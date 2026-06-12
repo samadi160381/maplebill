@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MapleBill — Invoice Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --blue-50: #EFF6FF;
+  --blue-100: #DBEAFE;
+  --blue-200: #BFDBFE;
+  --blue-400: #60A5FA;
+  --blue-500: #3B82F6;
+  --blue-600: #2563EB;
+  --blue-700: #1D4ED8;
+  --blue-800: #1E40AF;
+  --blue-900: #1E3A8A;
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+  --green-50: #F0FDF4;
+  --green-100: #DCFCE7;
+  --green-500: #22C55E;
+  --green-600: #16A34A;
+  --green-700: #15803D;
+  --red-50: #FEF2F2;
+  --red-100: #FEE2E2;
+  --red-500: #EF4444;
+  --red-600: #DC2626;
+  --amber-50: #FFFBEB;
+  --amber-100: #FEF3C7;
+  --amber-500: #F59E0B;
+  --amber-600: #D97706;
+  --purple-50: #FAF5FF;
+  --purple-100: #F3E8FF;
+  --purple-500: #A855F7;
+  --purple-600: #9333EA;
+  --bg: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  --bg-tertiary: #F3F4F6;
+  --surface: #FFFFFF;
+  --surface-hover: #F9FAFB;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-light: #EFF6FF;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --sidebar-width: 240px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --bg-secondary: #1E293B;
+  --bg-tertiary: #0F172A;
+  --surface: #1E293B;
+  --surface-hover: #2D3A4D;
+  --border: #334155;
+  --border-light: #1E293B;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --accent: #3B82F6;
+  --accent-hover: #2563EB;
+  --accent-light: #1E3A5F;
+  --blue-50: #1E3A5F;
+  --blue-100: #1E3A8A;
+  --green-50: #052E16;
+  --green-100: #14532D;
+  --red-50: #450A0A;
+  --red-100: #7F1D1D;
+  --amber-50: #451A03;
+  --amber-100: #78350F;
+  --purple-50: #2E1065;
+  --purple-100: #4C1D95;
+  --gray-50: #1E293B;
+  --gray-100: #334155;
+  --gray-200: #475569;
+  --gray-300: #64748B;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--bg-tertiary); color: var(--text-primary); min-height: 100vh; transition: background 0.2s, color 0.2s; }
+button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: var(--font); }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── App Shell ── */
+#app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── Auth Screens ── */
+.auth-screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: var(--bg); }
+.auth-screen.active { display: flex; }
+.auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2.5rem; }
+.auth-logo-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.auth-logo-icon svg { width: 22px; height: 22px; fill: white; }
+.auth-logo-text { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); }
+.auth-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+.auth-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.75rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--bg); color: var(--text-primary); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.form-input::placeholder { color: var(--text-muted); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 80px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-secondary { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
+.btn-secondary:hover { background: var(--surface-hover); }
+.btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; }
+.btn-ghost:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.btn-danger { background: var(--red-50); color: var(--red-600); border-color: var(--red-100); }
+.btn-danger:hover { background: var(--red-100); }
+.btn-success { background: var(--green-50); color: var(--green-700); border-color: var(--green-100); }
+.btn-success:hover { background: var(--green-100); }
+.btn-full { width: 100%; justify-content: center; padding: 10px 16px; }
+.btn-lg { padding: 11px 20px; font-size: 15px; }
+.btn-sm { padding: 5px 10px; font-size: 12px; gap: 4px; }
+.btn-icon { padding: 7px; aspect-ratio: 1; }
+.auth-footer { text-align: center; margin-top: 1.25rem; font-size: 13px; color: var(--text-secondary); }
+.auth-footer a { color: var(--accent); font-weight: 500; }
+.auth-footer a:hover { text-decoration: underline; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0; color: var(--text-muted); font-size: 12px; }
+.divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
+
+/* ── Sidebar ── */
+#sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: transform 0.25s; z-index: 100; overflow-y: auto; }
+.sidebar-header { padding: 1.25rem 1rem 1rem; border-bottom: 1px solid var(--border); }
+.sidebar-logo { display: flex; align-items: center; gap: 9px; }
+.sidebar-logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sidebar-logo-icon svg { width: 18px; height: 18px; fill: white; }
+.sidebar-logo-text { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.sidebar-nav { flex: 1; padding: 0.75rem 0.75rem; }
+.nav-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 0 0.5rem; margin: 0.75rem 0 0.25rem; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius); font-size: 13.5px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.12s; margin-bottom: 1px; white-space: nowrap; }
+.nav-item svg { width: 17px; height: 17px; flex-shrink: 0; }
+.nav-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.nav-item.active { background: var(--accent-light); color: var(--accent); }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--red-500); color: white; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 99px; min-width: 18px; text-align: center; }
+.sidebar-footer { padding: 0.75rem; border-top: 1px solid var(--border); }
+.sidebar-user { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; transition: background 0.12s; }
+.sidebar-user:hover { background: var(--bg-secondary); }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.user-plan { font-size: 11px; color: var(--text-muted); }
+
+/* ── Main Area ── */
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 1rem; }
+.topbar-left { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
+.topbar-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text-primary); }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.search-bar { display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 12px; flex: 1; max-width: 280px; }
+.search-bar input { border: none; background: transparent; outline: none; font-size: 13px; color: var(--text-primary); width: 100%; }
+.search-bar input::placeholder { color: var(--text-muted); }
+.search-bar svg { width: 15px; height: 15px; color: var(--text-muted); flex-shrink: 0; }
+.content { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Page Headers ── */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+.page-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.page-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── Stats Grid ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; }
+.stat-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.stat-value { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--text-primary); }
+.stat-change { font-size: 12px; color: var(--green-600); margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+.stat-change.negative { color: var(--red-500); }
+.stat-icon { width: 38px; height: 38px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; }
+.stat-icon svg { width: 20px; height: 20px; }
+.stat-icon.blue { background: var(--blue-50); color: var(--blue-600); }
+.stat-icon.green { background: var(--green-50); color: var(--green-600); }
+.stat-icon.amber { background: var(--amber-50); color: var(--amber-600); }
+.stat-icon.red { background: var(--red-50); color: var(--red-500); }
+.stat-icon.purple { background: var(--purple-50); color: var(--purple-600); }
+
+/* ── Cards ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.card-body { padding: 1.25rem; }
+
+/* ── Grid Layouts ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+.grid-col-7-5 { display: grid; grid-template-columns: 7fr 5fr; gap: 1rem; }
+
+/* ── Tables ── */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 12px 14px; font-size: 13.5px; color: var(--text-primary); border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-secondary); }
+.table-actions { display: flex; align-items: center; gap: 4px; }
+
+/* ── Badges ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+.badge-draft { background: var(--gray-100); color: var(--gray-600); }
+.badge-sent { background: var(--blue-50); color: var(--blue-700); }
+.badge-viewed { background: var(--purple-50); color: var(--purple-600); }
+.badge-paid { background: var(--green-50); color: var(--green-700); }
+.badge-overdue { background: var(--red-50); color: var(--red-600); }
+.badge-pending { background: var(--amber-50); color: var(--amber-600); }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ── Modals ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(2px); }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+.modal-sm { max-width: 420px; }
+.modal-md { max-width: 580px; }
+.modal-lg { max-width: 760px; }
+.modal-xl { max-width: 920px; }
+.modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.modal-body { padding: 1.5rem; }
+.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: var(--surface); }
+.close-btn { width: 30px; height: 30px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.12s; }
+.close-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.close-btn svg { width: 16px; height: 16px; }
+
+/* ── Toasts ── */
+#toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.toast { background: var(--gray-900); color: white; padding: 12px 16px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; min-width: 240px; animation: slideIn 0.2s ease; }
+.toast.success { background: var(--green-700); }
+.toast.error { background: var(--red-600); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+
+/* ── Invoice Builder ── */
+.invoice-builder { background: var(--surface); }
+.line-items-header { display: grid; grid-template-columns: 1fr 80px 110px 90px 110px 36px; gap: 8px; padding: 8px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.line-item-row { display: grid; grid-template-columns: 1fr 80px 110px 90px 110px 36px; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border-light); align-items: center; }
+.line-item-row:last-child { border-bottom: none; }
+.li-input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--bg); color: var(--text-primary); outline: none; }
+.li-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.totals-box { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 1.25rem; }
+.total-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+.total-row.grand { font-size: 17px; font-weight: 700; color: var(--text-primary); border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+
+/* ── Timeline / Activity ── */
+.activity-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+.activity-content { flex: 1; }
+.activity-text { font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+.activity-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── Chart container ── */
+.chart-container { position: relative; height: 220px; }
+
+/* ── Empty states ── */
+.empty-state { text-align: center; padding: 3rem 1rem; }
+.empty-state svg { width: 48px; height: 48px; color: var(--text-muted); margin: 0 auto 1rem; }
+.empty-state-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; }
+.empty-state-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+/* ── Filters ── */
+.filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-tab { padding: 5px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 500; color: var(--text-secondary); border: 1px solid transparent; cursor: pointer; transition: all 0.12s; }
+.filter-tab:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.filter-tab.active { background: var(--accent-light); color: var(--accent); border-color: var(--blue-200); }
+
+/* ── Toggle ── */
+.toggle { position: relative; display: inline-block; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--gray-300); border-radius: 10px; cursor: pointer; transition: 0.2s; }
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle-slider::before { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; bottom: 3px; left: 3px; transition: 0.2s; box-shadow: var(--shadow-sm); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+/* ── Settings sections ── */
+.settings-section { margin-bottom: 1.75rem; }
+.settings-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); }
+.settings-row:last-child { border-bottom: none; }
+.settings-row-info { font-size: 13.5px; color: var(--text-primary); }
+.settings-row-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── Client card ── */
+.client-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.client-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; cursor: pointer; transition: all 0.15s; }
+.client-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.client-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: white; margin-bottom: 0.75rem; }
+.client-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.client-email { font-size: 12.5px; color: var(--text-secondary); }
+.client-stats { display: flex; gap: 1rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); }
+.client-stat { font-size: 12px; color: var(--text-secondary); }
+.client-stat strong { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+/* ── Reports ── */
+.report-period { display: flex; gap: 6px; }
+.period-btn { padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); color: var(--text-secondary); cursor: pointer; background: var(--surface); }
+.period-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ── Inline editing ── */
+.editable { cursor: text; padding: 2px 4px; border-radius: 4px; }
+.editable:hover { background: var(--bg-secondary); }
+
+/* ── Invoice preview ── */
+.invoice-preview { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; color: #1F2937; font-size: 13px; line-height: 1.6; max-width: 680px; margin: 0 auto; }
+[data-theme="dark"] .invoice-preview { background: #FFFFFF; color: #1F2937; }
+.invoice-preview table { width: 100%; border-collapse: collapse; }
+.invoice-preview th { background: #EFF6FF; color: #1D4ED8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; text-align: left; }
+.invoice-preview td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; }
+
+/* ── Notification dot ── */
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red-500); position: absolute; top: 5px; right: 5px; }
+.relative { position: relative; }
+
+/* ── Theme toggle ── */
+.theme-btn { width: 32px; height: 32px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); border: 1px solid var(--border); background: var(--surface); transition: all 0.12s; }
+.theme-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.theme-btn svg { width: 15px; height: 15px; }
+
+/* ── Hamburger (mobile) ── */
+.hamburger { display: none; padding: 6px; border-radius: var(--radius); color: var(--text-secondary); }
+.hamburger svg { width: 20px; height: 20px; }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+  .sidebar-overlay.open { display: block; }
+  .hamburger { display: flex; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-col-7-5 { grid-template-columns: 1fr; }
+  .line-items-header { display: none; }
+  .line-item-row { grid-template-columns: 1fr 1fr; }
+  .content { padding: 1rem; }
+  .topbar { padding: 0 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .auth-screen { padding: 1rem; }
+  .auth-card { padding: 1.5rem; }
+  .modal { max-width: 100% !important; margin: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; align-self: flex-end; }
+  .modal-overlay { align-items: flex-end; padding: 0; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .client-grid { grid-template-columns: 1fr; }
+}
+
+/* ── AI badge ── */
+.ai-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; background: linear-gradient(135deg, #EDE9FE, #DBEAFE); color: #5B21B6; border-radius: 99px; font-size: 11px; font-weight: 600; border: 1px solid #C4B5FD; }
+.ai-badge svg { width: 12px; height: 12px; }
+
+/* ── Progress bar ── */
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+
+/* ── Tabs ── */
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; gap: 0; }
+.tab { padding: 10px 16px; font-size: 13.5px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.12s; }
+.tab:hover { color: var(--text-primary); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── Upload area ── */
+.upload-area { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; cursor: pointer; transition: all 0.15s; }
+.upload-area:hover { border-color: var(--accent); background: var(--accent-light); }
+.upload-area svg { width: 32px; height: 32px; color: var(--text-muted); margin: 0 auto 0.5rem; }
+
+/* ── Inline chart legend ── */
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.75rem; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── Loader ── */
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Color picker swatches ── */
+.color-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.color-swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border-color 0.12s; }
+.color-swatch.selected { border-color: var(--text-primary); }
+
+/* Print styles */
+@media print { #sidebar, .topbar, .no-print { display: none !important; } .content { padding: 0 !important; } }
+</style>
+</head>
+<body>
+<!-- Auth Screens -->
+<div class="auth-screen active" id="screen-login">
+  <div class="auth-logo">
+    <div class="auth-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6l-8-4zm0 2.2l6 3V12c0 4-2.5 7.7-6 8.9C8.5 19.7 6 16 6 12V7.2l6-3z"/></svg></div>
+    <span class="auth-logo-text">MapleBill</span>
+  </div>
+  <div class="auth-card">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in to manage your invoices</p>
+    <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" id="login-email" placeholder="you@company.com" value="demo@maplebill.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-pw" placeholder="••••••••" value="password"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" style="margin-top:0.5rem">Sign in</button>
+    <div class="divider">or</div>
+    <button class="btn btn-secondary btn-full" onclick="doLogin()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/><path d="M12 2a10 10 0 0 1 6.5 17.4"/></svg>
+      Continue with Google
+    </button>
+  </div>
+  <div class="auth-footer">Don't have an account? <a href="#" onclick="showAuth('signup')">Sign up free</a> · <a href="#" onclick="showAuth('reset')">Forgot password?</a></div>
+</div>
+
+<div class="auth-screen" id="screen-signup">
+  <div class="auth-logo">
+    <div class="auth-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6l-8-4zm0 2.2l6 3V12c0 4-2.5 7.7-6 8.9C8.5 19.7 6 16 6 12V7.2l6-3z"/></svg></div>
+    <span class="auth-logo-text">MapleBill</span>
+  </div>
+  <div class="auth-card">
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Start sending professional invoices today</p>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">First name</label><input class="form-input" placeholder="Alex"></div>
+      <div class="form-group"><label class="form-label">Last name</label><input class="form-input" placeholder="Carter"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Business name</label><input class="form-input" placeholder="Acme Studio"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@company.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Minimum 8 characters"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" style="margin-top:0.5rem">Create account</button>
+    <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:0.75rem">By signing up you agree to our Terms of Service and Privacy Policy</p>
+  </div>
+  <div class="auth-footer">Already have an account? <a href="#" onclick="showAuth('login')">Sign in</a></div>
+</div>
+
+<div class="auth-screen" id="screen-reset">
+  <div class="auth-logo">
+    <div class="auth-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6l-8-4zm0 2.2l6 3V12c0 4-2.5 7.7-6 8.9C8.5 19.7 6 16 6 12V7.2l6-3z"/></svg></div>
+    <span class="auth-logo-text">MapleBill</span>
+  </div>
+  <div class="auth-card">
+    <h1 class="auth-title">Reset your password</h1>
+    <p class="auth-subtitle">Enter your email and we'll send a reset link</p>
+    <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" placeholder="you@company.com"></div>
+    <button class="btn btn-primary btn-full" onclick="showToast('Reset link sent — check your email','success');showAuth('login')">Send reset link</button>
+  </div>
+  <div class="auth-footer"><a href="#" onclick="showAuth('login')">← Back to sign in</a></div>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none">
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6l-8-4z"/></svg></div>
+        <span class="sidebar-logo-text">MapleBill</span>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <ul>
+        <li class="nav-item active" onclick="nav('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </li>
+        <li class="nav-item" onclick="nav('invoices')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Invoices
+          <span class="nav-badge" id="overdue-badge">3</span>
+        </li>
+        <li class="nav-item" onclick="nav('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clients
+        </li>
+        <li class="nav-item" onclick="nav('quotes')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="12" y1="17" x2="8" y2="17"/></svg>
+          Quotes
+        </li>
+        <li class="nav-item" onclick="nav('expenses')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Expenses
+        </li>
+        <span class="nav-section-label">Analytics</span>
+        <li class="nav-item" onclick="nav('reports')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Reports
+        </li>
+        <li class="nav-item" onclick="nav('payments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payments
+        </li>
+        <span class="nav-section-label">Account</span>
+        <li class="nav-item" onclick="nav('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" onclick="nav('settings')">
+        <div class="user-avatar">AC</div>
+        <div>
+          <div class="user-name">Alex Carter</div>
+          <div class="user-plan">Pro Plan</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div id="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger btn-ghost" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search invoices, clients..." id="global-search" oninput="handleSearch(this.value)">
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+          <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openNewInvoice()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Invoice
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Good morning, Alex 👋</h1>
+            <p class="page-subtitle">Here's what's happening with your business today</p>
+          </div>
+          <div class="report-period">
+            <button class="period-btn active" onclick="setPeriod(this,'month')">Month</button>
+            <button class="period-btn" onclick="setPeriod(this,'quarter')">Quarter</button>
+            <button class="period-btn" onclick="setPeriod(this,'year')">Year</button>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">$48,290</div>
+            <div class="stat-change">↑ 12% vs last month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value">$12,450</div>
+            <div class="stat-change" style="color:var(--amber-600)">5 invoices pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="stat-label">Paid This Month</div>
+            <div class="stat-value">$31,840</div>
+            <div class="stat-change">↑ 8% vs last month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="stat-label">Overdue</div>
+            <div class="stat-value">$4,200</div>
+            <div class="stat-change negative">↑ 3 overdue invoices</div>
+          </div>
+        </div>
+        <div class="grid-col-7-5">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Revenue Overview</span>
+              <div class="legend">
+                <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Revenue</span>
+                <span class="legend-item"><span class="legend-dot" style="background:var(--green-500)"></span>Collected</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container"><canvas id="revenue-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Invoice Status</span></div>
+            <div class="card-body">
+              <div class="chart-container"><canvas id="status-chart"></canvas></div>
+              <div style="margin-top:1rem;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#16A34A;display:inline-block"></span>Paid (61%)</span><span style="font-weight:600;color:var(--text-primary)">$31,840</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#2563EB;display:inline-block"></span>Sent (16%)</span><span style="font-weight:600;color:var(--text-primary)">$8,250</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#F59E0B;display:inline-block"></span>Draft (15%)</span><span style="font-weight:600;color:var(--text-primary)">$8,000</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#EF4444;display:inline-block"></span>Overdue (8%)</span><span style="font-weight:600;color:var(--text-primary)">$4,200</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1rem">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Recent Invoices</span><button class="btn btn-ghost btn-sm" onclick="nav('invoices')">View all →</button></div>
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody id="recent-invoices-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Recent Activity</span></div>
+            <div class="card-body" id="activity-feed"></div>
+          </div>
+        </div>
+        <!-- Top clients -->
+        <div class="card" style="margin-top:1rem">
+          <div class="card-header"><span class="card-title">Top Clients by Revenue</span><button class="btn btn-ghost btn-sm" onclick="nav('clients')">Manage clients →</button></div>
+          <div class="card-body" id="top-clients"></div>
+        </div>
+      </div>
+
+      <!-- INVOICES -->
+      <div class="page" id="page-invoices">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Invoices</h1>
+            <p class="page-subtitle" id="invoices-count">Loading...</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="exportCSV()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openNewInvoice()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Invoice
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding-bottom:0">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div class="filter-bar" style="margin-bottom:0;flex:1">
+                <button class="filter-tab active" onclick="filterInvoices('all',this)">All</button>
+                <button class="filter-tab" onclick="filterInvoices('draft',this)">Draft</button>
+                <button class="filter-tab" onclick="filterInvoices('sent',this)">Sent</button>
+                <button class="filter-tab" onclick="filterInvoices('paid',this)">Paid</button>
+                <button class="filter-tab" onclick="filterInvoices('overdue',this)">Overdue</button>
+              </div>
+              <input class="form-input" style="width:200px;padding:6px 10px;font-size:13px" placeholder="Search invoices..." oninput="searchInvoices(this.value)" id="invoice-search">
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Invoice #</th><th>Client</th><th>Issue Date</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="invoices-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="page" id="page-clients">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Clients</h1>
+            <p class="page-subtitle" id="clients-count">Loading...</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openClientModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Client
+          </button>
+        </div>
+        <div style="margin-bottom:1rem">
+          <input class="form-input" style="max-width:300px" placeholder="Search clients..." oninput="searchClients(this.value)">
+        </div>
+        <div class="client-grid" id="clients-grid"></div>
+      </div>
+
+      <!-- QUOTES -->
+      <div class="page" id="page-quotes">
+        <div class="page-header">
+          <div><h1 class="page-title">Quotes & Estimates</h1><p class="page-subtitle">Create quotes and convert them to invoices</p></div>
+          <button class="btn btn-primary btn-sm" onclick="openNewQuote()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Quote
+          </button>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Quote #</th><th>Client</th><th>Date</th><th>Expires</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="quotes-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPENSES -->
+      <div class="page" id="page-expenses">
+        <div class="page-header">
+          <div><h1 class="page-title">Expenses</h1><p class="page-subtitle">Track your business expenses</p></div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Expense
+          </button>
+        </div>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" style="font-size:22px">$8,432</div><div class="stat-change negative">This month</div></div>
+          <div class="stat-card"><div class="stat-label">Deductible</div><div class="stat-value" style="font-size:22px">$6,180</div><div class="stat-change">73% of total</div></div>
+          <div class="stat-card"><div class="stat-label">Avg per Month</div><div class="stat-value" style="font-size:22px">$6,900</div><div class="stat-change">Last 3 months</div></div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Tax Deductible</th><th>Actions</th></tr></thead>
+              <tbody id="expenses-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="page-reports">
+        <div class="page-header">
+          <div><h1 class="page-title">Reports</h1><p class="page-subtitle">Insights into your business performance</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportExcel()">Export Excel</button>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'revenue-report')">Revenue</div>
+          <div class="tab" onclick="switchTab(this,'client-report')">By Client</div>
+          <div class="tab" onclick="switchTab(this,'tax-report')">Tax</div>
+        </div>
+        <div id="revenue-report">
+          <div class="grid-2" style="margin-bottom:1rem">
+            <div class="stat-card"><div class="stat-label">Annual Revenue</div><div class="stat-value">$182,450</div><div class="stat-change">↑ 24% vs last year</div></div>
+            <div class="stat-card"><div class="stat-label">Average Invoice Value</div><div class="stat-value">$3,840</div><div class="stat-change">↑ 8% vs last year</div></div>
+          </div>
+          <div class="card"><div class="card-header"><span class="card-title">Monthly Revenue</span></div><div class="card-body"><div class="chart-container" style="height:260px"><canvas id="annual-chart"></canvas></div></div></div>
+        </div>
+        <div id="client-report" style="display:none">
+          <div class="card">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>Client</th><th>Total Invoiced</th><th>Total Paid</th><th>Outstanding</th><th>Invoices</th></tr></thead>
+                <tbody id="client-report-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="tax-report" style="display:none">
+          <div class="grid-2" style="margin-bottom:1rem">
+            <div class="stat-card"><div class="stat-label">Total Tax Collected</div><div class="stat-value">$21,894</div><div class="stat-change">GST/HST</div></div>
+            <div class="stat-card"><div class="stat-label">Tax Deductible Expenses</div><div class="stat-value">$14,320</div><div class="stat-change">This fiscal year</div></div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1rem">Tax summary by quarter. Export for your accountant.</p>
+              <div class="table-wrapper">
+                <table>
+                  <thead><tr><th>Quarter</th><th>Revenue</th><th>Tax Rate</th><th>Tax Collected</th><th>Expenses</th><th>Net</th></tr></thead>
+                  <tbody>
+                    <tr><td>Q1 2026</td><td>$42,100</td><td>13%</td><td>$5,473</td><td>$8,200</td><td>$33,900</td></tr>
+                    <tr><td>Q2 2026</td><td>$48,290</td><td>13%</td><td>$6,278</td><td>$6,432</td><td>$41,858</td></tr>
+                    <tr><td>Q3 2025</td><td>$46,800</td><td>13%</td><td>$6,084</td><td>$7,100</td><td>$39,700</td></tr>
+                    <tr><td>Q4 2025</td><td>$45,260</td><td>13%</td><td>$5,884</td><td>$9,320</td><td>$35,940</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div class="page" id="page-payments">
+        <div class="page-header">
+          <div><h1 class="page-title">Payments</h1><p class="page-subtitle">Payment history and processing</p></div>
+        </div>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1rem">
+          <div class="stat-card"><div class="stat-label">Total Received</div><div class="stat-value" style="font-size:22px">$182,450</div><div class="stat-change">All time</div></div>
+          <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value" style="font-size:22px">$31,840</div><div class="stat-change">↑ 8%</div></div>
+          <div class="stat-card"><div class="stat-label">Avg Days to Pay</div><div class="stat-value" style="font-size:22px">14</div><div class="stat-change">days</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Payment History</span></div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Date</th><th>Invoice</th><th>Client</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="payments-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <div class="card-header"><span class="card-title">Payment Gateway</span><span class="badge badge-paid">Connected</span></div>
+          <div class="card-body">
+            <div class="settings-row">
+              <div><div class="settings-row-info">Stripe</div><div class="settings-row-desc">Accept credit cards, debit cards, and ACH transfers</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-paid">Active</span><button class="btn btn-secondary btn-sm" onclick="showToast('Opening Stripe dashboard...','success')">Manage</button></div>
+            </div>
+            <div class="settings-row">
+              <div><div class="settings-row-info">PayPal</div><div class="settings-row-desc">Accept PayPal payments from clients worldwide</div></div>
+              <button class="btn btn-secondary btn-sm" onclick="showToast('Connect PayPal in Settings → Payments','')">Connect</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header"><h1 class="page-title">Settings</h1></div>
+        <div class="grid-col-7-5">
+          <div>
+            <div class="tabs">
+              <div class="tab active" onclick="switchSettingsTab(this,'set-profile')">Company</div>
+              <div class="tab" onclick="switchSettingsTab(this,'set-invoice')">Invoice</div>
+              <div class="tab" onclick="switchSettingsTab(this,'set-payment')">Payments</div>
+              <div class="tab" onclick="switchSettingsTab(this,'set-notif')">Notifications</div>
+            </div>
+            <div id="set-profile">
+              <div class="card">
+                <div class="card-header"><span class="card-title">Company Profile</span></div>
+                <div class="card-body" style="display:flex;flex-direction:column;gap:1rem">
+                  <div class="upload-area" onclick="showToast('Logo upload coming soon')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <p style="font-size:13px;font-weight:500;color:var(--text-primary)">Upload company logo</p>
+                    <p style="font-size:11px;color:var(--text-muted)">PNG, JPG up to 2MB</p>
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group"><label class="form-label">Company name</label><input class="form-input" value="Acme Design Studio"></div>
+                    <div class="form-group"><label class="form-label">Legal name</label><input class="form-input" value="Acme Studio Inc."></div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="alex@acmestudio.com"></div>
+                    <div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="+1 (506) 555-0182"></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Address</label><textarea class="form-input form-textarea" style="min-height:60px">123 Main Street, Moncton, NB E1C 1A1, Canada</textarea></div>
+                  <div class="grid-2">
+                    <div class="form-group"><label class="form-label">Tax Number (GST/HST)</label><input class="form-input" value="123456789RT0001"></div>
+                    <div class="form-group"><label class="form-label">Website</label><input class="form-input" value="acmestudio.com"></div>
+                  </div>
+                  <button class="btn btn-primary" onclick="showToast('Company profile saved','success')">Save changes</button>
+                </div>
+              </div>
+            </div>
+            <div id="set-invoice" style="display:none">
+              <div class="card">
+                <div class="card-header"><span class="card-title">Invoice Settings</span></div>
+                <div class="card-body">
+                  <div class="settings-section">
+                    <div class="settings-label">Numbering</div>
+                    <div class="grid-2">
+                      <div class="form-group"><label class="form-label">Prefix</label><input class="form-input" value="INV-"></div>
+                      <div class="form-group"><label class="form-label">Next number</label><input class="form-input" type="number" value="1048"></div>
+                    </div>
+                  </div>
+                  <div class="settings-section">
+                    <div class="settings-label">Defaults</div>
+                    <div class="grid-2">
+                      <div class="form-group"><label class="form-label">Currency</label><select class="form-input form-select"><option>CAD — Canadian Dollar</option><option>USD — US Dollar</option><option>EUR — Euro</option><option>GBP — British Pound</option><option>AUD — Australian Dollar</option></select></div>
+                      <div class="form-group"><label class="form-label">Payment terms</label><select class="form-input form-select"><option>Net 30</option><option>Net 15</option><option>Net 60</option><option>Due on receipt</option></select></div>
+                    </div>
+                    <div class="grid-2">
+                      <div class="form-group"><label class="form-label">Default tax rate (%)</label><input class="form-input" type="number" value="13"></div>
+                      <div class="form-group"><label class="form-label">Tax label</label><input class="form-input" value="HST"></div>
+                    </div>
+                  </div>
+                  <div class="settings-section">
+                    <div class="settings-label">Default Terms</div>
+                    <textarea class="form-input form-textarea" style="min-height:100px">Payment is due within 30 days of invoice date. Late payments are subject to a 1.5% monthly interest charge. Please make checks payable to Acme Studio Inc.</textarea>
+                  </div>
+                  <button class="btn btn-primary" onclick="showToast('Invoice settings saved','success')">Save changes</button>
+                </div>
+              </div>
+            </div>
+            <div id="set-payment" style="display:none">
+              <div class="card">
+                <div class="card-header"><span class="card-title">Payment Settings</span></div>
+                <div class="card-body">
+                  <div class="settings-section">
+                    <div class="settings-label">Payment Methods</div>
+                    <div class="settings-row"><div><div class="settings-row-info">Accept online payments</div><div class="settings-row-desc">Allow clients to pay invoices online via Stripe</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-row-info">Credit & debit cards</div><div class="settings-row-desc">Visa, Mastercard, Amex via Stripe</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                    <div class="settings-row"><div><div class="settings-row-info">ACH / bank transfer</div><div class="settings-row-desc">Direct bank-to-bank payments (US only)</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+                  </div>
+                  <div class="settings-section">
+                    <div class="settings-label">Stripe Integration</div>
+                    <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:1rem;display:flex;align-items:center;justify-content:space-between">
+                      <div><p style="font-size:13.5px;font-weight:600;color:var(--text-primary)">Stripe account connected</p><p style="font-size:12px;color:var(--text-secondary)">acct_1Ox2...KqL4</p></div>
+                      <span class="badge badge-paid">Active</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary" onclick="showToast('Payment settings saved','success')">Save changes</button>
+                </div>
+              </div>
+            </div>
+            <div id="set-notif" style="display:none">
+              <div class="card">
+                <div class="card-header"><span class="card-title">Notifications</span></div>
+                <div class="card-body">
+                  <div class="settings-row"><div><div class="settings-row-info">Invoice paid</div><div class="settings-row-desc">Get notified when a client pays an invoice</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                  <div class="settings-row"><div><div class="settings-row-info">Invoice viewed</div><div class="settings-row-desc">Get notified when a client opens an invoice</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                  <div class="settings-row"><div><div class="settings-row-info">Overdue reminders</div><div class="settings-row-desc">Auto-send reminders for overdue invoices</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                  <div class="settings-row"><div><div class="settings-row-info">Payment reminders</div><div class="settings-row-desc">Send payment reminders 3 days before due</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+                  <div class="settings-row"><div><div class="settings-row-info">Weekly summary</div><div class="settings-row-desc">Receive a weekly revenue summary email</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><span class="card-title">Plan</span></div>
+              <div class="card-body">
+                <div style="background:var(--accent-light);border-radius:var(--radius-md);padding:1rem;margin-bottom:1rem">
+                  <div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:2px">Pro Plan</div>
+                  <div style="font-size:13px;color:var(--text-secondary)">$29 / month · Billed monthly</div>
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;flex-direction:column;gap:6px">
+                  <div>✓ Unlimited invoices</div><div>✓ Unlimited clients</div><div>✓ Stripe payments</div><div>✓ PDF generation</div><div>✓ Email sending</div><div>✓ Reports & analytics</div><div>✓ Priority support</div>
+                </div>
+                <button class="btn btn-secondary btn-full" style="margin-top:1rem" onclick="showToast('Opening billing portal...','')">Manage billing</button>
+              </div>
+            </div>
+            <div class="card" style="margin-top:1rem">
+              <div class="card-header"><span class="card-title">Danger Zone</span></div>
+              <div class="card-body">
+                <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:1rem">These actions are irreversible. Please proceed carefully.</p>
+                <button class="btn btn-danger btn-full" onclick="if(confirm('Delete all data? This cannot be undone.'))showToast('Contact support to delete account','error')">Delete account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Modal -->
+<div class="modal-overlay" id="invoice-modal">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <h2 class="modal-title" id="invoice-modal-title">New Invoice</h2>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="ai-badge" onclick="aiGenerateItems()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z"/></svg>
+          AI Suggest Items
+        </span>
+        <button class="close-btn" onclick="closeModal('invoice-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2" style="margin-bottom:1.25rem">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Client</label>
+            <select class="form-input form-select" id="inv-client">
+              <option value="">Select client...</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <div class="form-group"><label class="form-label">Invoice #</label><input class="form-input" id="inv-number" value="INV-1048"></div>
+            <div class="form-group"><label class="form-label">Currency</label><select class="form-input form-select" id="inv-currency"><option>CAD</option><option>USD</option><option>EUR</option><option>GBP</option></select></div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group"><label class="form-label">Issue Date</label><input class="form-input" type="date" id="inv-date"></div>
+            <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" id="inv-due"></div>
+          </div>
+        </div>
+        <div>
+          <div class="form-group"><label class="form-label">Status</label><select class="form-input form-select" id="inv-status"><option value="draft">Draft</option><option value="sent">Sent</option><option value="paid">Paid</option></select></div>
+          <div class="form-group"><label class="form-label">Discount (%)</label><input class="form-input" type="number" id="inv-discount" value="0" min="0" max="100" oninput="calcTotals()"></div>
+          <div class="form-group"><label class="form-label">PO Number (optional)</label><input class="form-input" id="inv-po" placeholder="PO-2024-001"></div>
+        </div>
+      </div>
+      
+      <!-- Line Items -->
+      <div style="margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+          <span style="font-size:13px;font-weight:600;color:var(--text-primary)">Line Items</span>
+        </div>
+        <div class="line-items-header" style="padding:8px 0">
+          <span>Description</span><span>Qty</span><span>Unit Price</span><span>Tax %</span><span style="text-align:right">Amount</span><span></span>
+        </div>
+        <div id="line-items-container"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="addLineItem()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add line item
+        </button>
+      </div>
+
+      <!-- Totals -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.25rem">
+        <div style="width:280px">
+          <div class="totals-box">
+            <div class="total-row"><span>Subtotal</span><span id="t-subtotal">$0.00</span></div>
+            <div class="total-row"><span>Discount</span><span id="t-discount" style="color:var(--green-600)">-$0.00</span></div>
+            <div class="total-row"><span>Tax</span><span id="t-tax">$0.00</span></div>
+            <div class="total-row grand"><span>Total</span><span id="t-total">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes & Terms -->
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="inv-notes" placeholder="Thank you for your business!"></textarea></div>
+        <div class="form-group"><label class="form-label">Terms & Conditions</label><textarea class="form-input form-textarea" id="inv-terms" placeholder="Payment due within 30 days...">Payment is due within 30 days of invoice date.</textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('invoice-modal')">Cancel</button>
+      <button class="btn btn-secondary" onclick="saveInvoice('draft')">Save as draft</button>
+      <button class="btn btn-secondary" onclick="previewInvoice()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Preview PDF
+      </button>
+      <button class="btn btn-primary" onclick="saveAndSend()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Save & Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Client Modal -->
+<div class="modal-overlay" id="client-modal">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="client-modal-title">Add Client</h2>
+      <button class="close-btn" onclick="closeModal('client-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Business Name *</label><input class="form-input" id="cl-company" placeholder="Acme Corp"></div>
+        <div class="form-group"><label class="form-label">Contact Name</label><input class="form-input" id="cl-name" placeholder="Jane Smith"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Email *</label><input class="form-input" type="email" id="cl-email" placeholder="jane@acme.com"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="cl-phone" placeholder="+1 (555) 000-0000"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Address</label><textarea class="form-input form-textarea" id="cl-address" placeholder="123 Main St, City, State, Country" style="min-height:60px"></textarea></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Tax Number</label><input class="form-input" id="cl-tax" placeholder="123456789"></div>
+        <div class="form-group"><label class="form-label">Website</label><input class="form-input" id="cl-web" placeholder="acme.com"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="cl-notes" placeholder="Internal notes about this client..." style="min-height:60px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('client-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveClient()">Save client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Preview Modal -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title">Invoice Preview</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="downloadPDF()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
+        <button class="close-btn" onclick="closeModal('preview-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="modal-body" id="preview-content"></div>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="modal-overlay" id="expense-modal">
+  <div class="modal modal-md">
+    <div class="modal-header"><h2 class="modal-title">Add Expense</h2><button class="close-btn" onclick="closeModal('expense-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="exp-date"></div>
+        <div class="form-group"><label class="form-label">Amount</label><input class="form-input" type="number" id="exp-amount" placeholder="0.00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="exp-desc" placeholder="Adobe Creative Cloud subscription"></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select" id="exp-cat"><option>Software</option><option>Hardware</option><option>Travel</option><option>Office</option><option>Marketing</option><option>Professional Services</option><option>Other</option></select></div>
+        <div class="form-group"><label class="form-label">Tax Deductible</label><select class="form-input form-select" id="exp-tax"><option>Yes</option><option>No</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="exp-notes" placeholder="Optional notes..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('expense-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveExpense()">Add expense</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+// ── State ──
+let currentPage = 'dashboard';
+let editingInvoiceId = null;
+let editingClientId = null;
+let invoiceFilter = 'all';
+let invoiceSearch = '';
+
+const AVATAR_COLORS = ['#2563EB','#16A34A','#9333EA','#D97706','#DC2626','#0891B2','#7C3AED','#BE185D'];
+
+const state = {
+  user: { name: 'Alex Carter', email: 'demo@maplebill.com', company: 'Acme Design Studio', plan: 'Pro' },
+  nextInvoiceNum: 1048,
+  invoices: [
+    { id:'inv1', number:'INV-1045', clientId:'cl1', date:'2026-06-01', due:'2026-07-01', status:'paid', currency:'CAD', items:[{desc:'Brand Identity Design',qty:1,price:4800,tax:13},{desc:'Style Guide',qty:1,price:800,tax:13}], discount:0, notes:'Thank you!', terms:'Net 30' },
+    { id:'inv2', number:'INV-1046', clientId:'cl2', date:'2026-06-05', due:'2026-06-20', status:'overdue', currency:'CAD', items:[{desc:'Website Redesign — Phase 1',qty:1,price:6500,tax:13}], discount:5, notes:'', terms:'Net 15' },
+    { id:'inv3', number:'INV-1047', clientId:'cl3', date:'2026-06-10', due:'2026-07-10', status:'sent', currency:'CAD', items:[{desc:'Monthly Retainer',qty:1,price:3500,tax:0},{desc:'Additional Development Hours',qty:8,price:150,tax:13}], discount:0, notes:'', terms:'Net 30' },
+    { id:'inv4', number:'INV-1044', clientId:'cl1', date:'2026-05-15', due:'2026-06-15', status:'overdue', currency:'CAD', items:[{desc:'UX Research & Wireframes',qty:1,price:3200,tax:13}], discount:0, notes:'', terms:'Net 30' },
+    { id:'inv5', number:'INV-1043', clientId:'cl4', date:'2026-05-01', due:'2026-05-31', status:'paid', currency:'USD', items:[{desc:'Logo Design Package',qty:1,price:2400,tax:0}], discount:10, notes:'', terms:'Net 30' },
+    { id:'inv6', number:'INV-1042', clientId:'cl2', date:'2026-04-15', due:'2026-05-15', status:'paid', currency:'CAD', items:[{desc:'Consulting — Strategy Session',qty:3,price:450,tax:13}], discount:0, notes:'', terms:'Net 30' },
+    { id:'inv7', number:'INV-1041', clientId:'cl5', date:'2026-06-08', due:'2026-07-08', status:'draft', currency:'CAD', items:[{desc:'Mobile App Design',qty:1,price:8000,tax:13}], discount:0, notes:'', terms:'Net 30' },
+  ],
+  clients: [
+    { id:'cl1', company:'Maple Tech Solutions', name:'Sarah Johnson', email:'sarah@mapletech.ca', phone:'+1 (416) 555-0142', address:'400 King St W, Toronto, ON M5V 1K2', tax:'', web:'mapletech.ca', notes:'' },
+    { id:'cl2', company:'Horizon Creative Agency', name:'Marcus Lee', email:'marcus@horizoncreative.com', phone:'+1 (604) 555-0198', address:'1055 W Georgia St, Vancouver, BC V6E 3P3', tax:'', web:'horizoncreative.com', notes:'Prefers invoices on the 1st' },
+    { id:'cl3', company:'Peak Performance Co.', name:'Emma Wilson', email:'emma@peakco.io', phone:'+1 (403) 555-0165', address:'707 5th St SW, Calgary, AB T2P 0Y3', tax:'', web:'peakco.io', notes:'' },
+    { id:'cl4', company:'Sunrise Digital LLC', name:'James Martinez', email:'james@sunrisedigital.com', phone:'+1 (312) 555-0177', address:'233 S Wacker Dr, Chicago, IL 60606', tax:'', web:'sunrisedigital.com', notes:'' },
+    { id:'cl5', company:'Northern Lights Media', name:'Olivia Chen', email:'olivia@nlmedia.ca', phone:'+1 (514) 555-0134', address:'1000 De La Commune St W, Montreal, QC H3C 1A2', tax:'', web:'nlmedia.ca', notes:'' },
+  ],
+  quotes: [
+    { id:'q1', number:'QTE-0021', clientId:'cl3', date:'2026-06-08', expires:'2026-07-08', status:'sent', amount:12000 },
+    { id:'q2', number:'QTE-0020', clientId:'cl5', date:'2026-05-20', expires:'2026-06-20', status:'accepted', amount:8500 },
+    { id:'q3', number:'QTE-0019', clientId:'cl2', date:'2026-05-10', expires:'2026-06-10', status:'declined', amount:15000 },
+  ],
+  expenses: [
+    { id:'e1', date:'2026-06-01', desc:'Adobe Creative Cloud', category:'Software', amount:89.99, taxDeductible:true },
+    { id:'e2', date:'2026-06-03', desc:'Figma Professional', category:'Software', amount:45.00, taxDeductible:true },
+    { id:'e3', date:'2026-06-05', desc:'Client Lunch — Maple Tech', category:'Travel', amount:142.50, taxDeductible:true },
+    { id:'e4', date:'2026-06-10', desc:'Office Supplies', category:'Office', amount:67.30, taxDeductible:false },
+    { id:'e5', date:'2026-06-11', desc:'Slack Business', category:'Software', amount:15.00, taxDeductible:true },
+  ],
+  payments: [
+    { date:'2026-06-08', invoiceId:'inv1', method:'Stripe (Visa)', amount:6328.00, status:'completed' },
+    { date:'2026-05-28', invoiceId:'inv5', method:'Bank Transfer', amount:2160.00, status:'completed' },
+    { date:'2026-05-10', invoiceId:'inv6', method:'Stripe (MC)', amount:1525.50, status:'completed' },
+  ]
+};
+
+// ── Helpers ──
+function fmt(n, currency='CAD') {
+  return new Intl.NumberFormat('en-CA', { style:'currency', currency: currency || 'CAD' }).format(n || 0);
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-CA', { month:'short', day:'numeric', year:'numeric' });
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function daysFrom(d, days) {
+  const dt = new Date(d + 'T00:00:00');
+  dt.setDate(dt.getDate() + days);
+  return dt.toISOString().split('T')[0];
+}
+function avatarColor(str) { let h=0; for(let c of str) h=(h*31+c.charCodeAt(0))&0xff; return AVATAR_COLORS[h % AVATAR_COLORS.length]; }
+function initials(name) { return name.split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join(''); }
+function getClient(id) { return state.clients.find(c=>c.id===id); }
+function invoiceTotal(inv) {
+  const sub = inv.items.reduce((s,i) => s + i.qty * i.price, 0);
+  const disc = sub * (inv.discount/100);
+  const tax = inv.items.reduce((s,i) => s + i.qty * i.price * (i.tax/100), 0);
+  return { sub, disc, tax, total: sub - disc + tax };
+}
+function statusBadge(status) {
+  const map = { draft:'badge-draft', sent:'badge-sent', viewed:'badge-viewed', paid:'badge-paid', overdue:'badge-overdue', pending:'badge-pending', accepted:'badge-paid', declined:'badge-overdue' };
+  const dot = { paid:'●', sent:'●', overdue:'●', draft:'○', viewed:'●', accepted:'●', declined:'●' };
+  return `<span class="badge ${map[status]||'badge-draft'}">${dot[status]||'○'} ${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+}
+function showToast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => { t.style.animation='slideOut 0.2s ease forwards'; setTimeout(()=>t.remove(), 200); }, 3000);
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── Auth ──
+function showAuth(screen) {
+  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+}
+function doLogin() {
+  document.querySelectorAll('.auth-screen').forEach(s => s.style.display='none');
+  document.getElementById('app').style.display='flex';
+  initApp();
+}
+
+// ── Nav ──
+function nav(page) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { dashboard:0, invoices:1, clients:2, quotes:3, expenses:4, reports:5, payments:6, settings:7 };
+  const items = document.querySelectorAll('.nav-item');
+  if (items[navMap[page]]) items[navMap[page]].classList.add('active');
+  closeSidebar();
+  if (page === 'invoices') renderInvoicesTable();
+  if (page === 'clients') renderClientsGrid();
+  if (page === 'quotes') renderQuotesTable();
+  if (page === 'expenses') renderExpensesTable();
+  if (page === 'reports') setTimeout(initReportsChart, 50);
+  if (page === 'payments') renderPaymentsTable();
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+function toggleTheme() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  icon.innerHTML = dark ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>' : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  setTimeout(initCharts, 50);
+}
+
+// ── Dashboard ──
+function initApp() {
+  populateClientDropdown();
+  renderRecentInvoices();
+  renderActivityFeed();
+  renderTopClients();
+  setTimeout(initCharts, 100);
+  updateOverdueBadge();
+}
+function updateOverdueBadge() {
+  const count = state.invoices.filter(i=>i.status==='overdue').length;
+  document.getElementById('overdue-badge').textContent = count;
+}
+function renderRecentInvoices() {
+  const tbody = document.getElementById('recent-invoices-body');
+  const recent = state.invoices.slice(0,5);
+  tbody.innerHTML = recent.map(inv => {
+    const client = getClient(inv.clientId);
+    const { total } = invoiceTotal(inv);
+    return `<tr onclick="editInvoice('${inv.id}')" style="cursor:pointer">
+      <td><span style="font-weight:600;color:var(--accent)">${inv.number}</span></td>
+      <td>${client?.company || '—'}</td>
+      <td>${fmt(total, inv.currency)}</td>
+      <td>${statusBadge(inv.status)}</td>
+    </tr>`;
+  }).join('');
+}
+function renderActivityFeed() {
+  const activities = [
+    { text: '<strong>INV-1047</strong> sent to Peak Performance Co.', time: '2 hours ago' },
+    { text: '<strong>INV-1045</strong> paid by Maple Tech Solutions — $6,328', time: '1 day ago' },
+    { text: 'New client <strong>Northern Lights Media</strong> added', time: '2 days ago' },
+    { text: '<strong>INV-1046</strong> is overdue — reminder sent', time: '3 days ago' },
+    { text: '<strong>INV-1043</strong> paid by Sunrise Digital — $2,160', time: '1 week ago' },
+  ];
+  document.getElementById('activity-feed').innerHTML = activities.map(a =>
+    `<div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`
+  ).join('');
+}
+function renderTopClients() {
+  const clientRevenue = {};
+  state.invoices.forEach(inv => {
+    if (!clientRevenue[inv.clientId]) clientRevenue[inv.clientId] = { total:0, paid:0, count:0 };
+    const { total } = invoiceTotal(inv);
+    clientRevenue[inv.clientId].total += total;
+    if (inv.status==='paid') clientRevenue[inv.clientId].paid += total;
+    clientRevenue[inv.clientId].count++;
+  });
+  const sorted = state.clients.sort((a,b) => (clientRevenue[b.id]?.total||0) - (clientRevenue[a.id]?.total||0)).slice(0,4);
+  const max = clientRevenue[sorted[0]?.id]?.total || 1;
+  document.getElementById('top-clients').innerHTML = sorted.map(cl => {
+    const rev = clientRevenue[cl.id] || { total:0, paid:0, count:0 };
+    const pct = Math.round((rev.total/max)*100);
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--border-light)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(cl.company)};display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700">${initials(cl.company)}</div>
+          <span style="font-size:13.5px;font-weight:500">${cl.company}</span>
+        </div>
+        <span style="font-size:13.5px;font-weight:600">${fmt(rev.total)}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── Charts ──
+let charts = {};
+function initCharts() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#94A3B8' : '#6B7280';
+  const gridColor = isDark ? '#334155' : '#F3F4F6';
+  Chart.defaults.color = textColor;
+
+  if (charts.revenue) charts.revenue.destroy();
+  if (charts.status) charts.status.destroy();
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+  const rc = document.getElementById('revenue-chart').getContext('2d');
+  charts.revenue = new Chart(rc, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label:'Revenue', data:[28000,32000,29000,38000,42000,48290], backgroundColor:'rgba(37,99,235,0.15)', borderColor:'#2563EB', borderWidth:2, borderRadius:4, type:'bar' },
+        { label:'Collected', data:[26000,30000,27500,35000,39000,31840], borderColor:'#16A34A', borderWidth:2, type:'line', fill:false, tension:0.3, pointBackgroundColor:'#16A34A', pointRadius:3 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ grid:{color:gridColor}, ticks:{color:textColor,font:{size:11}} }, y:{ grid:{color:gridColor}, ticks:{ color:textColor, font:{size:11}, callback:v=>'$'+v.toLocaleString() } } } }
+  });
+
+  const sc = document.getElementById('status-chart').getContext('2d');
+  charts.status = new Chart(sc, {
+    type: 'doughnut',
+    data: {
+      labels: ['Paid','Sent','Draft','Overdue'],
+      datasets: [{ data:[61,16,15,8], backgroundColor:['#16A34A','#2563EB','#9CA3AF','#EF4444'], borderWidth:0, hoverOffset:4 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, cutout:'72%' }
+  });
+}
+function initReportsChart() {
+  if (charts.annual) charts.annual.destroy();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#94A3B8' : '#6B7280';
+  const gridColor = isDark ? '#334155' : '#F3F4F6';
+  const ac = document.getElementById('annual-chart')?.getContext('2d');
+  if (!ac) return;
+  charts.annual = new Chart(ac, {
+    type: 'bar',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets: [{ label:'Revenue', data:[28000,32000,29000,38000,42000,48290,0,0,0,0,0,0], backgroundColor:'rgba(37,99,235,0.2)', borderColor:'#2563EB', borderWidth:2, borderRadius:4 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ grid:{color:gridColor}, ticks:{color:textColor,font:{size:11}} }, y:{ grid:{color:gridColor}, ticks:{ color:textColor, font:{size:11}, callback:v=>'$'+v.toLocaleString() } } } }
+  });
+}
+
+// ── Invoice CRUD ──
+function populateClientDropdown() {
+  const sel = document.getElementById('inv-client');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select client...</option>' + state.clients.map(c => `<option value="${c.id}">${c.company}</option>`).join('');
+}
+function openNewInvoice() {
+  editingInvoiceId = null;
+  document.getElementById('invoice-modal-title').textContent = 'New Invoice';
+  document.getElementById('inv-number').value = 'INV-' + state.nextInvoiceNum;
+  document.getElementById('inv-client').value = '';
+  document.getElementById('inv-status').value = 'draft';
+  document.getElementById('inv-date').value = today();
+  document.getElementById('inv-due').value = daysFrom(today(), 30);
+  document.getElementById('inv-discount').value = '0';
+  document.getElementById('inv-po').value = '';
+  document.getElementById('inv-notes').value = 'Thank you for your business!';
+  document.getElementById('inv-terms').value = 'Payment is due within 30 days of invoice date.';
+  document.getElementById('line-items-container').innerHTML = '';
+  addLineItem();
+  calcTotals();
+  openModal('invoice-modal');
+}
+function openNewQuote() {
+  showToast('Quote builder opening...','success');
+  openNewInvoice();
+  document.getElementById('invoice-modal-title').textContent = 'New Quote';
+}
+function editInvoice(id) {
+  const inv = state.invoices.find(i=>i.id===id);
+  if (!inv) return;
+  editingInvoiceId = id;
+  document.getElementById('invoice-modal-title').textContent = 'Edit ' + inv.number;
+  document.getElementById('inv-number').value = inv.number;
+  document.getElementById('inv-client').value = inv.clientId;
+  document.getElementById('inv-status').value = inv.status;
+  document.getElementById('inv-date').value = inv.date;
+  document.getElementById('inv-due').value = inv.due;
+  document.getElementById('inv-discount').value = inv.discount || 0;
+  document.getElementById('inv-po').value = inv.po || '';
+  document.getElementById('inv-notes').value = inv.notes || '';
+  document.getElementById('inv-terms').value = inv.terms || '';
+  document.getElementById('line-items-container').innerHTML = '';
+  inv.items.forEach(item => addLineItem(item));
+  calcTotals();
+  openModal('invoice-modal');
+}
+function addLineItem(item={desc:'',qty:1,price:0,tax:13}) {
+  const container = document.getElementById('line-items-container');
+  const row = document.createElement('div');
+  row.className = 'line-item-row';
+  row.innerHTML = `
+    <input class="li-input" placeholder="Service description" value="${item.desc}" oninput="calcTotals()">
+    <input class="li-input" type="number" min="0" value="${item.qty}" oninput="calcTotals()" style="text-align:center">
+    <input class="li-input" type="number" min="0" step="0.01" value="${item.price}" oninput="calcTotals()" placeholder="0.00">
+    <input class="li-input" type="number" min="0" max="100" value="${item.tax}" oninput="calcTotals()" placeholder="0" style="text-align:center">
+    <div class="li-amount" style="text-align:right;font-weight:600;font-size:14px;color:var(--text-primary);padding:0 4px">$0.00</div>
+    <button onclick="this.closest('.line-item-row').remove();calcTotals()" style="width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);background:var(--bg-secondary);border:1px solid var(--border);cursor:pointer;flex-shrink:0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </button>`;
+  container.appendChild(row);
+  calcTotals();
+}
+function calcTotals() {
+  let sub = 0, taxTotal = 0;
+  document.querySelectorAll('.line-item-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const qty = parseFloat(inputs[1]?.value) || 0;
+    const price = parseFloat(inputs[2]?.value) || 0;
+    const tax = parseFloat(inputs[3]?.value) || 0;
+    const amount = qty * price;
+    sub += amount;
+    taxTotal += amount * (tax/100);
+    const amtEl = row.querySelector('.li-amount');
+    if (amtEl) amtEl.textContent = fmt(amount);
+  });
+  const disc = parseFloat(document.getElementById('inv-discount')?.value) || 0;
+  const discAmt = sub * (disc/100);
+  const total = sub - discAmt + taxTotal;
+  const currency = document.getElementById('inv-currency')?.value || 'CAD';
+  document.getElementById('t-subtotal').textContent = fmt(sub, currency);
+  document.getElementById('t-discount').textContent = '-' + fmt(discAmt, currency);
+  document.getElementById('t-tax').textContent = fmt(taxTotal, currency);
+  document.getElementById('t-total').textContent = fmt(total, currency);
+}
+function collectInvoiceData() {
+  const items = [];
+  document.querySelectorAll('.line-item-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
+  });
+  return {
+    number: document.getElementById('inv-number').value,
+    clientId: document.getElementById('inv-client').value,
+    status: document.getElementById('inv-status').value,
+    date: document.getElementById('inv-date').value,
+    due: document.getElementById('inv-due').value,
+    discount: parseFloat(document.getElementById('inv-discount').value)||0,
+    currency: document.getElementById('inv-currency').value,
+    po: document.getElementById('inv-po').value,
+    notes: document.getElementById('inv-notes').value,
+    terms: document.getElementById('inv-terms').value,
+    items
+  };
+}
+function saveInvoice(status) {
+  const data = collectInvoiceData();
+  data.status = status || data.status;
+  if (editingInvoiceId) {
+    const idx = state.invoices.findIndex(i=>i.id===editingInvoiceId);
+    state.invoices[idx] = { ...state.invoices[idx], ...data };
+  } else {
+    data.id = 'inv' + Date.now();
+    state.invoices.unshift(data);
+    state.nextInvoiceNum++;
+  }
+  closeModal('invoice-modal');
+  showToast('Invoice saved successfully', 'success');
+  renderRecentInvoices();
+  renderInvoicesTable();
+  updateOverdueBadge();
+}
+function saveAndSend() {
+  saveInvoice('sent');
+  showToast('Invoice sent to client by email', 'success');
+}
+function deleteInvoice(id) {
+  if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  state.invoices = state.invoices.filter(i=>i.id!==id);
+  renderInvoicesTable();
+  renderRecentInvoices();
+  updateOverdueBadge();
+  showToast('Invoice deleted');
+}
+function duplicateInvoice(id) {
+  const inv = state.invoices.find(i=>i.id===id);
+  if (!inv) return;
+  const newInv = { ...JSON.parse(JSON.stringify(inv)), id:'inv'+Date.now(), number:'INV-'+state.nextInvoiceNum, date:today(), due:daysFrom(today(),30), status:'draft' };
+  state.invoices.unshift(newInv);
+  state.nextInvoiceNum++;
+  renderInvoicesTable();
+  showToast('Invoice duplicated', 'success');
+}
+function markPaid(id) {
+  const inv = state.invoices.find(i=>i.id===id);
+  if (inv) { inv.status='paid'; renderInvoicesTable(); renderRecentInvoices(); updateOverdueBadge(); showToast('Invoice marked as paid','success'); }
+}
+function aiGenerateItems() {
+  const clientId = document.getElementById('inv-client').value;
+  const client = getClient(clientId);
+  showToast('AI generating line items...','');
+  setTimeout(() => {
+    document.getElementById('line-items-container').innerHTML = '';
+    const items = [
+      { desc: `Brand Strategy Consulting${client?' for '+client.company:''}`, qty:1, price:2500, tax:13 },
+      { desc: 'UI/UX Design — 20 hours', qty:20, price:125, tax:13 },
+      { desc: 'Project Management', qty:1, price:800, tax:13 },
+    ];
+    items.forEach(addLineItem);
+    showToast('AI suggested 3 line items','success');
+  }, 900);
+}
+function previewInvoice() {
+  const data = collectInvoiceData();
+  const client = getClient(data.clientId);
+  const { sub, disc, tax, total } = (() => {
+    const s = data.items.reduce((a,i)=>a+i.qty*i.price,0);
+    const d = s*(data.discount/100);
+    const t = data.items.reduce((a,i)=>a+i.qty*i.price*(i.tax/100),0);
+    return { sub:s, disc:d, tax:t, total:s-d+t };
+  })();
+  const itemRows = data.items.map(i=>`<tr><td>${i.desc}</td><td style="text-align:center">${i.qty}</td><td style="text-align:right">${fmt(i.price,data.currency)}</td><td style="text-align:center">${i.tax}%</td><td style="text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
+  document.getElementById('preview-content').innerHTML = `
+    <div class="invoice-preview">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem">
+        <div>
+          <div style="width:48px;height:48px;background:#2563EB;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="white"><path d="M12 2L4 6v6c0 5.1 3.4 9.9 8 11 4.6-1.1 8-5.9 8-11V6l-8-4z"/></svg>
+          </div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:700;color:#111827">${state.user.company}</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:4px">${state.user.email}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:#2563EB;letter-spacing:-0.5px">INVOICE</div>
+          <div style="font-size:14px;color:#374151;margin-top:4px;font-weight:600">${data.number}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding:1.25rem;background:#F9FAFB;border-radius:10px">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">Billed To</div>
+          <div style="font-weight:700;color:#111827">${client?.company||'Client Name'}</div>
+          <div style="font-size:13px;color:#6B7280">${client?.name||''}</div>
+          <div style="font-size:13px;color:#6B7280">${client?.email||''}</div>
+          <div style="font-size:13px;color:#6B7280;margin-top:4px">${client?.address||''}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">Details</div>
+          <div style="font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;color:#374151">
+            <span style="color:#9CA3AF">Issue Date</span><span style="font-weight:500">${fmtDate(data.date)}</span>
+            <span style="color:#9CA3AF">Due Date</span><span style="font-weight:500">${fmtDate(data.due)}</span>
+            <span style="color:#9CA3AF">Currency</span><span style="font-weight:500">${data.currency}</span>
+          </div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:1.5rem">
+        <thead><tr><th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;padding:10px 12px;text-align:left">Description</th><th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">Qty</th><th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">Unit Price</th><th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">Tax</th><th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">Amount</th></tr></thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.5rem">
+        <div style="width:240px;background:#F9FAFB;border-radius:8px;padding:1rem">
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:6px"><span>Subtotal</span><span>${fmt(sub,data.currency)}</span></div>
+          ${disc>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#16A34A;margin-bottom:6px"><span>Discount (${data.discount}%)</span><span>-${fmt(disc,data.currency)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:8px"><span>Tax</span><span>${fmt(tax,data.currency)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:800;color:#111827;border-top:2px solid #E5E7EB;padding-top:8px"><span>Total</span><span style="color:#2563EB">${fmt(total,data.currency)}</span></div>
+        </div>
+      </div>
+      ${data.notes?`<div style="background:#F0FDF4;border-left:3px solid #16A34A;padding:0.75rem 1rem;border-radius:0 8px 8px 0;margin-bottom:1rem"><div style="font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">Notes</div><div style="font-size:13px;color:#374151">${data.notes}</div></div>`:''}
+      ${data.terms?`<div style="border-top:1px solid #E5E7EB;padding-top:1rem;margin-top:0.5rem"><div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">Terms & Conditions</div><div style="font-size:12px;color:#9CA3AF">${data.terms}</div></div>`:''}
+    </div>`;
+  closeModal('invoice-modal');
+  openModal('preview-modal');
+}
+function downloadPDF() {
+  showToast('Generating PDF...','');
+  setTimeout(() => showToast('PDF downloaded successfully','success'), 1200);
+}
+
+// ── Invoices Table ──
+function renderInvoicesTable() {
+  let invoices = state.invoices;
+  if (invoiceFilter !== 'all') invoices = invoices.filter(i=>i.status===invoiceFilter);
+  if (invoiceSearch) {
+    const q = invoiceSearch.toLowerCase();
+    invoices = invoices.filter(i => {
+      const client = getClient(i.clientId);
+      return i.number.toLowerCase().includes(q) || client?.company.toLowerCase().includes(q) || client?.name.toLowerCase().includes(q);
+    });
+  }
+  document.getElementById('invoices-count').textContent = `${invoices.length} invoice${invoices.length!==1?'s':''}`;
+  document.getElementById('invoices-table-body').innerHTML = invoices.length ? invoices.map(inv => {
+    const client = getClient(inv.clientId);
+    const { total } = invoiceTotal(inv);
+    return `<tr>
+      <td><span style="font-weight:600;color:var(--accent);cursor:pointer" onclick="editInvoice('${inv.id}')">${inv.number}</span></td>
+      <td>${client?.company||'—'}</td>
+      <td style="color:var(--text-secondary)">${fmtDate(inv.date)}</td>
+      <td style="color:${inv.status==='overdue'?'var(--red-500)':'var(--text-secondary)'}">${fmtDate(inv.due)}</td>
+      <td style="font-weight:600">${fmt(total,inv.currency)}</td>
+      <td>${statusBadge(inv.status)}</td>
+      <td>
+        <div class="table-actions">
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="editInvoice('${inv.id}')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+          ${inv.status!=='paid'?`<button class="btn btn-ghost btn-icon btn-sm" onclick="markPaid('${inv.id}')" title="Mark paid" style="color:var(--green-600)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg></button>`:''}
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="duplicateInvoice('${inv.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="previewInvoice()" title="Preview PDF" style="color:var(--text-secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="deleteInvoice('${inv.id}')" title="Delete" style="color:var(--red-500)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="empty-state-title">No invoices found</div><div class="empty-state-text">Create your first invoice to get started</div><button class="btn btn-primary" onclick="openNewInvoice()">New Invoice</button></div></td></tr>`;
+}
+function filterInvoices(status, btn) {
+  invoiceFilter = status;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderInvoicesTable();
+}
+function searchInvoices(q) { invoiceSearch = q; renderInvoicesTable(); }
+function handleSearch(q) {
+  if (q.length > 1) { nav('invoices'); document.getElementById('invoice-search').value = q; searchInvoices(q); }
+}
+
+// ── Clients ──
+function renderClientsGrid() {
+  const clients = state.clients;
+  document.getElementById('clients-count').textContent = `${clients.length} client${clients.length!==1?'s':''}`;
+  const clientRevenue = {};
+  state.invoices.forEach(inv => {
+    if (!clientRevenue[inv.clientId]) clientRevenue[inv.clientId] = { total:0, count:0 };
+    const { total } = invoiceTotal(inv);
+    clientRevenue[inv.clientId].total += total;
+    clientRevenue[inv.clientId].count++;
+  });
+  document.getElementById('clients-grid').innerHTML = clients.length ? clients.map(cl => {
+    const rev = clientRevenue[cl.id] || { total:0, count:0 };
+    return `<div class="client-card" onclick="editClient('${cl.id}')">
+      <div class="client-avatar" style="background:${avatarColor(cl.company)}">${initials(cl.company)}</div>
+      <div class="client-name">${cl.company}</div>
+      <div class="client-email">${cl.email}</div>
+      <div class="client-stats">
+        <div class="client-stat"><strong>${fmt(rev.total)}</strong>Total billed</div>
+        <div class="client-stat"><strong>${rev.count}</strong>Invoice${rev.count!==1?'s':''}</div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty-state" style="grid-column:1/-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div class="empty-state-title">No clients yet</div><div class="empty-state-text">Add your first client to start sending invoices</div><button class="btn btn-primary" onclick="openClientModal()">Add Client</button></div>`;
+}
+function searchClients(q) {
+  const clients = q ? state.clients.filter(c => c.company.toLowerCase().includes(q.toLowerCase()) || c.name.toLowerCase().includes(q.toLowerCase()) || c.email.toLowerCase().includes(q.toLowerCase())) : state.clients;
+  const clientRevenue = {};
+  state.invoices.forEach(inv => {
+    if (!clientRevenue[inv.clientId]) clientRevenue[inv.clientId] = { total:0, count:0 };
+    const { total } = invoiceTotal(inv);
+    clientRevenue[inv.clientId].total += total;
+    clientRevenue[inv.clientId].count++;
+  });
+  document.getElementById('clients-grid').innerHTML = clients.map(cl => {
+    const rev = clientRevenue[cl.id] || { total:0, count:0 };
+    return `<div class="client-card" onclick="editClient('${cl.id}')">
+      <div class="client-avatar" style="background:${avatarColor(cl.company)}">${initials(cl.company)}</div>
+      <div class="client-name">${cl.company}</div>
+      <div class="client-email">${cl.email}</div>
+      <div class="client-stats">
+        <div class="client-stat"><strong>${fmt(rev.total)}</strong>Total billed</div>
+        <div class="client-stat"><strong>${rev.count}</strong>Invoices</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openClientModal() {
+  editingClientId = null;
+  document.getElementById('client-modal-title').textContent = 'Add Client';
+  ['cl-company','cl-name','cl-email','cl-phone','cl-address','cl-tax','cl-web','cl-notes'].forEach(id => document.getElementById(id).value='');
+  openModal('client-modal');
+}
+function editClient(id) {
+  const cl = state.clients.find(c=>c.id===id);
+  if (!cl) return;
+  editingClientId = id;
+  document.getElementById('client-modal-title').textContent = 'Edit Client';
+  document.getElementById('cl-company').value = cl.company;
+  document.getElementById('cl-name').value = cl.name;
+  document.getElementById('cl-email').value = cl.email;
+  document.getElementById('cl-phone').value = cl.phone;
+  document.getElementById('cl-address').value = cl.address;
+  document.getElementById('cl-tax').value = cl.tax;
+  document.getElementById('cl-web').value = cl.web;
+  document.getElementById('cl-notes').value = cl.notes;
+  openModal('client-modal');
+}
+function saveClient() {
+  const company = document.getElementById('cl-company').value.trim();
+  const email = document.getElementById('cl-email').value.trim();
+  if (!company) { showToast('Business name is required','error'); return; }
+  if (!email) { showToast('Email is required','error'); return; }
+  const data = { company, name:document.getElementById('cl-name').value, email, phone:document.getElementById('cl-phone').value, address:document.getElementById('cl-address').value, tax:document.getElementById('cl-tax').value, web:document.getElementById('cl-web').value, notes:document.getElementById('cl-notes').value };
+  if (editingClientId) {
+    const idx = state.clients.findIndex(c=>c.id===editingClientId);
+    state.clients[idx] = { ...state.clients[idx], ...data };
+  } else {
+    data.id = 'cl' + Date.now();
+    state.clients.push(data);
+  }
+  closeModal('client-modal');
+  populateClientDropdown();
+  renderClientsGrid();
+  showToast('Client saved','success');
+}
+
+// ── Quotes ──
+function renderQuotesTable() {
+  document.getElementById('quotes-table-body').innerHTML = state.quotes.map(q => {
+    const client = getClient(q.clientId);
+    return `<tr>
+      <td><span style="font-weight:600;color:var(--accent)">${q.number}</span></td>
+      <td>${client?.company||'—'}</td>
+      <td style="color:var(--text-secondary)">${fmtDate(q.date)}</td>
+      <td style="color:var(--text-secondary)">${fmtDate(q.expires)}</td>
+      <td style="font-weight:600">${fmt(q.amount)}</td>
+      <td>${statusBadge(q.status)}</td>
+      <td>
+        <div class="table-actions">
+          ${q.status==='accepted'?`<button class="btn btn-success btn-sm" onclick="showToast('Converting to invoice...','success')">Convert to Invoice</button>`:''}
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="showToast('Sending quote...','success')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Expenses ──
+function renderExpensesTable() {
+  document.getElementById('expenses-table-body').innerHTML = state.expenses.map(e => `<tr>
+    <td style="color:var(--text-secondary)">${fmtDate(e.date)}</td>
+    <td style="font-weight:500">${e.desc}</td>
+    <td><span class="badge badge-sent">${e.category}</span></td>
+    <td style="font-weight:600">${fmt(e.amount)}</td>
+    <td>${e.taxDeductible ? '<span class="badge badge-paid">Yes</span>' : '<span class="badge badge-draft">No</span>'}</td>
+    <td><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--red-500)" onclick="deleteExpense('${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td>
+  </tr>`).join('');
+}
+function openExpenseModal() {
+  document.getElementById('exp-date').value = today();
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-desc').value = '';
+  document.getElementById('exp-notes').value = '';
+  openModal('expense-modal');
+}
+function saveExpense() {
+  const desc = document.getElementById('exp-desc').value.trim();
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  if (!desc) { showToast('Description required','error'); return; }
+  if (!amount) { showToast('Amount required','error'); return; }
+  state.expenses.unshift({ id:'e'+Date.now(), date:document.getElementById('exp-date').value, desc, category:document.getElementById('exp-cat').value, amount, taxDeductible:document.getElementById('exp-tax').value==='Yes', notes:document.getElementById('exp-notes').value });
+  closeModal('expense-modal');
+  renderExpensesTable();
+  showToast('Expense added','success');
+}
+function deleteExpense(id) {
+  if (!confirm('Delete this expense?')) return;
+  state.expenses = state.expenses.filter(e=>e.id!==id);
+  renderExpensesTable();
+  showToast('Expense deleted');
+}
+
+// ── Payments ──
+function renderPaymentsTable() {
+  const tbody = document.getElementById('payments-table-body');
+  tbody.innerHTML = state.payments.map(p => {
+    const inv = state.invoices.find(i=>i.id===p.invoiceId);
+    const client = inv ? getClient(inv.clientId) : null;
+    return `<tr>
+      <td style="color:var(--text-secondary)">${fmtDate(p.date)}</td>
+      <td><span style="font-weight:600;color:var(--accent)">${inv?.number||'—'}</span></td>
+      <td>${client?.company||'—'}</td>
+      <td><span class="badge badge-draft">${p.method}</span></td>
+      <td style="font-weight:600">${fmt(p.amount)}</td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Reports ──
+function renderClientReport() {
+  const clientRevenue = {};
+  state.invoices.forEach(inv => {
+    if (!clientRevenue[inv.clientId]) clientRevenue[inv.clientId] = { total:0, paid:0, count:0 };
+    const { total } = invoiceTotal(inv);
+    clientRevenue[inv.clientId].total += total;
+    if (inv.status==='paid') clientRevenue[inv.clientId].paid += total;
+    clientRevenue[inv.clientId].count++;
+  });
+  document.getElementById('client-report-body').innerHTML = state.clients.map(cl => {
+    const rev = clientRevenue[cl.id] || { total:0, paid:0, count:0 };
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(cl.company)};display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700">${initials(cl.company)}</div>${cl.company}</div></td>
+      <td style="font-weight:600">${fmt(rev.total)}</td>
+      <td style="color:var(--green-600);font-weight:600">${fmt(rev.paid)}</td>
+      <td style="color:${rev.total-rev.paid>0?'var(--amber-600)':'var(--text-secondary)'};font-weight:600">${fmt(rev.total-rev.paid)}</td>
+      <td>${rev.count}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Tabs ──
+function switchTab(btn, targetId) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const parent = btn.closest('.page') || btn.closest('.card') || document;
+  // report tabs
+  ['revenue-report','client-report','tax-report'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  const target = document.getElementById(targetId);
+  if (target) { target.style.display='block'; if(targetId==='client-report') renderClientReport(); if(targetId==='revenue-report') setTimeout(initReportsChart,50); }
+}
+function switchSettingsTab(btn, targetId) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['set-profile','set-invoice','set-payment','set-notif'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display='none';
+  });
+  document.getElementById(targetId).style.display='block';
+}
+
+// ── Period ──
+function setPeriod(btn) {
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Export ──
+function exportCSV() {
+  const rows = [['Invoice #','Client','Date','Due','Amount','Status']];
+  state.invoices.forEach(inv => {
+    const client = getClient(inv.clientId);
+    const { total } = invoiceTotal(inv);
+    rows.push([inv.number, client?.company||'', inv.date, inv.due, total.toFixed(2), inv.status]);
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv,' + encodeURIComponent(csv);
+  a.download = 'maplebill-invoices.csv';
+  a.click();
+  showToast('CSV exported','success');
+}
+function exportExcel() { showToast('Excel export ready — check your downloads','success'); }
+
+// ── Close modal on overlay click ──
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+});
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); document.getElementById('global-search').focus(); }
+});
+</script>
+</body>
+</html>
