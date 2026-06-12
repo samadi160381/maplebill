@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --blue-50: #EFF6FF;
@@ -447,14 +448,9 @@ tr:hover td { background: var(--bg-secondary); }
   <div class="auth-card">
     <h1 class="auth-title">Create your account</h1>
     <p class="auth-subtitle">Start sending professional invoices today</p>
-    <div class="grid-2">
-      <div class="form-group"><label class="form-label">First name</label><input class="form-input" placeholder="Alex"></div>
-      <div class="form-group"><label class="form-label">Last name</label><input class="form-input" placeholder="Carter"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Business name</label><input class="form-input" placeholder="Acme Studio"></div>
-    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@company.com"></div>
-    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Minimum 8 characters"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" style="margin-top:0.5rem">Create account</button>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="signup-email" placeholder="you@company.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="signup-pw" placeholder="Minimum 8 characters"></div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doSignup()" style="margin-top:0.5rem">Create account</button>
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:0.75rem">By signing up you agree to our Terms of Service and Privacy Policy</p>
   </div>
   <div class="auth-footer">Already have an account? <a href="#" onclick="showAuth('login')">Sign in</a></div>
@@ -528,12 +524,13 @@ tr:hover td { background: var(--bg-secondary); }
     </div>
     <div class="sidebar-footer">
       <div class="sidebar-user" onclick="nav('settings')">
-        <div class="user-avatar">AC</div>
+        <div class="user-avatar" id="user-avatar-initials">AC</div>
         <div>
-          <div class="user-name">Alex Carter</div>
-          <div class="user-plan">Pro Plan</div>
+          <div class="user-name" id="sidebar-user-name">My Account</div>
+          <div class="user-plan">Free Plan</div>
         </div>
       </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px;color:var(--text-secondary)" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
 
@@ -1211,15 +1208,67 @@ function showToast(msg, type='') {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
+// ── Supabase ──
+const SUPABASE_URL = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_A7Ng8DLarg0gXgheHiPqpg_kxO6-GF_';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) enterApp(session.user);
+});
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) {
+    enterApp(session.user);
+  } else if (event === 'SIGNED_OUT') {
+    document.getElementById('app').style.display = 'none';
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-login').classList.add('active');
+    document.getElementById('screen-login').style.display = '';
+  }
+});
+
+function enterApp(user) {
+  document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  document.getElementById('app').style.display = 'flex';
+  // Show user email in sidebar
+  const emailShort = user.email ? user.email.split('@')[0] : 'My Account';
+  const nameEl = document.getElementById('sidebar-user-name');
+  if (nameEl) nameEl.textContent = emailShort;
+  const avatarEl = document.getElementById('user-avatar-initials');
+  if (avatarEl) avatarEl.textContent = emailShort.slice(0,2).toUpperCase();
+  initApp();
+}
+
 // ── Auth ──
 function showAuth(screen) {
   document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + screen).classList.add('active');
 }
-function doLogin() {
-  document.querySelectorAll('.auth-screen').forEach(s => s.style.display='none');
-  document.getElementById('app').style.display='flex';
-  initApp();
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  if (!email || !pw) { showToast('Please enter email and password', 'error'); return; }
+  const btn = document.querySelector('#screen-login .btn-primary');
+  if (btn) btn.textContent = 'Signing in...';
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if (btn) btn.textContent = 'Sign in';
+  if (error) showToast(error.message, 'error');
+}
+
+async function doSignup() {
+  const email = document.getElementById('signup-email') ? document.getElementById('signup-email').value.trim() : '';
+  const pw = document.getElementById('signup-pw') ? document.getElementById('signup-pw').value : '';
+  if (!email || !pw) { showToast('Please fill in all fields', 'error'); return; }
+  const { error } = await sb.auth.signUp({ email, password: pw });
+  if (error) showToast(error.message, 'error');
+  else { showToast('Check your email to confirm your account!', 'success'); showAuth('login'); }
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
 }
 
 // ── Nav ──
