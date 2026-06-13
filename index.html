@@ -2358,8 +2358,19 @@ function editClient(id) {
 async function deleteClient() {
   if (!editingClientId) return;
   if (!confirm('Delete this client? This cannot be undone.')) return;
+  
+  // Check if this is a demo client (not in database)
+  if (editingClientId.startsWith('cl')) {
+    // Just remove from local state
+    state.clients = state.clients.filter(c => c.id !== editingClientId);
+    closeModal('client-modal');
+    renderClientsGrid();
+    showToast('Client removed', 'success');
+    return;
+  }
+  
   const { error } = await sb.from('clients').delete().eq('id', editingClientId);
-  if (error) { showToast('Error deleting client', 'error'); return; }
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
   closeModal('client-modal');
   await loadOrgData();
   populateClientDropdown();
