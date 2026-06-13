@@ -1214,7 +1214,6 @@ const SUPABASE_KEY = 'sb_publishable_A7Ng8DLarg0gXgheHiPqpg_kxO6-GF_';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 window.addEventListener('DOMContentLoaded', async () => {
-  // Hide app until we know auth state
   document.getElementById('app').style.display = 'none';
   document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
 
@@ -1227,10 +1226,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+let appInitialized = false;
 sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN' && session) {
+  if (event === 'SIGNED_IN' && session && !appInitialized) {
     enterApp(session.user);
   } else if (event === 'SIGNED_OUT') {
+    appInitialized = false;
     document.getElementById('app').style.display = 'none';
     document.querySelectorAll('.auth-screen').forEach(s => { s.style.display=''; s.classList.remove('active'); });
     document.getElementById('screen-login').classList.add('active');
@@ -1238,9 +1239,10 @@ sb.auth.onAuthStateChange((event, session) => {
 });
 
 function enterApp(user) {
+  if (appInitialized) return;
+  appInitialized = true;
   document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
   document.getElementById('app').style.display = 'flex';
-  // Show user email in sidebar
   const emailShort = user.email ? user.email.split('@')[0] : 'My Account';
   const nameEl = document.getElementById('sidebar-user-name');
   if (nameEl) nameEl.textContent = emailShort;
@@ -1412,11 +1414,8 @@ async function initApp() {
   if (el) el.textContent = `${greeting}, ${name} 👋`;
   showToast('Data loaded!', 'success');
   const hashPage = location.hash.replace('#', '');
-  if (hashPage && document.getElementById('page-' + hashPage)) {
-    nav(hashPage);
-  } else {
-    nav('dashboard');
-  }
+  const targetPage = (hashPage && document.getElementById('page-' + hashPage)) ? hashPage : 'dashboard';
+  setTimeout(() => nav(targetPage), 50);
 }
 
 function renderDashboardStats() {
