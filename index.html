@@ -1642,16 +1642,24 @@ async function showPublicInvoice(invoiceId) {
       <!-- DIVIDER -->
       <div style="border-top:2px solid #C8102E;margin:28px 0 24px"></div>
 
-      <!-- BOTTOM: Thank you + Terms -->
+      <!-- BOTTOM: Notes + Terms -->
       <div style="display:flex;gap:48px;align-items:flex-start">
         <div style="flex:1">
-          ${inv.notes || inv.terms ? `<div style="font-size:30px;font-family:Georgia,serif;font-style:italic;color:#1B2A4A">Thank you!</div>` : ''}
+          ${inv.notes ? `
+          <div style="font-weight:800;font-size:11px;color:#C8102E;letter-spacing:1px;margin-bottom:8px">NOTES</div>
+          <div style="font-size:13px;color:#374151;line-height:1.6">${inv.notes}</div>
+          ` : ''}
         </div>
         ${inv.terms ? `
         <div style="flex:1;border-left:4px solid #C8102E;padding-left:16px">
           <div style="font-weight:800;font-size:11px;color:#C8102E;letter-spacing:1px;margin-bottom:8px">TERMS &amp; CONDITIONS</div>
           <div style="font-size:13px;color:#374151;line-height:1.6">${inv.terms}</div>
         </div>` : ''}
+      </div>
+
+      <!-- Closing message -->
+      <div style="text-align:center;margin-top:32px;font-size:22px;font-family:Georgia,serif;font-style:italic;color:#1B2A4A">
+        Thank you for your business!
       </div>
 
       <div class="no-print" style="text-align:center;margin-top:44px">
