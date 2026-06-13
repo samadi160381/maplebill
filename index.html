@@ -269,8 +269,8 @@ tr:hover td { background: var(--bg-secondary); }
 
 /* ── Invoice Builder ── */
 .invoice-builder { background: var(--surface); }
-.line-items-header { display: grid; grid-template-columns: 1fr 80px 110px 90px 110px 36px; gap: 8px; padding: 8px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-.line-item-row { display: grid; grid-template-columns: 1fr 80px 110px 90px 110px 36px; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border-light); align-items: center; }
+.line-items-header { display: grid; grid-template-columns: 1fr 70px 80px 110px 90px 110px 36px; gap: 8px; padding: 8px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.line-item-row { display: grid; grid-template-columns: 1fr 70px 80px 110px 90px 110px 36px; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border-light); align-items: center; }
 .line-item-row:last-child { border-bottom: none; }
 .li-input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--bg); color: var(--text-primary); outline: none; }
 .li-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
@@ -1045,7 +1045,7 @@ tr:hover td { background: var(--bg-secondary); }
           <span style="font-size:13px;font-weight:600;color:var(--text-primary)">Line Items</span>
         </div>
         <div class="line-items-header" style="padding:8px 0">
-          <span>Description</span><span>Qty</span><span>Unit Price</span><span>Tax %</span><span style="text-align:right">Amount</span><span></span>
+          <span>Description</span><span>Qty</span><span>Unit</span><span>Unit Price</span><span>Tax %</span><span style="text-align:right">Amount</span><span></span>
         </div>
         <div id="line-items-container"></div>
         <button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="addLineItem()">
@@ -1607,7 +1607,7 @@ async function showPublicInvoice(invoiceId) {
         <tbody>
           ${items.map(item => `
             <tr style="border-bottom:1px solid #e2e8f0">
-              <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}</td>
+              <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}${item.unit_label && item.unit_label!=='unit' ? ' '+item.unit_label : ''}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151">${item.description}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151;text-align:right">${parseFloat(item.unit_price).toFixed(2)}</td>
               <td style="padding:12px 0 12px 8px;font-size:13px;color:#374151;text-align:right;font-weight:600">${(item.quantity*item.unit_price).toFixed(2)}</td>
@@ -1770,6 +1770,7 @@ function toggleTheme() {
 let currentOrgId = null;
 let defaultTaxRate = 0;
 let defaultTerms = 'Payment is due within 15 days of invoice date.';
+const UNITS = ['unit', 'kg', 'lb', 'g', 'oz', 'case', 'box', 'dozen', 'L', 'hr', 'day'];
 let defaultTaxLabel = 'Tax';
 
 async function loadOrgData() {
@@ -1840,7 +1841,7 @@ async function loadOrgData() {
     province: inv.province || '', language: inv.language || 'en', po: inv.po || '',
     taxAmount: inv.tax_amount || 0,
     items: (inv.invoice_items || []).map(li => ({
-      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0, unit: li.unit_label || 'unit'
     }))
   }));
 
@@ -2059,14 +2060,18 @@ function applyProvinceTax() {
 function addLineItem(item=null) {
   if (!item) {
     const code = document.getElementById('inv-province')?.value || '';
-    item = { desc:'', qty:1, price:0, tax: provinceTaxRate(code) || defaultTaxRate };
+    item = { desc:'', qty:1, unit:'unit', price:0, tax: provinceTaxRate(code) || defaultTaxRate };
   }
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
   row.className = 'line-item-row';
+  const unitVal = item.unit || 'unit';
   row.innerHTML = `
     <input class="li-input" placeholder="Service description" value="${item.desc}" oninput="calcTotals()">
     <input class="li-input" type="number" min="0" value="${item.qty}" oninput="calcTotals()" style="text-align:center">
+    <select class="li-input li-unit" style="text-align:center">
+      ${UNITS.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
+    </select>
     <input class="li-input" type="number" min="0" step="0.01" value="${item.price}" oninput="calcTotals()" placeholder="0.00">
     <input class="li-input" type="number" min="0" max="100" value="${item.tax}" oninput="calcTotals()" placeholder="0" style="text-align:center">
     <div class="li-amount" style="text-align:right;font-weight:600;font-size:14px;color:var(--text-primary);padding:0 4px">$0.00</div>
@@ -2123,7 +2128,7 @@ function collectInvoiceData() {
   const items = [];
   document.querySelectorAll('.line-item-row').forEach(row => {
     const inputs = row.querySelectorAll('input');
-    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
+    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, unit: row.querySelector('.li-unit')?.value || 'unit', price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
   });
   return {
     number: document.getElementById('inv-number').value,
@@ -2192,7 +2197,7 @@ async function saveInvoice(status) {
 
   if (error) { showToast('Error saving invoice: ' + error.message, 'error'); return; }
 
-  // Save line items (tax_rate added by Phase 1 update; falls back if column missing)
+  // Save line items (tax_rate / unit_label added by later updates; falls back if columns missing)
   if (invId && data.items.length > 0) {
     const lineItemsFull = data.items.map((item, i) => ({
       invoice_id: invId,
@@ -2200,11 +2205,24 @@ async function saveInvoice(status) {
       quantity: item.qty || 1,
       unit_price: item.price || 0,
       tax_rate: item.tax || 0,
+      unit_label: item.unit || 'unit',
       sort_order: i
     }));
-    const { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
+    let { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
     if (liErr) {
-      // Fallback: save without tax_rate column (older DB schema)
+      // Fallback: try without unit_label column (older DB schema)
+      const lineItemsNoUnit = data.items.map((item, i) => ({
+        invoice_id: invId,
+        description: item.desc || 'Service',
+        quantity: item.qty || 1,
+        unit_price: item.price || 0,
+        tax_rate: item.tax || 0,
+        sort_order: i
+      }));
+      ({ error: liErr } = await sb.from('invoice_items').insert(lineItemsNoUnit));
+    }
+    if (liErr) {
+      // Fallback: save without tax_rate/unit_label columns (older DB schema)
       const lineItems = data.items.map((item, i) => ({
         invoice_id: invId,
         description: item.desc || 'Service',
@@ -2276,7 +2294,7 @@ async function sendInvoiceEmail(invoiceId) {
             ${(inv.items||[]).map((item,i) => `
               <tr style="background:${i%2===0?'#f8fafc':'white'}">
                 <td style="padding:10px;color:#374151">${item.desc}</td>
-                <td style="padding:10px;color:#374151;text-align:center">${item.qty}</td>
+                <td style="padding:10px;color:#374151;text-align:center">${item.qty}${item.unit && item.unit!=='unit' ? ' '+item.unit : ''}</td>
                 <td style="padding:10px;color:#374151;text-align:right">$${parseFloat(item.price).toFixed(2)}</td>
                 <td style="padding:10px;color:#374151;text-align:right;font-weight:600">$${(item.qty*item.price).toFixed(2)}</td>
               </tr>
@@ -2412,7 +2430,7 @@ function renderPreview() {
   const { _sub: sub, _disc: disc, _tax: tax, _total: total } = data;
   const lang = data.language || 'en';
   document.getElementById('preview-lang-label').textContent = lang === 'fr' ? 'FR' : 'EN';
-  const itemRows = data.items.map(i=>`<tr><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6">${i.desc}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.qty}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right">${fmt(i.price,data.currency)}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.tax||0}%</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
+  const itemRows = data.items.map(i=>`<tr><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6">${i.desc}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.qty} ${i.unit && i.unit!=='unit' ? i.unit : ''}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right">${fmt(i.price,data.currency)}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.tax||0}%</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
   const provLabel = data.province ? (CA_TAX_RATES[data.province]?.name + (lang==='fr' ? '' : '') ) : '';
   document.getElementById('preview-content').innerHTML = `
     <div class="invoice-preview" id="pdf-content" lang="${lang}">
@@ -2531,7 +2549,7 @@ function downloadPDF() {
   data.items.forEach((item, idx) => {
     if (idx % 2 === 0) { doc.setFillColor(249,250,251); doc.rect(14, y-4, 182, 8, 'F'); }
     doc.text(item.desc || '', 18, y+0.5);
-    doc.text(String(item.qty), 130, y+0.5, { align: 'right' });
+    doc.text(String(item.qty) + (item.unit && item.unit !== 'unit' ? ' ' + item.unit : ''), 130, y+0.5, { align: 'right' });
     doc.text(fmt(item.price, data.currency), 155, y+0.5, { align: 'right' });
     doc.text(fmt(item.qty * item.price, data.currency), 196, y+0.5, { align: 'right' });
     y += 8;
