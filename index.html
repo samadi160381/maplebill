@@ -1412,7 +1412,11 @@ async function initApp() {
   if (el) el.textContent = `${greeting}, ${name} 👋`;
   showToast('Data loaded!', 'success');
   const hashPage = location.hash.replace('#', '');
-  if (hashPage && document.getElementById('page-' + hashPage)) nav(hashPage);
+  if (hashPage && document.getElementById('page-' + hashPage)) {
+    nav(hashPage);
+  } else {
+    nav('dashboard');
+  }
 }
 
 function renderDashboardStats() {
