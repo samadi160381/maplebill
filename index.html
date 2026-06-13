@@ -1213,43 +1213,67 @@ const SUPABASE_URL = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A7Ng8DLarg0gXgheHiPqpg_kxO6-GF_';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ── Boot ──
 window.addEventListener('DOMContentLoaded', async () => {
+  // Start fully hidden
   document.getElementById('app').style.display = 'none';
-  document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
 
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    enterApp(session.user);
+    showApp(session.user);
   } else {
-    document.getElementById('screen-login').style.display = '';
-    document.getElementById('screen-login').classList.add('active');
+    showLogin();
   }
 });
 
-let appInitialized = false;
-sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_IN' && session && !appInitialized) {
-    enterApp(session.user);
-  } else if (event === 'SIGNED_OUT') {
-    appInitialized = false;
-    document.getElementById('app').style.display = 'none';
-    document.querySelectorAll('.auth-screen').forEach(s => { s.style.display=''; s.classList.remove('active'); });
-    document.getElementById('screen-login').classList.add('active');
-  }
-});
-
-function enterApp(user) {
-  if (appInitialized) return;
-  appInitialized = true;
-  document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
-  document.getElementById('app').style.display = 'flex';
-  const emailShort = user.email ? user.email.split('@')[0] : 'My Account';
-  const nameEl = document.getElementById('sidebar-user-name');
-  if (nameEl) nameEl.textContent = emailShort;
-  const avatarEl = document.getElementById('user-avatar-initials');
-  if (avatarEl) avatarEl.textContent = emailShort.slice(0,2).toUpperCase();
-  initApp();
+function showLogin() {
+  document.getElementById('app').style.display = 'none';
+  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-login').classList.add('active');
 }
+
+function showApp(user) {
+  // Hide all auth screens
+  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+  // Show app
+  document.getElementById('app').style.display = 'flex';
+  // Set sidebar user info
+  const name = user.email ? user.email.split('@')[0] : 'Account';
+  const nameEl = document.getElementById('sidebar-user-name');
+  if (nameEl) nameEl.textContent = name;
+  const avatarEl = document.getElementById('user-avatar-initials');
+  if (avatarEl) avatarEl.textContent = name.slice(0,2).toUpperCase();
+  // Load data then show correct page
+  loadAndRender(user);
+}
+
+async function loadAndRender(user) {
+  showToast('Loading...', '');
+  await loadOrgData();
+  populateClientDropdown();
+  renderDashboardStats();
+  renderRecentInvoices();
+  renderActivityFeed();
+  renderTopClients();
+  updateOverdueBadge();
+  // Set greeting
+  const name = user.email ? user.email.split('@')[0] : 'there';
+  const hour = new Date().getHours();
+  const g = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const el = document.getElementById('dashboard-greeting');
+  if (el) el.textContent = `${g}, ${name} 👋`;
+  // Navigate to correct page
+  const hash = location.hash.replace('#', '');
+  const target = (hash && document.getElementById('page-' + hash)) ? hash : 'dashboard';
+  nav(target);
+  setTimeout(initCharts, 100);
+  showToast('Ready!', 'success');
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') showLogin();
+});
 
 // ── Auth ──
 function showAuth(screen) {
@@ -1395,29 +1419,6 @@ async function loadOrgData() {
 }
 
 // ── Dashboard ──
-async function initApp() {
-  showToast('Loading your data...', '');
-  await loadOrgData();
-  populateClientDropdown();
-  renderDashboardStats();
-  renderRecentInvoices();
-  renderActivityFeed();
-  renderTopClients();
-  setTimeout(initCharts, 100);
-  updateOverdueBadge();
-  // Set greeting
-  const { data: { user } } = await sb.auth.getUser();
-  const name = user?.email ? user.email.split('@')[0] : 'there';
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  const el = document.getElementById('dashboard-greeting');
-  if (el) el.textContent = `${greeting}, ${name} 👋`;
-  showToast('Data loaded!', 'success');
-  const hashPage = location.hash.replace('#', '');
-  const targetPage = (hashPage && document.getElementById('page-' + hashPage)) ? hashPage : 'dashboard';
-  setTimeout(() => nav(targetPage), 50);
-}
-
 function renderDashboardStats() {
   const invoices = state.invoices;
   const now = new Date();
