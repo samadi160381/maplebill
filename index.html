@@ -2062,7 +2062,7 @@ function applyProvinceTax() {
 function addLineItem(item=null) {
   if (!item) {
     const code = document.getElementById('inv-province')?.value || '';
-    item = { desc:'', qty:1, unit:'unit', price:0, tax: provinceTaxRate(code) || defaultTaxRate };
+    item = { desc:'', qty:1, unit:'', price:0, tax: provinceTaxRate(code) || defaultTaxRate };
   }
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
