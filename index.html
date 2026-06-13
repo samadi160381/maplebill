@@ -1843,7 +1843,7 @@ async function loadOrgData() {
     province: inv.province || '', language: inv.language || 'en', po: inv.po || '',
     taxAmount: inv.tax_amount || 0,
     items: (inv.invoice_items || []).map(li => ({
-      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0, unit: li.unit_label || 'unit'
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0, unit: li.unit_label || ''
     }))
   }));
 
@@ -2067,12 +2067,14 @@ function addLineItem(item=null) {
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
   row.className = 'line-item-row';
-  const unitVal = item.unit || 'unit';
+  const unitVal = item.unit || '';
+  const allUnits = UNITS.includes(unitVal) || !unitVal ? UNITS : [...UNITS, unitVal];
   row.innerHTML = `
     <input class="li-input" placeholder="Service description" value="${item.desc}" oninput="calcTotals()">
     <input class="li-input" type="number" min="0" value="${item.qty}" oninput="calcTotals()" style="text-align:center">
     <select class="li-input li-unit" style="text-align:center">
-      ${UNITS.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
+      <option value="">— select —</option>
+      ${allUnits.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
     </select>
     <input class="li-input" type="number" min="0" step="0.01" value="${item.price}" oninput="calcTotals()" placeholder="0.00">
     <input class="li-input" type="number" min="0" max="100" value="${item.tax}" oninput="calcTotals()" placeholder="0" style="text-align:center">
@@ -2554,7 +2556,7 @@ function downloadPDF() {
     if (idx % 2 === 0) { doc.setFillColor(249,250,251); doc.rect(14, y-4, 182, 8, 'F'); }
     doc.text(item.desc || '', 18, y+0.5);
     doc.text(String(item.qty), 108, y+0.5, { align: 'right' });
-    doc.text(item.unit || '', 128, y+0.5, { align: 'right' });
+    doc.text(item.unit && item.unit !== 'unit' ? item.unit : '', 128, y+0.5, { align: 'right' });
     doc.text(fmt(item.price, data.currency), 160, y+0.5, { align: 'right' });
     doc.text(fmt(item.qty * item.price, data.currency), 196, y+0.5, { align: 'right' });
     y += 8;
