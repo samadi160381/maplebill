@@ -487,38 +487,38 @@ tr:hover td { background: var(--bg-secondary); }
       <ul>
         <li class="nav-item active" onclick="nav('dashboard')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Dashboard
+          <span data-en="Dashboard" data-fr="Tableau de bord">Dashboard</span>
         </li>
         <li class="nav-item" onclick="nav('invoices')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Invoices
+          <span data-en="Invoices" data-fr="Factures">Invoices</span>
           <span class="nav-badge" id="overdue-badge">3</span>
         </li>
         <li class="nav-item" onclick="nav('clients')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Clients
+          <span data-en="Clients" data-fr="Clients">Clients</span>
         </li>
         <li class="nav-item" onclick="nav('quotes')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="12" y1="17" x2="8" y2="17"/></svg>
-          Quotes
+          <span data-en="Quotes" data-fr="Devis">Quotes</span>
         </li>
         <li class="nav-item" onclick="nav('expenses')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Expenses
+          <span data-en="Expenses" data-fr="Dépenses">Expenses</span>
         </li>
-        <span class="nav-section-label">Analytics</span>
+        <span class="nav-section-label" data-en="Analytics" data-fr="Analytique">Analytics</span>
         <li class="nav-item" onclick="nav('reports')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Reports
+          <span data-en="Reports" data-fr="Rapports">Reports</span>
         </li>
         <li class="nav-item" onclick="nav('payments')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Payments
+          <span data-en="Payments" data-fr="Paiements">Payments</span>
         </li>
-        <span class="nav-section-label">Account</span>
+        <span class="nav-section-label" data-en="Account" data-fr="Compte">Account</span>
         <li class="nav-item" onclick="nav('settings')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Settings
+          <span data-en="Settings" data-fr="Paramètres">Settings</span>
         </li>
       </ul>
     </div>
@@ -527,10 +527,10 @@ tr:hover td { background: var(--bg-secondary); }
         <div class="user-avatar" id="user-avatar-initials">AC</div>
         <div>
           <div class="user-name" id="sidebar-user-name">My Account</div>
-          <div class="user-plan">Free Plan</div>
+          <div class="user-plan" data-en="Free Plan" data-fr="Plan gratuit">Free Plan</div>
         </div>
       </div>
-      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px;color:var(--text-secondary)" onclick="doLogout()">Sign out</button>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px;color:var(--text-secondary)" onclick="doLogout()"><span data-en="Sign out" data-fr="Déconnexion">Sign out</span></button>
     </div>
   </nav>
 
@@ -547,12 +547,13 @@ tr:hover td { background: var(--bg-secondary); }
         </div>
       </div>
       <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" id="lang-toggle-btn" onclick="toggleUILang()" title="Switch language / Changer de langue" style="font-weight:700;font-size:13px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius)">FR</button>
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
           <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         <button class="btn btn-primary btn-sm" onclick="openNewInvoice()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Invoice
+          <span data-en="New Invoice" data-fr="Nouvelle facture">New Invoice</span>
         </button>
       </div>
     </header>
@@ -562,48 +563,48 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="page" id="page-dashboard">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Good morning, Alex 👋</h1>
-            <p class="page-subtitle">Here's what's happening with your business today</p>
+            <h1 class="page-title" data-en="Good morning, Alex 👋" data-fr="Bonjour, Alex 👋">Good morning, Alex 👋</h1>
+            <p class="page-subtitle" data-en="Here's what's happening with your business today" data-fr="Voici ce qui se passe dans votre entreprise aujourd'hui">Here's what's happening with your business today</p>
           </div>
           <div class="report-period">
-            <button class="period-btn active" onclick="setPeriod(this,'month')">Month</button>
-            <button class="period-btn" onclick="setPeriod(this,'quarter')">Quarter</button>
-            <button class="period-btn" onclick="setPeriod(this,'year')">Year</button>
+            <button class="period-btn active" onclick="setPeriod(this,'month')"><span data-en="Month" data-fr="Mois">Month</span></button>
+            <button class="period-btn" onclick="setPeriod(this,'quarter')"><span data-en="Quarter" data-fr="Trimestre">Quarter</span></button>
+            <button class="period-btn" onclick="setPeriod(this,'year')"><span data-en="Year" data-fr="Année">Year</span></button>
           </div>
         </div>
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-            <div class="stat-label">Total Revenue</div>
+            <div class="stat-label"><span data-en="Total Revenue" data-fr="Revenus totaux">Total Revenue</span></div>
             <div class="stat-value">$48,290</div>
-            <div class="stat-change">↑ 12% vs last month</div>
+            <div class="stat-change"><span data-en="↑ 12% vs last month" data-fr="↑ 12% vs mois dernier">↑ 12% vs last month</span></div>
           </div>
           <div class="stat-card">
             <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <div class="stat-label">Outstanding</div>
+            <div class="stat-label"><span data-en="Outstanding" data-fr="En attente">Outstanding</span></div>
             <div class="stat-value">$12,450</div>
-            <div class="stat-change" style="color:var(--amber-600)">5 invoices pending</div>
+            <div class="stat-change" style="color:var(--amber-600)"><span data-en="5 invoices pending" data-fr="5 factures en attente">5 invoices pending</span></div>
           </div>
           <div class="stat-card">
             <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="stat-label">Paid This Month</div>
+            <div class="stat-label"><span data-en="Paid This Month" data-fr="Payé ce mois">Paid This Month</span></div>
             <div class="stat-value">$31,840</div>
-            <div class="stat-change">↑ 8% vs last month</div>
+            <div class="stat-change"><span data-en="↑ 8% vs last month" data-fr="↑ 8% vs mois dernier">↑ 8% vs last month</span></div>
           </div>
           <div class="stat-card">
             <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div class="stat-label">Overdue</div>
+            <div class="stat-label"><span data-en="Overdue" data-fr="En retard">Overdue</span></div>
             <div class="stat-value">$4,200</div>
-            <div class="stat-change negative">↑ 3 overdue invoices</div>
+            <div class="stat-change negative"><span data-en="↑ 3 overdue invoices" data-fr="↑ 3 factures en retard">↑ 3 overdue invoices</span></div>
           </div>
         </div>
         <div class="grid-col-7-5">
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Revenue Overview</span>
+              <span class="card-title"><span data-en="Revenue Overview" data-fr="Aperçu des revenus">Revenue Overview</span></span>
               <div class="legend">
-                <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Revenue</span>
-                <span class="legend-item"><span class="legend-dot" style="background:var(--green-500)"></span>Collected</span>
+                <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span><span data-en="Revenue" data-fr="Revenus">Revenue</span></span>
+                <span class="legend-item"><span class="legend-dot" style="background:var(--green-500)"></span><span data-en="Collected" data-fr="Encaissé">Collected</span></span>
               </div>
             </div>
             <div class="card-body">
@@ -611,7 +612,7 @@ tr:hover td { background: var(--bg-secondary); }
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title">Invoice Status</span></div>
+            <div class="card-header"><span class="card-title"><span data-en="Invoice Status" data-fr="Statut des factures">Invoice Status</span></span></div>
             <div class="card-body">
               <div class="chart-container"><canvas id="status-chart"></canvas></div>
               <div style="margin-top:1rem;display:flex;flex-direction:column;gap:6px">
@@ -625,7 +626,7 @@ tr:hover td { background: var(--bg-secondary); }
         </div>
         <div class="grid-2" style="margin-top:1rem">
           <div class="card">
-            <div class="card-header"><span class="card-title">Recent Invoices</span><button class="btn btn-ghost btn-sm" onclick="nav('invoices')">View all →</button></div>
+            <div class="card-header"><span class="card-title"><span data-en="Recent Invoices" data-fr="Factures récentes">Recent Invoices</span></span><button class="btn btn-ghost btn-sm" onclick="nav('invoices')"><span data-en="View all →" data-fr="Voir tout →">View all →</span></button></div>
             <div class="table-wrapper">
               <table>
                 <thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead>
@@ -634,13 +635,13 @@ tr:hover td { background: var(--bg-secondary); }
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title">Recent Activity</span></div>
+            <div class="card-header"><span class="card-title"><span data-en="Recent Activity" data-fr="Activité récente">Recent Activity</span></span></div>
             <div class="card-body" id="activity-feed"></div>
           </div>
         </div>
         <!-- Top clients -->
         <div class="card" style="margin-top:1rem">
-          <div class="card-header"><span class="card-title">Top Clients by Revenue</span><button class="btn btn-ghost btn-sm" onclick="nav('clients')">Manage clients →</button></div>
+          <div class="card-header"><span class="card-title"><span data-en="Top Clients by Revenue" data-fr="Meilleurs clients par revenus">Top Clients by Revenue</span></span><button class="btn btn-ghost btn-sm" onclick="nav('clients')"><span data-en="Manage clients →" data-fr="Gérer les clients →">Manage clients →</span></button></div>
           <div class="card-body" id="top-clients"></div>
         </div>
       </div>
@@ -649,7 +650,7 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="page" id="page-invoices">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Invoices</h1>
+            <h1 class="page-title" data-en="Invoices" data-fr="Factures">Invoices</h1>
             <p class="page-subtitle" id="invoices-count">Loading...</p>
           </div>
           <div style="display:flex;gap:8px">
@@ -659,7 +660,7 @@ tr:hover td { background: var(--bg-secondary); }
             </button>
             <button class="btn btn-primary btn-sm" onclick="openNewInvoice()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              New Invoice
+              <span data-en="New Invoice" data-fr="Nouvelle facture">New Invoice</span>
             </button>
           </div>
         </div>
@@ -667,18 +668,18 @@ tr:hover td { background: var(--bg-secondary); }
           <div class="card-body" style="padding-bottom:0">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <div class="filter-bar" style="margin-bottom:0;flex:1">
-                <button class="filter-tab active" onclick="filterInvoices('all',this)">All</button>
-                <button class="filter-tab" onclick="filterInvoices('draft',this)">Draft</button>
-                <button class="filter-tab" onclick="filterInvoices('sent',this)">Sent</button>
-                <button class="filter-tab" onclick="filterInvoices('paid',this)">Paid</button>
-                <button class="filter-tab" onclick="filterInvoices('overdue',this)">Overdue</button>
+                <button class="filter-tab active" onclick="filterInvoices('all',this)"><span data-en="All" data-fr="Tout">All</span></button>
+                <button class="filter-tab" onclick="filterInvoices('draft',this)"><span data-en="Draft" data-fr="Brouillon">Draft</span></button>
+                <button class="filter-tab" onclick="filterInvoices('sent',this)"><span data-en="Sent" data-fr="Envoyé">Sent</span></button>
+                <button class="filter-tab" onclick="filterInvoices('paid',this)"><span data-en="Paid" data-fr="Payé">Paid</span></button>
+                <button class="filter-tab" onclick="filterInvoices('overdue',this)"><span data-en="Overdue" data-fr="En retard">Overdue</span></button>
               </div>
               <input class="form-input" style="width:200px;padding:6px 10px;font-size:13px" placeholder="Search invoices..." oninput="searchInvoices(this.value)" id="invoice-search">
             </div>
           </div>
           <div class="table-wrapper">
             <table>
-              <thead><tr><th>Invoice #</th><th>Client</th><th>Issue Date</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th data-en="Invoice #" data-fr="Facture #">Invoice #</th><th>Client</th><th data-en="Issue Date" data-fr="Date d'émission">Issue Date</th><th data-en="Due Date" data-fr="Échéance">Due Date</th><th data-en="Amount" data-fr="Montant">Amount</th><th data-en="Status" data-fr="Statut">Status</th><th data-en="Actions" data-fr="Actions">Actions</th></tr></thead>
               <tbody id="invoices-table-body"></tbody>
             </table>
           </div>
@@ -689,12 +690,12 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="page" id="page-clients">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Clients</h1>
+            <h1 class="page-title" data-en="Clients" data-fr="Clients">Clients</h1>
             <p class="page-subtitle" id="clients-count">Loading...</p>
           </div>
           <button class="btn btn-primary btn-sm" onclick="openClientModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Client
+            <span data-en="Add Client" data-fr="Ajouter un client">Add Client</span>
           </button>
         </div>
         <div style="margin-bottom:1rem">
@@ -709,13 +710,13 @@ tr:hover td { background: var(--bg-secondary); }
           <div><h1 class="page-title">Quotes & Estimates</h1><p class="page-subtitle">Create quotes and convert them to invoices</p></div>
           <button class="btn btn-primary btn-sm" onclick="openNewQuote()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Quote
+            <span data-en="New Quote" data-fr="Nouveau devis">New Quote</span>
           </button>
         </div>
         <div class="card">
           <div class="table-wrapper">
             <table>
-              <thead><tr><th>Quote #</th><th>Client</th><th>Date</th><th>Expires</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th data-en="Quote #" data-fr="Devis #">Quote #</th><th>Client</th><th data-en="Date" data-fr="Date">Date</th><th data-en="Expires" data-fr="Expire">Expires</th><th data-en="Amount" data-fr="Montant">Amount</th><th data-en="Status" data-fr="Statut">Status</th><th data-en="Actions" data-fr="Actions">Actions</th></tr></thead>
               <tbody id="quotes-table-body"></tbody>
             </table>
           </div>
@@ -725,7 +726,7 @@ tr:hover td { background: var(--bg-secondary); }
       <!-- EXPENSES -->
       <div class="page" id="page-expenses">
         <div class="page-header">
-          <div><h1 class="page-title">Expenses</h1><p class="page-subtitle">Track your business expenses</p></div>
+          <div><h1 class="page-title" data-en="Expenses" data-fr="Dépenses">Expenses</h1><p class="page-subtitle" data-en="Track your business expenses" data-fr="Suivez vos dépenses professionnelles">Track your business expenses</p></div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary btn-sm" onclick="exportExpensesCRA()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -755,14 +756,14 @@ tr:hover td { background: var(--bg-secondary); }
       <!-- REPORTS -->
       <div class="page" id="page-reports">
         <div class="page-header">
-          <div><h1 class="page-title">Reports</h1><p class="page-subtitle">Insights into your business performance</p></div>
+          <div><h1 class="page-title" data-en="Reports" data-fr="Rapports">Reports</h1><p class="page-subtitle" data-en="Insights into your business performance" data-fr="Aperçus sur la performance de votre entreprise">Insights into your business performance</p></div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
             <button class="btn btn-secondary btn-sm" onclick="exportExcel()">Export Excel</button>
           </div>
         </div>
         <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'revenue-report')">Revenue</div>
+          <div class="tab active" onclick="switchTab(this,'revenue-report')"><span data-en="Revenue" data-fr="Revenus">Revenue</span></div>
           <div class="tab" onclick="switchTab(this,'client-report')">By Client</div>
           <div class="tab" onclick="switchTab(this,'tax-report')">Tax</div>
         </div>
@@ -777,7 +778,7 @@ tr:hover td { background: var(--bg-secondary); }
           <div class="card">
             <div class="table-wrapper">
               <table>
-                <thead><tr><th>Client</th><th>Total Invoiced</th><th>Total Paid</th><th>Outstanding</th><th>Invoices</th></tr></thead>
+                <thead><tr><th>Client</th><th>Total Invoiced</th><th>Total Paid</th><th><span data-en="Outstanding" data-fr="En attente">Outstanding</span></th><th>Invoices</th></tr></thead>
                 <tbody id="client-report-body"></tbody>
               </table>
             </div>
@@ -793,7 +794,7 @@ tr:hover td { background: var(--bg-secondary); }
               <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1rem">Tax summary by quarter. Export for your accountant.</p>
               <div class="table-wrapper">
                 <table>
-                  <thead><tr><th>Quarter</th><th>Revenue</th><th>Tax Rate</th><th>Tax Collected</th><th>Expenses</th><th>Net</th></tr></thead>
+                  <thead><tr><th>Quarter</th><th><span data-en="Revenue" data-fr="Revenus">Revenue</span></th><th>Tax Rate</th><th>Tax Collected</th><th>Expenses</th><th>Net</th></tr></thead>
                   <tbody>
                     <tr><td>Q1 2026</td><td>$42,100</td><td>13%</td><td>$5,473</td><td>$8,200</td><td>$33,900</td></tr>
                     <tr><td>Q2 2026</td><td>$48,290</td><td>13%</td><td>$6,278</td><td>$6,432</td><td>$41,858</td></tr>
@@ -810,7 +811,7 @@ tr:hover td { background: var(--bg-secondary); }
       <!-- PAYMENTS -->
       <div class="page" id="page-payments">
         <div class="page-header">
-          <div><h1 class="page-title">Payments</h1><p class="page-subtitle">Payment history and processing</p></div>
+          <div><h1 class="page-title" data-en="Payments" data-fr="Paiements">Payments</h1><p class="page-subtitle" data-en="Payment history and processing" data-fr="Historique et traitement des paiements">Payment history and processing</p></div>
         </div>
         <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1rem">
           <div class="stat-card"><div class="stat-label">Total Received</div><div class="stat-value" style="font-size:22px">$182,450</div><div class="stat-change">All time</div></div>
@@ -843,7 +844,7 @@ tr:hover td { background: var(--bg-secondary); }
 
       <!-- SETTINGS -->
       <div class="page" id="page-settings">
-        <div class="page-header"><h1 class="page-title">Settings</h1></div>
+        <div class="page-header"><h1 class="page-title" data-en="Settings" data-fr="Paramètres">Settings</h1></div>
         <div class="grid-col-7-5">
           <div>
             <div class="tabs">
@@ -2728,6 +2729,38 @@ function markPaidFromPortal() {
   markPaid(portalInvoiceId);
   closeModal('portal-modal');
 }
+
+
+// ── UI Language Toggle (EN / FR) ──
+let uiLang = 'en';
+function toggleUILang() {
+  uiLang = uiLang === 'en' ? 'fr' : 'en';
+  document.getElementById('lang-toggle-btn').textContent = uiLang === 'en' ? 'FR' : 'EN';
+  document.getElementById('lang-toggle-btn').title = uiLang === 'en' ? 'Switch to French / Passer en français' : 'Switch to English / Passer en anglais';
+
+  // Update all elements with data-en / data-fr attributes
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const text = uiLang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+    if (text) el.textContent = text;
+  });
+
+  // Elements that need innerHTML (with icons etc.) — handled via data-en on parent, text-only children
+  // Update search placeholders
+  const globalSearch = document.getElementById('global-search');
+  if (globalSearch) globalSearch.placeholder = uiLang === 'fr' ? 'Rechercher factures, clients...' : 'Search invoices, clients...';
+  const invoiceSearch = document.getElementById('invoice-search');
+  if (invoiceSearch) invoiceSearch.placeholder = uiLang === 'fr' ? 'Rechercher factures...' : 'Search invoices...';
+
+  // Re-render dynamic tables so their inline text updates
+  renderInvoicesTable();
+  renderQuotesTable();
+  renderClientsGrid();
+
+  showToast(uiLang === 'fr' ? 'Interface en français ✓' : 'Interface in English ✓', 'success');
+}
+
+// Override status badge to respect UI lang
+const _origStatusBadge = typeof statusBadge !== 'undefined' ? statusBadge : null;
 
 // ── Close modal on overlay click ──
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
