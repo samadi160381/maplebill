@@ -1133,8 +1133,8 @@ let invoiceSearch = '';
 const AVATAR_COLORS = ['#2563EB','#16A34A','#9333EA','#D97706','#DC2626','#0891B2','#7C3AED','#BE185D'];
 
 const state = {
-  user: { name: 'Alex Carter', email: 'demo@maplebill.com', company: 'Acme Design Studio', plan: 'Pro' },
-  nextInvoiceNum: 1048,
+  user: { name: 'My Account', email: '', company: '', plan: 'Free' },
+  nextInvoiceNum: 1001,
   invoices: [
     { id:'inv1', number:'INV-1045', clientId:'cl1', date:'2026-06-01', due:'2026-07-01', status:'paid', currency:'CAD', items:[{desc:'Brand Identity Design',qty:1,price:4800,tax:13},{desc:'Style Guide',qty:1,price:800,tax:13}], discount:0, notes:'Thank you!', terms:'Net 30' },
     { id:'inv2', number:'INV-1046', clientId:'cl2', date:'2026-06-05', due:'2026-06-20', status:'overdue', currency:'CAD', items:[{desc:'Website Redesign — Phase 1',qty:1,price:6500,tax:13}], discount:5, notes:'', terms:'Net 15' },
@@ -1304,14 +1304,70 @@ function toggleTheme() {
   setTimeout(initCharts, 50);
 }
 
+// ── Database helpers ──
+let currentOrgId = null;
+
+async function loadOrgData() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+
+  // Get org
+  const { data: memberData } = await sb.from('members')
+    .select('organization_id')
+    .eq('user_id', user.id)
+    .single();
+  if (!memberData) { showToast('No organization found', 'error'); return; }
+  currentOrgId = memberData.organization_id;
+
+  // Load clients
+  const { data: clients } = await sb.from('clients')
+    .select('*')
+    .eq('organization_id', currentOrgId)
+    .order('created_at', { ascending: false });
+  state.clients = (clients || []).map(c => ({
+    id: c.id, company: c.company, name: c.contact_name || '',
+    email: c.email || '', phone: c.phone || '',
+    address: c.address || '', tax: c.tax_number || '',
+    web: '', notes: c.notes || ''
+  }));
+
+  // Load invoices
+  const { data: invoices } = await sb.from('invoices')
+    .select('*, invoice_items(*)')
+    .eq('organization_id', currentOrgId)
+    .order('created_at', { ascending: false });
+  state.invoices = (invoices || []).map(inv => ({
+    id: inv.id, number: inv.number, clientId: inv.client_id,
+    date: inv.issue_date, due: inv.due_date, status: inv.status,
+    currency: inv.currency, discount: inv.discount_value || 0,
+    notes: inv.notes || '', terms: inv.terms || '',
+    items: (inv.invoice_items || []).map(li => ({
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: 0
+    }))
+  }));
+
+  // Load expenses
+  const { data: expenses } = await sb.from('expenses')
+    .select('*')
+    .eq('organization_id', currentOrgId)
+    .order('created_at', { ascending: false });
+  state.expenses = (expenses || []).map(e => ({
+    id: e.id, date: e.expense_date, desc: e.description,
+    category: e.category, amount: e.amount, taxDeductible: e.tax_deductible
+  }));
+}
+
 // ── Dashboard ──
-function initApp() {
+async function initApp() {
+  showToast('Loading your data...', '');
+  await loadOrgData();
   populateClientDropdown();
   renderRecentInvoices();
   renderActivityFeed();
   renderTopClients();
   setTimeout(initCharts, 100);
   updateOverdueBadge();
+  showToast('Data loaded!', 'success');
 }
 function updateOverdueBadge() {
   const count = state.invoices.filter(i=>i.status==='overdue').length;
@@ -1527,18 +1583,66 @@ function collectInvoiceData() {
     items
   };
 }
-function saveInvoice(status) {
+async function saveInvoice(status) {
   const data = collectInvoiceData();
   data.status = status || data.status;
+  if (!data.clientId) { showToast('Please select a client','error'); return; }
+  if (!data.number) { showToast('Invoice number is required','error'); return; }
+
+  // Calculate totals
+  let subtotal = 0, taxAmount = 0;
+  data.items.forEach(i => {
+    const amt = i.qty * i.price;
+    subtotal += amt;
+    taxAmount += amt * (i.tax/100);
+  });
+  const discAmt = subtotal * ((data.discount||0)/100);
+  const total = subtotal - discAmt + taxAmount;
+
+  const invData = {
+    organization_id: currentOrgId,
+    client_id: data.clientId,
+    number: data.number,
+    status: data.status,
+    issue_date: data.date,
+    due_date: data.due,
+    currency: data.currency || 'CAD',
+    subtotal, tax_amount: taxAmount,
+    discount_type: data.discount > 0 ? 'percent' : 'none',
+    discount_value: data.discount || 0,
+    total, amount_due: total,
+    notes: data.notes || '',
+    terms: data.terms || ''
+  };
+
+  let invId = editingInvoiceId;
+  let error;
+
   if (editingInvoiceId) {
-    const idx = state.invoices.findIndex(i=>i.id===editingInvoiceId);
-    state.invoices[idx] = { ...state.invoices[idx], ...data };
+    ({ error } = await sb.from('invoices').update(invData).eq('id', editingInvoiceId));
+    if (!error) await sb.from('invoice_items').delete().eq('invoice_id', editingInvoiceId);
   } else {
-    data.id = 'inv' + Date.now();
-    state.invoices.unshift(data);
-    state.nextInvoiceNum++;
+    const { data: newInv, error: insertErr } = await sb.from('invoices').insert(invData).select().single();
+    error = insertErr;
+    if (newInv) invId = newInv.id;
   }
+
+  if (error) { showToast('Error saving invoice: ' + error.message, 'error'); return; }
+
+  // Save line items
+  if (invId && data.items.length > 0) {
+    const lineItems = data.items.map((item, i) => ({
+      invoice_id: invId,
+      description: item.desc || 'Service',
+      quantity: item.qty || 1,
+      unit_price: item.price || 0,
+      sort_order: i
+    }));
+    await sb.from('invoice_items').insert(lineItems);
+  }
+
   closeModal('invoice-modal');
+  await loadOrgData();
   showToast('Invoice saved successfully', 'success');
   renderRecentInvoices();
   renderInvoicesTable();
@@ -1548,8 +1652,10 @@ function saveAndSend() {
   saveInvoice('sent');
   showToast('Invoice sent to client by email', 'success');
 }
-function deleteInvoice(id) {
+async function deleteInvoice(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return;
+  const { error } = await sb.from('invoices').delete().eq('id', id);
+  if (error) { showToast('Error deleting invoice','error'); return; }
   state.invoices = state.invoices.filter(i=>i.id!==id);
   renderInvoicesTable();
   renderRecentInvoices();
@@ -1761,20 +1867,29 @@ function editClient(id) {
   document.getElementById('cl-notes').value = cl.notes;
   openModal('client-modal');
 }
-function saveClient() {
+async function saveClient() {
   const company = document.getElementById('cl-company').value.trim();
   const email = document.getElementById('cl-email').value.trim();
   if (!company) { showToast('Business name is required','error'); return; }
   if (!email) { showToast('Email is required','error'); return; }
-  const data = { company, name:document.getElementById('cl-name').value, email, phone:document.getElementById('cl-phone').value, address:document.getElementById('cl-address').value, tax:document.getElementById('cl-tax').value, web:document.getElementById('cl-web').value, notes:document.getElementById('cl-notes').value };
+  const dbData = {
+    organization_id: currentOrgId,
+    company,
+    contact_name: document.getElementById('cl-name').value,
+    email,
+    phone: document.getElementById('cl-phone').value,
+    address: document.getElementById('cl-address').value,
+    notes: document.getElementById('cl-notes').value
+  };
+  let error;
   if (editingClientId) {
-    const idx = state.clients.findIndex(c=>c.id===editingClientId);
-    state.clients[idx] = { ...state.clients[idx], ...data };
+    ({ error } = await sb.from('clients').update(dbData).eq('id', editingClientId));
   } else {
-    data.id = 'cl' + Date.now();
-    state.clients.push(data);
+    ({ error } = await sb.from('clients').insert(dbData));
   }
+  if (error) { showToast('Error saving client: ' + error.message, 'error'); return; }
   closeModal('client-modal');
+  await loadOrgData();
   populateClientDropdown();
   renderClientsGrid();
   showToast('Client saved','success');
@@ -1819,18 +1934,32 @@ function openExpenseModal() {
   document.getElementById('exp-notes').value = '';
   openModal('expense-modal');
 }
-function saveExpense() {
+async function saveExpense() {
   const desc = document.getElementById('exp-desc').value.trim();
   const amount = parseFloat(document.getElementById('exp-amount').value);
   if (!desc) { showToast('Description required','error'); return; }
   if (!amount) { showToast('Amount required','error'); return; }
-  state.expenses.unshift({ id:'e'+Date.now(), date:document.getElementById('exp-date').value, desc, category:document.getElementById('exp-cat').value, amount, taxDeductible:document.getElementById('exp-tax').value==='Yes', notes:document.getElementById('exp-notes').value });
+  const { data: { user } } = await sb.auth.getUser();
+  const { error } = await sb.from('expenses').insert({
+    organization_id: currentOrgId,
+    description: desc,
+    amount,
+    category: document.getElementById('exp-cat').value,
+    expense_date: document.getElementById('exp-date').value,
+    tax_deductible: document.getElementById('exp-tax').value === 'Yes',
+    notes: document.getElementById('exp-notes').value,
+    created_by: user.id
+  });
+  if (error) { showToast('Error saving expense','error'); return; }
   closeModal('expense-modal');
+  await loadOrgData();
   renderExpensesTable();
   showToast('Expense added','success');
 }
-function deleteExpense(id) {
+async function deleteExpense(id) {
   if (!confirm('Delete this expense?')) return;
+  const { error } = await sb.from('expenses').delete().eq('id', id);
+  if (error) { showToast('Error deleting expense','error'); return; }
   state.expenses = state.expenses.filter(e=>e.id!==id);
   renderExpensesTable();
   showToast('Expense deleted');
