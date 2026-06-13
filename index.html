@@ -1311,6 +1311,7 @@ async function saveInvoiceSettings() {
   }
   defaultTaxRate = rate;
   defaultTaxLabel = label;
+  defaultTerms = terms;
 }
 
 function provinceTaxRate(code) {
@@ -1768,6 +1769,7 @@ function toggleTheme() {
 // ── Database helpers ──
 let currentOrgId = null;
 let defaultTaxRate = 0;
+let defaultTerms = 'Payment is due within 15 days of invoice date.';
 let defaultTaxLabel = 'Tax';
 
 async function loadOrgData() {
@@ -1808,7 +1810,8 @@ async function loadOrgData() {
     const termsInput = document.getElementById('settings-default-terms');
     if (taxInput) taxInput.value = defaultTaxRate;
     if (taxLabel) taxLabel.value = defaultTaxLabel;
-    if (termsInput && orgSettings.default_terms) termsInput.value = orgSettings.default_terms;
+    if (orgSettings.default_terms) defaultTerms = orgSettings.default_terms;
+    if (termsInput) termsInput.value = defaultTerms;
   }
 
   // Load clients
@@ -1992,7 +1995,7 @@ function openNewInvoice() {
   document.getElementById('inv-province').value = '';
   document.getElementById('inv-lang').value = 'en';
   document.getElementById('inv-notes').value = 'Thank you for your business!';
-  document.getElementById('inv-terms').value = 'Payment is due within 15 days of invoice date.';
+  document.getElementById('inv-terms').value = defaultTerms;
   document.getElementById('line-items-container').innerHTML = '';
   addLineItem();
   updateTaxHint();
@@ -2992,7 +2995,7 @@ function convertQuoteToInvoice(quoteId) {
   document.getElementById('inv-province').value = client?.province || '';
   document.getElementById('inv-lang').value = client?.language || 'en';
   document.getElementById('inv-notes').value = 'Thank you for your business!';
-  document.getElementById('inv-terms').value = 'Payment is due within 15 days of invoice date.';
+  document.getElementById('inv-terms').value = defaultTerms;
 
   // Seed a line item with the quote total (quotes store a flat amount)
   document.getElementById('line-items-container').innerHTML = '';
