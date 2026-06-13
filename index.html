@@ -1601,7 +1601,6 @@ async function loadOrgData() {
 
 // ── Dashboard ──
 async function initApp() {
-  showToast('Loading your data...', '');
   await loadOrgData();
   populateClientDropdown();
   renderRecentInvoices();
@@ -1609,7 +1608,6 @@ async function initApp() {
   renderTopClients();
   setTimeout(initCharts, 100);
   updateOverdueBadge();
-  showToast('Data loaded!', 'success');
   const hash = location.hash.replace('#', '');
   if (hash && document.getElementById('page-' + hash)) nav(hash); else nav('dashboard');
 }
