@@ -116,7 +116,7 @@ ul { list-style: none; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 /* ── App Shell ── */
-#app { display: flex; height: 100vh; overflow: hidden; }
+#app { display: none; height: 100vh; overflow: hidden; }
 
 /* ── Auth Screens ── */
 .auth-screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: var(--bg); }
@@ -1214,8 +1214,17 @@ const SUPABASE_KEY = 'sb_publishable_A7Ng8DLarg0gXgheHiPqpg_kxO6-GF_';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 window.addEventListener('DOMContentLoaded', async () => {
+  // Hide app until we know auth state
+  document.getElementById('app').style.display = 'none';
+  document.querySelectorAll('.auth-screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+
   const { data: { session } } = await sb.auth.getSession();
-  if (session) enterApp(session.user);
+  if (session) {
+    enterApp(session.user);
+  } else {
+    document.getElementById('screen-login').style.display = '';
+    document.getElementById('screen-login').classList.add('active');
+  }
 });
 
 sb.auth.onAuthStateChange((event, session) => {
@@ -1223,9 +1232,8 @@ sb.auth.onAuthStateChange((event, session) => {
     enterApp(session.user);
   } else if (event === 'SIGNED_OUT') {
     document.getElementById('app').style.display = 'none';
-    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.auth-screen').forEach(s => { s.style.display=''; s.classList.remove('active'); });
     document.getElementById('screen-login').classList.add('active');
-    document.getElementById('screen-login').style.display = '';
   }
 });
 
