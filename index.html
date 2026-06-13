@@ -1074,6 +1074,7 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="cl-notes" placeholder="Internal notes about this client..." style="min-height:60px"></textarea></div>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-danger" id="delete-client-btn" onclick="deleteClient()" style="margin-right:auto;display:none">Delete Client</button>
       <button class="btn btn-ghost" onclick="closeModal('client-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveClient()">Save client</button>
     </div>
@@ -1861,6 +1862,7 @@ function openClientModal() {
   editingClientId = null;
   document.getElementById('client-modal-title').textContent = 'Add Client';
   ['cl-company','cl-name','cl-email','cl-phone','cl-address','cl-tax','cl-web','cl-notes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('delete-client-btn').style.display = 'none';
   openModal('client-modal');
 }
 function editClient(id) {
@@ -1876,7 +1878,19 @@ function editClient(id) {
   document.getElementById('cl-tax').value = cl.tax;
   document.getElementById('cl-web').value = cl.web;
   document.getElementById('cl-notes').value = cl.notes;
+  document.getElementById('delete-client-btn').style.display = 'inline-flex';
   openModal('client-modal');
+}
+async function deleteClient() {
+  if (!editingClientId) return;
+  if (!confirm('Delete this client? This cannot be undone.')) return;
+  const { error } = await sb.from('clients').delete().eq('id', editingClientId);
+  if (error) { showToast('Error deleting client', 'error'); return; }
+  closeModal('client-modal');
+  await loadOrgData();
+  populateClientDropdown();
+  renderClientsGrid();
+  showToast('Client deleted', 'success');
 }
 async function saveClient() {
   const company = document.getElementById('cl-company').value.trim();
