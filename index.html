@@ -1598,7 +1598,8 @@ async function showPublicInvoice(invoiceId) {
       <table style="width:100%;border-collapse:collapse;margin-bottom:0">
         <thead>
           <tr style="border-bottom:2px solid #1B2A4A;border-top:2px solid #1B2A4A">
-            <th style="padding:10px 8px 10px 0;text-align:left;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px;width:55px">QTY</th>
+            <th style="padding:10px 8px 10px 0;text-align:left;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px;width:45px">QTY</th>
+            <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px;width:55px">UNIT</th>
             <th style="padding:10px 8px;text-align:left;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px">DESCRIPTION</th>
             <th style="padding:10px 8px;text-align:right;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px">UNIT PRICE</th>
             <th style="padding:10px 0 10px 8px;text-align:right;font-size:11px;font-weight:800;color:#1B2A4A;letter-spacing:0.5px">AMOUNT</th>
@@ -1607,7 +1608,8 @@ async function showPublicInvoice(invoiceId) {
         <tbody>
           ${items.map(item => `
             <tr style="border-bottom:1px solid #e2e8f0">
-              <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}${item.unit_label && item.unit_label!=='unit' ? ' '+item.unit_label : ''}</td>
+              <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}</td>
+              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || 'unit'}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151">${item.description}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151;text-align:right">${parseFloat(item.unit_price).toFixed(2)}</td>
               <td style="padding:12px 0 12px 8px;font-size:13px;color:#374151;text-align:right;font-weight:600">${(item.quantity*item.unit_price).toFixed(2)}</td>
@@ -2430,7 +2432,7 @@ function renderPreview() {
   const { _sub: sub, _disc: disc, _tax: tax, _total: total } = data;
   const lang = data.language || 'en';
   document.getElementById('preview-lang-label').textContent = lang === 'fr' ? 'FR' : 'EN';
-  const itemRows = data.items.map(i=>`<tr><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6">${i.desc}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.qty} ${i.unit && i.unit!=='unit' ? i.unit : ''}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right">${fmt(i.price,data.currency)}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.tax||0}%</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
+  const itemRows = data.items.map(i=>`<tr><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6">${i.desc}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.qty}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.unit || 'unit'}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right">${fmt(i.price,data.currency)}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.tax||0}%</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
   const provLabel = data.province ? (CA_TAX_RATES[data.province]?.name + (lang==='fr' ? '' : '') ) : '';
   document.getElementById('preview-content').innerHTML = `
     <div class="invoice-preview" id="pdf-content" lang="${lang}">
@@ -2468,6 +2470,7 @@ function renderPreview() {
         <thead><tr>
           <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;padding:10px 12px;text-align:left">${t(lang,'description')}</th>
           <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">${t(lang,'qty')}</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">Unit</th>
           <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">${t(lang,'unitPrice')}</th>
           <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">${t(lang,'tax')}</th>
           <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">${t(lang,'amount')}</th>
@@ -2539,8 +2542,9 @@ function downloadPDF() {
   doc.rect(14, y, 182, 8, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
   doc.text(t(lang,'description').toUpperCase(), 18, y+5.5);
-  doc.text(t(lang,'qty').toUpperCase(), 130, y+5.5, { align: 'right' });
-  doc.text(t(lang,'unitPrice').toUpperCase(), 155, y+5.5, { align: 'right' });
+  doc.text(t(lang,'qty').toUpperCase(), 108, y+5.5, { align: 'right' });
+  doc.text('UNIT', 128, y+5.5, { align: 'right' });
+  doc.text(t(lang,'unitPrice').toUpperCase(), 160, y+5.5, { align: 'right' });
   doc.text(t(lang,'amount').toUpperCase(), 196, y+5.5, { align: 'right' });
   y += 12;
 
@@ -2549,8 +2553,9 @@ function downloadPDF() {
   data.items.forEach((item, idx) => {
     if (idx % 2 === 0) { doc.setFillColor(249,250,251); doc.rect(14, y-4, 182, 8, 'F'); }
     doc.text(item.desc || '', 18, y+0.5);
-    doc.text(String(item.qty) + (item.unit && item.unit !== 'unit' ? ' ' + item.unit : ''), 130, y+0.5, { align: 'right' });
-    doc.text(fmt(item.price, data.currency), 155, y+0.5, { align: 'right' });
+    doc.text(String(item.qty), 108, y+0.5, { align: 'right' });
+    doc.text(item.unit || 'unit', 128, y+0.5, { align: 'right' });
+    doc.text(fmt(item.price, data.currency), 160, y+0.5, { align: 'right' });
     doc.text(fmt(item.qty * item.price, data.currency), 196, y+0.5, { align: 'right' });
     y += 8;
   });
