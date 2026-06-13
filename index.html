@@ -1543,9 +1543,13 @@ async function showPublicInvoice(invoiceId) {
   const discountPct = inv.discount_value || inv.discount || 0;
   const discountAmt = subtotal * (discountPct / 100);
   const afterDiscount = subtotal - discountAmt;
-  const taxAmt = items.reduce((s, i) => s + ((i.quantity * i.unit_price) * ((i.tax_rate || 0) / 100)), 0);
-  const avgTaxRate = items.length > 0 ? (items.reduce((s,i) => s + (i.tax_rate||0), 0) / items.length).toFixed(0) : 0;
-  const taxLabel = org?.tax_label || 'Tax';
+  // Use per-item tax_rate if available, otherwise fall back to inv.tax_amount saved on invoice
+  const itemTaxAmt = items.reduce((s, i) => s + ((i.quantity * i.unit_price) * ((i.tax_rate || 0) / 100)), 0);
+  const taxAmt = itemTaxAmt > 0 ? itemTaxAmt : (inv.tax_amount || 0);
+  const avgTaxRate = itemTaxAmt > 0
+    ? (items.reduce((s,i) => s + (i.tax_rate||0), 0) / items.length).toFixed(0)
+    : (subtotal > 0 ? ((taxAmt / subtotal) * 100).toFixed(0) : 0);
+  const taxLabel = org?.tax_label || 'HST';
   const total = afterDiscount + taxAmt;
 
   document.body.innerHTML = `
@@ -2186,6 +2190,7 @@ async function saveInvoice(status) {
     }));
     const { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
     if (liErr) {
+      // Fallback: save without tax_rate column (older DB schema)
       const lineItems = data.items.map((item, i) => ({
         invoice_id: invId,
         description: item.desc || 'Service',
@@ -2194,6 +2199,9 @@ async function saveInvoice(status) {
         sort_order: i
       }));
       await sb.from('invoice_items').insert(lineItems);
+      // Store total tax on the invoice record itself as backup
+      const totalTax = data.items.reduce((s, item) => s + ((item.qty||1)*(item.price||0)*((item.tax||0)/100)), 0);
+      await sb.from('invoices').update({ tax_amount: totalTax }).eq('id', invId);
     }
   }
 
