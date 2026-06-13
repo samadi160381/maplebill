@@ -2225,8 +2225,9 @@ async function sendInvoiceEmail(invoiceId) {
   const client = state.clients.find(c => c.id === inv.clientId);
   if (!client || !client.email) { showToast('Client has no email address', 'error'); return; }
 
-  const total = inv.items ? inv.items.reduce((s, i) => s + (i.qty * i.price), 0) : inv.total || 0;
-  
+  const { sub, disc, tax, total } = invoiceTotal(inv);
+  const avgTaxRate = sub > 0 ? ((tax / sub) * 100).toFixed(0) : 0;
+
   // Build invoice data for PDF link
   const invoiceData = encodeURIComponent(JSON.stringify({
     number: inv.number,
@@ -2267,8 +2268,22 @@ async function sendInvoiceEmail(invoiceId) {
               </tr>
             `).join('')}
             <tr style="border-top:2px solid #e2e8f0">
+              <td colspan="3" style="padding:8px 10px;color:#64748b;font-size:13px">Subtotal</td>
+              <td style="padding:8px 10px;color:#1e293b;text-align:right;font-size:13px">$${sub.toFixed(2)}</td>
+            </tr>
+            ${disc > 0 ? `
+            <tr>
+              <td colspan="3" style="padding:8px 10px;color:#64748b;font-size:13px">Discount (${inv.discount}%)</td>
+              <td style="padding:8px 10px;color:#16a34a;text-align:right;font-size:13px">-$${disc.toFixed(2)}</td>
+            </tr>` : ''}
+            ${tax > 0 ? `
+            <tr>
+              <td colspan="3" style="padding:8px 10px;color:#64748b;font-size:13px">Tax (${avgTaxRate}%)</td>
+              <td style="padding:8px 10px;color:#1e293b;text-align:right;font-size:13px">$${tax.toFixed(2)}</td>
+            </tr>` : ''}
+            <tr style="border-top:2px solid #e2e8f0">
               <td colspan="3" style="padding:12px 10px;font-weight:700;color:#1e293b">Total</td>
-              <td style="padding:12px 10px;font-weight:700;color:#2563EB;text-align:right;font-size:18px">$${total.toFixed(2)} CAD</td>
+              <td style="padding:12px 10px;font-weight:700;color:#2563EB;text-align:right;font-size:18px">$${total.toFixed(2)} ${inv.currency || 'CAD'}</td>
             </tr>
           </table>
         </div>
