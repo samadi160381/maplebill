@@ -2015,9 +2015,73 @@ async function saveInvoice(status) {
   renderInvoicesTable();
   updateOverdueBadge();
 }
-function saveAndSend() {
-  saveInvoice('sent');
-  showToast('Invoice sent to client by email', 'success');
+async function saveAndSend() {
+  await saveInvoice('sent');
+  // Send email via Resend
+  const inv = state.invoices.find(i => i.number === document.getElementById('inv-number')?.value) || state.invoices[0];
+  if (inv) await sendInvoiceEmail(inv.id);
+}
+
+async function sendInvoiceEmail(invoiceId) {
+  const inv = state.invoices.find(i => i.id === invoiceId);
+  if (!inv) return;
+  const client = state.clients.find(c => c.id === inv.clientId);
+  if (!client || !client.email) { showToast('Client has no email address', 'error'); return; }
+
+  const total = inv.items ? inv.items.reduce((s, i) => s + (i.qty * i.price), 0) : inv.total || 0;
+  
+  const emailHtml = `
+    <div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px">
+      <div style="background:#2563EB;padding:24px;border-radius:12px 12px 0 0;text-align:center">
+        <h1 style="color:white;margin:0;font-size:24px">🍁 MapleBill</h1>
+      </div>
+      <div style="background:#f8fafc;padding:32px;border-radius:0 0 12px 12px;border:1px solid #e2e8f0">
+        <h2 style="color:#1e293b;margin:0 0 8px">Invoice ${inv.number}</h2>
+        <p style="color:#64748b;margin:0 0 24px">Hi ${client.company}, please find your invoice below.</p>
+        <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border:1px solid #e2e8f0">
+          <table style="width:100%;border-collapse:collapse">
+            ${(inv.items||[]).map(item => `
+              <tr>
+                <td style="padding:8px 0;color:#374151">${item.desc}</td>
+                <td style="padding:8px 0;color:#374151;text-align:right">${item.qty} × $${item.price}</td>
+                <td style="padding:8px 0;color:#374151;text-align:right;font-weight:600">$${(item.qty*item.price).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+            <tr style="border-top:2px solid #e2e8f0">
+              <td colspan="2" style="padding:12px 0;font-weight:700;color:#1e293b">Total</td>
+              <td style="padding:12px 0;font-weight:700;color:#2563EB;text-align:right;font-size:18px">$${total.toFixed(2)} CAD</td>
+            </tr>
+          </table>
+        </div>
+        <p style="color:#64748b;font-size:14px">Due date: ${inv.due || 'Upon receipt'}</p>
+        <p style="color:#64748b;font-size:12px;margin-top:24px">Sent from MapleBill · maplebill.com</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer re_9x5hLBpV_QE2VRZJWquUWmtNwosdo2epb',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'MapleBill <invoices@maplebill.com>',
+        to: [client.email],
+        subject: `Invoice ${inv.number} from MapleBill — $${total.toFixed(2)} CAD`,
+        html: emailHtml
+      })
+    });
+    const data = await res.json();
+    if (data.id) {
+      showToast('Invoice emailed to ' + client.email, 'success');
+    } else {
+      showToast('Email error: ' + (data.message || 'Unknown error'), 'error');
+    }
+  } catch (e) {
+    showToast('Could not send email: ' + e.message, 'error');
+  }
 }
 async function deleteInvoice(id) {
   if (!confirm('Delete this invoice? This cannot be undone.')) return;
