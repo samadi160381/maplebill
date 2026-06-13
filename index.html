@@ -1609,7 +1609,7 @@ async function showPublicInvoice(invoiceId) {
           ${items.map(item => `
             <tr style="border-bottom:1px solid #e2e8f0">
               <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}</td>
-              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || 'unit'}</td>
+              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || ''}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151">${item.description}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151;text-align:right">${parseFloat(item.unit_price).toFixed(2)}</td>
               <td style="padding:12px 0 12px 8px;font-size:13px;color:#374151;text-align:right;font-weight:600">${(item.quantity*item.unit_price).toFixed(2)}</td>
@@ -2130,7 +2130,7 @@ function collectInvoiceData() {
   const items = [];
   document.querySelectorAll('.line-item-row').forEach(row => {
     const inputs = row.querySelectorAll('input');
-    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, unit: row.querySelector('.li-unit')?.value || 'unit', price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
+    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, unit: row.querySelector('.li-unit')?.value || '', price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
   });
   return {
     number: document.getElementById('inv-number').value,
@@ -2554,7 +2554,7 @@ function downloadPDF() {
     if (idx % 2 === 0) { doc.setFillColor(249,250,251); doc.rect(14, y-4, 182, 8, 'F'); }
     doc.text(item.desc || '', 18, y+0.5);
     doc.text(String(item.qty), 108, y+0.5, { align: 'right' });
-    doc.text(item.unit || 'unit', 128, y+0.5, { align: 'right' });
+    doc.text(item.unit || '', 128, y+0.5, { align: 'right' });
     doc.text(fmt(item.price, data.currency), 160, y+0.5, { align: 'right' });
     doc.text(fmt(item.qty * item.price, data.currency), 196, y+0.5, { align: 'right' });
     y += 8;
