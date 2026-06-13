@@ -726,10 +726,16 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="page" id="page-expenses">
         <div class="page-header">
           <div><h1 class="page-title">Expenses</h1><p class="page-subtitle">Track your business expenses</p></div>
-          <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Expense
-          </button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="exportExpensesCRA()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              🇨🇦 Export for CRA (T2125)
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Expense
+            </button>
+          </div>
         </div>
         <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value" style="font-size:22px">$8,432</div><div class="stat-change negative">This month</div></div>
@@ -739,7 +745,7 @@ tr:hover td { background: var(--bg-secondary); }
         <div class="card">
           <div class="table-wrapper">
             <table>
-              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Tax Deductible</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>CRA Line (T2125)</th><th>Amount</th><th>Tax Deductible</th><th>Actions</th></tr></thead>
               <tbody id="expenses-table-body"></tbody>
             </table>
           </div>
@@ -982,7 +988,7 @@ tr:hover td { background: var(--bg-secondary); }
         <div>
           <div class="form-group">
             <label class="form-label">Client</label>
-            <select class="form-input form-select" id="inv-client">
+            <select class="form-input form-select" id="inv-client" onchange="onInvoiceClientChange()">
               <option value="">Select client...</option>
             </select>
           </div>
@@ -993,6 +999,35 @@ tr:hover td { background: var(--bg-secondary); }
           <div class="grid-2">
             <div class="form-group"><label class="form-label">Issue Date</label><input class="form-input" type="date" id="inv-date"></div>
             <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" id="inv-due"></div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">🇨🇦 Tax Province</label>
+              <select class="form-input form-select" id="inv-province" onchange="applyProvinceTax()">
+                <option value="">— Outside Canada (no tax) —</option>
+                <option value="AB">Alberta</option>
+                <option value="BC">British Columbia</option>
+                <option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option>
+                <option value="NL">Newfoundland and Labrador</option>
+                <option value="NS">Nova Scotia</option>
+                <option value="NT">Northwest Territories</option>
+                <option value="NU">Nunavut</option>
+                <option value="ON">Ontario</option>
+                <option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option>
+                <option value="SK">Saskatchewan</option>
+                <option value="YT">Yukon</option>
+              </select>
+              <div id="inv-tax-hint" style="font-size:11px;color:var(--text-secondary);margin-top:4px">Select a province to auto-apply tax to all line items</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🌐 Invoice Language</label>
+              <select class="form-input form-select" id="inv-lang">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+              </select>
+            </div>
           </div>
         </div>
         <div>
@@ -1024,6 +1059,7 @@ tr:hover td { background: var(--bg-secondary); }
             <div class="total-row"><span>Subtotal</span><span id="t-subtotal">$0.00</span></div>
             <div class="total-row"><span>Discount</span><span id="t-discount" style="color:var(--green-600)">-$0.00</span></div>
             <div class="total-row"><span>Tax</span><span id="t-tax">$0.00</span></div>
+            <div id="t-tax-breakdown" style="font-size:11px;color:var(--text-secondary);text-align:right;margin:-4px 0 4px"></div>
             <div class="total-row grand"><span>Total</span><span id="t-total">$0.00</span></div>
           </div>
         </div>
@@ -1068,8 +1104,30 @@ tr:hover td { background: var(--bg-secondary); }
       </div>
       <div class="form-group"><label class="form-label">Address</label><textarea class="form-input form-textarea" id="cl-address" placeholder="123 Main St, City, State, Country" style="min-height:60px"></textarea></div>
       <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Province / Territory</label>
+          <select class="form-input form-select" id="cl-province">
+            <option value="">— Outside Canada —</option>
+            <option value="AB">Alberta (GST 5%)</option>
+            <option value="BC">British Columbia (GST+PST 12%)</option>
+            <option value="MB">Manitoba (GST+PST 12%)</option>
+            <option value="NB">New Brunswick (HST 15%)</option>
+            <option value="NL">Newfoundland and Labrador (HST 15%)</option>
+            <option value="NS">Nova Scotia (HST 14%)</option>
+            <option value="NT">Northwest Territories (GST 5%)</option>
+            <option value="NU">Nunavut (GST 5%)</option>
+            <option value="ON">Ontario (HST 13%)</option>
+            <option value="PE">Prince Edward Island (HST 15%)</option>
+            <option value="QC">Quebec (GST+QST 14.975%)</option>
+            <option value="SK">Saskatchewan (GST+PST 11%)</option>
+            <option value="YT">Yukon (GST 5%)</option>
+          </select>
+        </div>
         <div class="form-group"><label class="form-label">Tax Number</label><input class="form-input" id="cl-tax" placeholder="123456789"></div>
+      </div>
+      <div class="grid-2">
         <div class="form-group"><label class="form-label">Website</label><input class="form-input" id="cl-web" placeholder="acme.com"></div>
+        <div class="form-group"><label class="form-label">Preferred Invoice Language</label><select class="form-input form-select" id="cl-lang"><option value="en">English</option><option value="fr">Français</option></select></div>
       </div>
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="cl-notes" placeholder="Internal notes about this client..." style="min-height:60px"></textarea></div>
     </div>
@@ -1087,6 +1145,10 @@ tr:hover td { background: var(--bg-secondary); }
     <div class="modal-header">
       <h2 class="modal-title">Invoice Preview</h2>
       <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="togglePreviewLanguage()" title="Toggle invoice language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="preview-lang-label">EN</span>
+        </button>
         <button class="btn btn-secondary btn-sm" onclick="downloadPDF()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
@@ -1113,7 +1175,25 @@ tr:hover td { background: var(--bg-secondary); }
       </div>
       <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="exp-desc" placeholder="Adobe Creative Cloud subscription"></div>
       <div class="grid-2">
-        <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select" id="exp-cat"><option>Software</option><option>Hardware</option><option>Travel</option><option>Office</option><option>Marketing</option><option>Professional Services</option><option>Other</option></select></div>
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select" id="exp-cat">
+          <option>Advertising &amp; Marketing</option>
+          <option>Meals &amp; Entertainment</option>
+          <option>Insurance</option>
+          <option>Interest &amp; Bank Charges</option>
+          <option>Licenses &amp; Memberships</option>
+          <option>Software</option>
+          <option>Office Supplies</option>
+          <option>Professional Services</option>
+          <option>Management &amp; Admin Fees</option>
+          <option>Rent</option>
+          <option>Maintenance &amp; Repairs</option>
+          <option>Salaries &amp; Wages</option>
+          <option>Travel</option>
+          <option>Utilities</option>
+          <option>Vehicle</option>
+          <option>Hardware</option>
+          <option>Other</option>
+        </select></div>
         <div class="form-group"><label class="form-label">Tax Deductible</label><select class="form-input form-select" id="exp-tax"><option>Yes</option><option>No</option></select></div>
       </div>
       <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="exp-notes" placeholder="Optional notes..."></textarea></div>
@@ -1137,6 +1217,81 @@ let invoiceSearch = '';
 
 const AVATAR_COLORS = ['#2563EB','#16A34A','#9333EA','#D97706','#DC2626','#0891B2','#7C3AED','#BE185D'];
 
+// ── Canadian Tax Rates by Province/Territory ──
+// gst = federal GST, pst = provincial sales tax, hst = harmonized (replaces gst+pst), total = combined rate charged
+const CA_TAX_RATES = {
+  'AB': { name:'Alberta',                  short:'GST',      gst:5,    pst:0,     hst:0,  total:5 },
+  'BC': { name:'British Columbia',         short:'GST+PST',  gst:5,    pst:7,     hst:0,  total:12 },
+  'MB': { name:'Manitoba',                 short:'GST+PST',  gst:5,    pst:7,     hst:0,  total:12 },
+  'NB': { name:'New Brunswick',            short:'HST',      gst:0,    pst:0,     hst:15, total:15 },
+  'NL': { name:'Newfoundland and Labrador',short:'HST',      gst:0,    pst:0,     hst:15, total:15 },
+  'NS': { name:'Nova Scotia',              short:'HST',      gst:0,    pst:0,     hst:14, total:14 },
+  'NT': { name:'Northwest Territories',    short:'GST',      gst:5,    pst:0,     hst:0,  total:5 },
+  'NU': { name:'Nunavut',                  short:'GST',      gst:5,    pst:0,     hst:0,  total:5 },
+  'ON': { name:'Ontario',                  short:'HST',      gst:0,    pst:0,     hst:13, total:13 },
+  'PE': { name:'Prince Edward Island',     short:'HST',      gst:0,    pst:0,     hst:15, total:15 },
+  'QC': { name:'Quebec',                   short:'GST+QST',  gst:5,    pst:9.975, hst:0,  total:14.975 },
+  'SK': { name:'Saskatchewan',             short:'GST+PST',  gst:5,    pst:6,     hst:0,  total:11 },
+  'YT': { name:'Yukon',                    short:'GST',      gst:5,    pst:0,     hst:0,  total:5 },
+  '':   { name:'No province / Outside Canada', short:'—',    gst:0,    pst:0,     hst:0,  total:0 },
+};
+function provinceTaxRate(code) {
+  const p = CA_TAX_RATES[code || ''];
+  return p ? p.total : 0;
+}
+function provinceTaxLabel(code) {
+  const p = CA_TAX_RATES[code || ''];
+  if (!p || !p.total) return '';
+  if (p.hst) return `HST ${p.hst}%`;
+  if (p.pst) return `GST ${p.gst}% + ${code==='QC'?'QST':'PST'} ${p.pst}%`;
+  return `GST ${p.gst}%`;
+}
+
+// ── Bilingual (EN/FR) Invoice Translations ──
+const I18N = {
+  en: {
+    invoice:'INVOICE', quote:'QUOTE', billedTo:'Billed To', details:'Details',
+    issueDate:'Issue Date', dueDate:'Due Date', currency:'Currency', province:'Province',
+    description:'Description', qty:'Qty', unitPrice:'Unit Price', tax:'Tax', amount:'Amount',
+    subtotal:'Subtotal', discount:'Discount', total:'Total', notes:'Notes', terms:'Terms',
+    thankYou:'Thank you for your business!'
+  },
+  fr: {
+    invoice:'FACTURE', quote:'DEVIS', billedTo:'Facturé à', details:'Détails',
+    issueDate:"Date d'émission", dueDate:"Date d'échéance", currency:'Devise', province:'Province',
+    description:'Description', qty:'Qté', unitPrice:'Prix unitaire', tax:'Taxe', amount:'Montant',
+    subtotal:'Sous-total', discount:'Remise', total:'Total', notes:'Remarques', terms:'Modalités',
+    thankYou:'Merci de votre confiance !'
+  }
+};
+function t(lang, key) { return (I18N[lang] || I18N.en)[key] || I18N.en[key]; }
+
+// ── CRA T2125 Expense Line Mapping (for "Export for CRA" report) ──
+const CRA_CATEGORIES = {
+  'Advertising & Marketing':  { line:'8521', label:'Advertising' },
+  'Marketing':                { line:'8521', label:'Advertising' },
+  'Meals & Entertainment':    { line:'8523', label:'Meals and entertainment (50% deductible)', limit:0.5 },
+  'Insurance':                { line:'8690', label:'Insurance' },
+  'Interest & Bank Charges':  { line:'8710', label:'Interest and bank charges' },
+  'Licenses & Memberships':   { line:'8760', label:'Business taxes, licenses and memberships' },
+  'Software':                 { line:'8810', label:'Office expenses' },
+  'Hardware':                 { line:'8810', label:'Office expenses' },
+  'Office':                   { line:'8811', label:'Supplies' },
+  'Office Supplies':          { line:'8811', label:'Supplies' },
+  'Professional Services':    { line:'8860', label:'Legal, accounting and professional fees' },
+  'Management & Admin Fees':  { line:'8871', label:'Management and administration fees' },
+  'Rent':                     { line:'8910', label:'Rent' },
+  'Maintenance & Repairs':    { line:'8960', label:'Maintenance and repairs' },
+  'Salaries & Wages':         { line:'9060', label:'Salaries, wages and benefits' },
+  'Travel':                   { line:'9200', label:'Travel' },
+  'Utilities':                { line:'9220', label:'Utilities' },
+  'Vehicle':                  { line:'9281', label:'Motor vehicle expenses' },
+  'Other':                    { line:'9270', label:'Other expenses' },
+};
+function craCategory(name) {
+  return CRA_CATEGORIES[name] || { line:'9270', label:'Other expenses' };
+}
+
 const state = {
   user: { name: 'My Account', email: '', company: '', plan: 'Free' },
   nextInvoiceNum: 1001,
@@ -1150,11 +1305,11 @@ const state = {
     { id:'inv7', number:'INV-1041', clientId:'cl5', date:'2026-06-08', due:'2026-07-08', status:'draft', currency:'CAD', items:[{desc:'Mobile App Design',qty:1,price:8000,tax:13}], discount:0, notes:'', terms:'Net 30' },
   ],
   clients: [
-    { id:'cl1', company:'Maple Tech Solutions', name:'Sarah Johnson', email:'sarah@mapletech.ca', phone:'+1 (416) 555-0142', address:'400 King St W, Toronto, ON M5V 1K2', tax:'', web:'mapletech.ca', notes:'' },
-    { id:'cl2', company:'Horizon Creative Agency', name:'Marcus Lee', email:'marcus@horizoncreative.com', phone:'+1 (604) 555-0198', address:'1055 W Georgia St, Vancouver, BC V6E 3P3', tax:'', web:'horizoncreative.com', notes:'Prefers invoices on the 1st' },
-    { id:'cl3', company:'Peak Performance Co.', name:'Emma Wilson', email:'emma@peakco.io', phone:'+1 (403) 555-0165', address:'707 5th St SW, Calgary, AB T2P 0Y3', tax:'', web:'peakco.io', notes:'' },
-    { id:'cl4', company:'Sunrise Digital LLC', name:'James Martinez', email:'james@sunrisedigital.com', phone:'+1 (312) 555-0177', address:'233 S Wacker Dr, Chicago, IL 60606', tax:'', web:'sunrisedigital.com', notes:'' },
-    { id:'cl5', company:'Northern Lights Media', name:'Olivia Chen', email:'olivia@nlmedia.ca', phone:'+1 (514) 555-0134', address:'1000 De La Commune St W, Montreal, QC H3C 1A2', tax:'', web:'nlmedia.ca', notes:'' },
+    { id:'cl1', company:'Maple Tech Solutions', name:'Sarah Johnson', email:'sarah@mapletech.ca', phone:'+1 (416) 555-0142', address:'400 King St W, Toronto, ON M5V 1K2', tax:'', web:'mapletech.ca', notes:'', province:'ON', language:'en' },
+    { id:'cl2', company:'Horizon Creative Agency', name:'Marcus Lee', email:'marcus@horizoncreative.com', phone:'+1 (604) 555-0198', address:'1055 W Georgia St, Vancouver, BC V6E 3P3', tax:'', web:'horizoncreative.com', notes:'Prefers invoices on the 1st', province:'BC', language:'en' },
+    { id:'cl3', company:'Peak Performance Co.', name:'Emma Wilson', email:'emma@peakco.io', phone:'+1 (403) 555-0165', address:'707 5th St SW, Calgary, AB T2P 0Y3', tax:'', web:'peakco.io', notes:'', province:'AB', language:'en' },
+    { id:'cl4', company:'Sunrise Digital LLC', name:'James Martinez', email:'james@sunrisedigital.com', phone:'+1 (312) 555-0177', address:'233 S Wacker Dr, Chicago, IL 60606', tax:'', web:'sunrisedigital.com', notes:'', province:'', language:'en' },
+    { id:'cl5', company:'Northern Lights Media', name:'Olivia Chen', email:'olivia@nlmedia.ca', phone:'+1 (514) 555-0134', address:'1000 De La Commune St W, Montreal, QC H3C 1A2', tax:'', web:'nlmedia.ca', notes:'', province:'QC', language:'fr' },
   ],
   quotes: [
     { id:'q1', number:'QTE-0021', clientId:'cl3', date:'2026-06-08', expires:'2026-07-08', status:'sent', amount:12000 },
@@ -1164,8 +1319,8 @@ const state = {
   expenses: [
     { id:'e1', date:'2026-06-01', desc:'Adobe Creative Cloud', category:'Software', amount:89.99, taxDeductible:true },
     { id:'e2', date:'2026-06-03', desc:'Figma Professional', category:'Software', amount:45.00, taxDeductible:true },
-    { id:'e3', date:'2026-06-05', desc:'Client Lunch — Maple Tech', category:'Travel', amount:142.50, taxDeductible:true },
-    { id:'e4', date:'2026-06-10', desc:'Office Supplies', category:'Office', amount:67.30, taxDeductible:false },
+    { id:'e3', date:'2026-06-05', desc:'Client Lunch — Maple Tech', category:'Meals & Entertainment', amount:142.50, taxDeductible:true },
+    { id:'e4', date:'2026-06-10', desc:'Office Supplies', category:'Office Supplies', amount:67.30, taxDeductible:false },
     { id:'e5', date:'2026-06-11', desc:'Slack Business', category:'Software', amount:15.00, taxDeductible:true },
   ],
   payments: [
@@ -1342,7 +1497,8 @@ async function loadOrgData() {
     id: c.id, company: c.company, name: c.contact_name || '',
     email: c.email || '', phone: c.phone || '',
     address: c.address || '', tax: c.tax_number || '',
-    web: '', notes: c.notes || ''
+    web: '', notes: c.notes || '',
+    province: c.province || '', language: c.language || 'en'
   }));
 
   // Load invoices
@@ -1355,8 +1511,9 @@ async function loadOrgData() {
     date: inv.issue_date, due: inv.due_date, status: inv.status,
     currency: inv.currency, discount: inv.discount_value || 0,
     notes: inv.notes || '', terms: inv.terms || '',
+    province: inv.province || '', language: inv.language || 'en', po: inv.po || '',
     items: (inv.invoice_items || []).map(li => ({
-      desc: li.description, qty: li.quantity, price: li.unit_price, tax: 0
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0
     }))
   }));
 
@@ -1510,10 +1667,13 @@ function openNewInvoice() {
   document.getElementById('inv-due').value = daysFrom(today(), 30);
   document.getElementById('inv-discount').value = '0';
   document.getElementById('inv-po').value = '';
+  document.getElementById('inv-province').value = '';
+  document.getElementById('inv-lang').value = 'en';
   document.getElementById('inv-notes').value = 'Thank you for your business!';
   document.getElementById('inv-terms').value = 'Payment is due within 30 days of invoice date.';
   document.getElementById('line-items-container').innerHTML = '';
   addLineItem();
+  updateTaxHint();
   calcTotals();
   openModal('invoice-modal');
 }
@@ -1534,14 +1694,48 @@ function editInvoice(id) {
   document.getElementById('inv-due').value = inv.due;
   document.getElementById('inv-discount').value = inv.discount || 0;
   document.getElementById('inv-po').value = inv.po || '';
+  document.getElementById('inv-province').value = inv.province || '';
+  document.getElementById('inv-lang').value = inv.language || 'en';
   document.getElementById('inv-notes').value = inv.notes || '';
   document.getElementById('inv-terms').value = inv.terms || '';
   document.getElementById('line-items-container').innerHTML = '';
   inv.items.forEach(item => addLineItem(item));
+  updateTaxHint();
   calcTotals();
   openModal('invoice-modal');
 }
-function addLineItem(item={desc:'',qty:1,price:0,tax:13}) {
+function onInvoiceClientChange() {
+  const clientId = document.getElementById('inv-client').value;
+  const client = getClient(clientId);
+  if (!client) return;
+  // Auto-fill tax province and invoice language from the client's saved preferences
+  if (client.province) document.getElementById('inv-province').value = client.province;
+  if (client.language) document.getElementById('inv-lang').value = client.language;
+  updateTaxHint();
+  applyProvinceTax();
+}
+function updateTaxHint() {
+  const code = document.getElementById('inv-province').value;
+  const hint = document.getElementById('inv-tax-hint');
+  if (!code) { hint.textContent = 'Select a province to auto-apply tax to all line items'; return; }
+  const p = CA_TAX_RATES[code];
+  hint.textContent = `${p.name} — ${provinceTaxLabel(code)} (${p.total}% total) will be applied to line items`;
+}
+function applyProvinceTax() {
+  const code = document.getElementById('inv-province').value;
+  const rate = provinceTaxRate(code);
+  updateTaxHint();
+  document.querySelectorAll('.line-item-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    if (inputs[3]) inputs[3].value = rate;
+  });
+  calcTotals();
+}
+function addLineItem(item=null) {
+  if (!item) {
+    const code = document.getElementById('inv-province')?.value || '';
+    item = { desc:'', qty:1, price:0, tax: provinceTaxRate(code) };
+  }
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
   row.className = 'line-item-row';
@@ -1578,6 +1772,27 @@ function calcTotals() {
   document.getElementById('t-discount').textContent = '-' + fmt(discAmt, currency);
   document.getElementById('t-tax').textContent = fmt(taxTotal, currency);
   document.getElementById('t-total').textContent = fmt(total, currency);
+  const provCode = document.getElementById('inv-province')?.value || '';
+  const breakdownEl = document.getElementById('t-tax-breakdown');
+  if (breakdownEl) {
+    const p = CA_TAX_RATES[provCode];
+    if (p && p.total && taxTotal > 0) {
+      const taxableBase = sub - discAmt;
+      if (p.hst) {
+        breakdownEl.textContent = `includes HST ${fmt(taxableBase * (p.hst/100), currency)}`;
+      } else if (p.pst) {
+        const gstAmt = taxableBase * (p.gst/100);
+        const pstAmt = taxableBase * (p.pst/100);
+        breakdownEl.textContent = `GST ${fmt(gstAmt, currency)} + ${provCode==='QC'?'QST':'PST'} ${fmt(pstAmt, currency)}`;
+      } else if (p.gst) {
+        breakdownEl.textContent = `includes GST ${fmt(taxableBase * (p.gst/100), currency)}`;
+      } else {
+        breakdownEl.textContent = '';
+      }
+    } else {
+      breakdownEl.textContent = '';
+    }
+  }
 }
 function collectInvoiceData() {
   const items = [];
@@ -1594,6 +1809,8 @@ function collectInvoiceData() {
     discount: parseFloat(document.getElementById('inv-discount').value)||0,
     currency: document.getElementById('inv-currency').value,
     po: document.getElementById('inv-po').value,
+    province: document.getElementById('inv-province').value,
+    language: document.getElementById('inv-lang').value,
     notes: document.getElementById('inv-notes').value,
     terms: document.getElementById('inv-terms').value,
     items
@@ -1630,31 +1847,47 @@ async function saveInvoice(status) {
     notes: data.notes || '',
     terms: data.terms || ''
   };
+  // Extra columns (province / language / PO) — added by the Phase 1 update.
+  // Will be saved if your `invoices` table has these columns; falls back gracefully if not.
+  const invDataFull = { ...invData, province: data.province || '', language: data.language || 'en', po: data.po || '' };
 
   let invId = editingInvoiceId;
   let error;
 
   if (editingInvoiceId) {
-    ({ error } = await sb.from('invoices').update(invData).eq('id', editingInvoiceId));
+    ({ error } = await sb.from('invoices').update(invDataFull).eq('id', editingInvoiceId));
+    if (error) ({ error } = await sb.from('invoices').update(invData).eq('id', editingInvoiceId));
     if (!error) await sb.from('invoice_items').delete().eq('invoice_id', editingInvoiceId);
   } else {
-    const { data: newInv, error: insertErr } = await sb.from('invoices').insert(invData).select().single();
+    let { data: newInv, error: insertErr } = await sb.from('invoices').insert(invDataFull).select().single();
+    if (insertErr) ({ data: newInv, error: insertErr } = await sb.from('invoices').insert(invData).select().single());
     error = insertErr;
     if (newInv) invId = newInv.id;
   }
 
   if (error) { showToast('Error saving invoice: ' + error.message, 'error'); return; }
 
-  // Save line items
+  // Save line items (tax_rate added by Phase 1 update; falls back if column missing)
   if (invId && data.items.length > 0) {
-    const lineItems = data.items.map((item, i) => ({
+    const lineItemsFull = data.items.map((item, i) => ({
       invoice_id: invId,
       description: item.desc || 'Service',
       quantity: item.qty || 1,
       unit_price: item.price || 0,
+      tax_rate: item.tax || 0,
       sort_order: i
     }));
-    await sb.from('invoice_items').insert(lineItems);
+    const { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
+    if (liErr) {
+      const lineItems = data.items.map((item, i) => ({
+        invoice_id: invId,
+        description: item.desc || 'Service',
+        quantity: item.qty || 1,
+        unit_price: item.price || 0,
+        sort_order: i
+      }));
+      await sb.from('invoice_items').insert(lineItems);
+    }
   }
 
   closeModal('invoice-modal');
@@ -1715,31 +1948,43 @@ function previewInvoice(invId) {
     const inv = state.invoices.find(i => i.id === invId);
     if (!inv) return;
     client = getClient(inv.clientId);
-    const { total } = invoiceTotal(inv);
     data = {
       number: inv.number, clientId: inv.clientId, status: inv.status,
       date: inv.date, due: inv.due, discount: inv.discount || 0,
       currency: inv.currency || 'CAD', notes: inv.notes || '', terms: inv.terms || '',
+      province: inv.province || client?.province || '',
+      language: inv.language || client?.language || 'en',
       items: inv.items || []
     };
-    const s = data.items.reduce((a,i)=>a+i.qty*i.price,0);
-    const d = s*(data.discount/100);
-    const t = data.items.reduce((a,i)=>a+i.qty*i.price*(i.tax/100),0);
-    data._sub = s; data._disc = d; data._tax = t; data._total = s-d+t;
   } else {
     // Called from invoice builder modal
     data = collectInvoiceData();
     client = getClient(data.clientId);
-    const s = data.items.reduce((a,i)=>a+i.qty*i.price,0);
-    const d = s*(data.discount/100);
-    const t = data.items.reduce((a,i)=>a+i.qty*i.price*(i.tax/100),0);
-    data._sub = s; data._disc = d; data._tax = t; data._total = s-d+t;
   }
-  currentPreviewData = { data, client };
+  const s = data.items.reduce((a,i)=>a+i.qty*i.price,0);
+  const d = s*(data.discount/100);
+  const tax = data.items.reduce((a,i)=>a+i.qty*i.price*(i.tax/100),0);
+  data._sub = s; data._disc = d; data._tax = tax; data._total = s-d+tax;
+  currentPreviewData = { data, client, invId };
+  renderPreview();
+  if (!invId) closeModal('invoice-modal');
+  openModal('preview-modal');
+}
+function togglePreviewLanguage() {
+  if (!currentPreviewData) return;
+  currentPreviewData.data.language = currentPreviewData.data.language === 'fr' ? 'en' : 'fr';
+  renderPreview();
+}
+function renderPreview() {
+  if (!currentPreviewData) return;
+  const { data, client } = currentPreviewData;
   const { _sub: sub, _disc: disc, _tax: tax, _total: total } = data;
+  const lang = data.language || 'en';
+  document.getElementById('preview-lang-label').textContent = lang === 'fr' ? 'FR' : 'EN';
   const itemRows = data.items.map(i=>`<tr><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6">${i.desc}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.qty}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right">${fmt(i.price,data.currency)}</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:center">${i.tax||0}%</td><td style="padding:10px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:600">${fmt(i.qty*i.price,data.currency)}</td></tr>`).join('');
+  const provLabel = data.province ? (CA_TAX_RATES[data.province]?.name + (lang==='fr' ? '' : '') ) : '';
   document.getElementById('preview-content').innerHTML = `
-    <div class="invoice-preview" id="pdf-content">
+    <div class="invoice-preview" id="pdf-content" lang="${lang}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem">
         <div>
           <div style="width:48px;height:48px;background:#2563EB;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem">
@@ -1748,54 +1993,54 @@ function previewInvoice(invId) {
           <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:700;color:#111827">MapleBill</div>
         </div>
         <div style="text-align:right">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:#2563EB;letter-spacing:-0.5px">INVOICE</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:#2563EB;letter-spacing:-0.5px">${t(lang,'invoice')}</div>
           <div style="font-size:14px;color:#374151;margin-top:4px;font-weight:600">${data.number}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding:1.25rem;background:#F9FAFB;border-radius:10px">
         <div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">Billed To</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">${t(lang,'billedTo')}</div>
           <div style="font-weight:700;color:#111827">${client?.company||'Client Name'}</div>
           <div style="font-size:13px;color:#6B7280">${client?.name||''}</div>
           <div style="font-size:13px;color:#6B7280">${client?.email||''}</div>
           <div style="font-size:13px;color:#6B7280;margin-top:4px">${client?.address||''}</div>
         </div>
         <div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">Details</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:6px">${t(lang,'details')}</div>
           <div style="font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;color:#374151">
-            <span style="color:#9CA3AF">Issue Date</span><span style="font-weight:500">${fmtDate(data.date)}</span>
-            <span style="color:#9CA3AF">Due Date</span><span style="font-weight:500">${fmtDate(data.due)}</span>
-            <span style="color:#9CA3AF">Currency</span><span style="font-weight:500">${data.currency}</span>
+            <span style="color:#9CA3AF">${t(lang,'issueDate')}</span><span style="font-weight:500">${fmtDate(data.date)}</span>
+            <span style="color:#9CA3AF">${t(lang,'dueDate')}</span><span style="font-weight:500">${fmtDate(data.due)}</span>
+            <span style="color:#9CA3AF">${t(lang,'currency')}</span><span style="font-weight:500">${data.currency}</span>
+            ${provLabel?`<span style="color:#9CA3AF">${t(lang,'province')}</span><span style="font-weight:500">${provLabel} (${provinceTaxLabel(data.province)})</span>`:''}
           </div>
         </div>
       </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:1.5rem">
         <thead><tr>
-          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;padding:10px 12px;text-align:left">Description</th>
-          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">Qty</th>
-          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">Unit Price</th>
-          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">Tax</th>
-          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">Amount</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;padding:10px 12px;text-align:left">${t(lang,'description')}</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">${t(lang,'qty')}</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">${t(lang,'unitPrice')}</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:center">${t(lang,'tax')}</th>
+          <th style="background:#EFF6FF;color:#1D4ED8;font-size:11px;text-transform:uppercase;padding:10px 12px;text-align:right">${t(lang,'amount')}</th>
         </tr></thead>
         <tbody>${itemRows}</tbody>
       </table>
       <div style="display:flex;justify-content:flex-end;margin-bottom:1.5rem">
         <div style="width:240px;background:#F9FAFB;border-radius:8px;padding:1rem">
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:6px"><span>Subtotal</span><span>${fmt(sub,data.currency)}</span></div>
-          ${disc>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#16A34A;margin-bottom:6px"><span>Discount (${data.discount}%)</span><span>-${fmt(disc,data.currency)}</span></div>`:''}
-          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:8px"><span>Tax</span><span>${fmt(tax,data.currency)}</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:800;color:#111827;border-top:2px solid #E5E7EB;padding-top:8px"><span>Total</span><span style="color:#2563EB">${fmt(total,data.currency)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:6px"><span>${t(lang,'subtotal')}</span><span>${fmt(sub,data.currency)}</span></div>
+          ${disc>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:#16A34A;margin-bottom:6px"><span>${t(lang,'discount')} (${data.discount}%)</span><span>-${fmt(disc,data.currency)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6B7280;margin-bottom:8px"><span>${data.province && CA_TAX_RATES[data.province]?.short !== '—' ? CA_TAX_RATES[data.province].short : t(lang,'tax')}</span><span>${fmt(tax,data.currency)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:800;color:#111827;border-top:2px solid #E5E7EB;padding-top:8px"><span>${t(lang,'total')}</span><span style="color:#2563EB">${fmt(total,data.currency)}</span></div>
         </div>
       </div>
-      ${data.notes?`<div style="background:#F0FDF4;border-left:3px solid #16A34A;padding:0.75rem 1rem;border-radius:0 8px 8px 0;margin-bottom:1rem"><div style="font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;margin-bottom:4px">Notes</div><div style="font-size:13px;color:#374151">${data.notes}</div></div>`:''}
-      ${data.terms?`<div style="border-top:1px solid #E5E7EB;padding-top:1rem"><div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">Terms</div><div style="font-size:12px;color:#9CA3AF">${data.terms}</div></div>`:''}
+      ${data.notes?`<div style="background:#F0FDF4;border-left:3px solid #16A34A;padding:0.75rem 1rem;border-radius:0 8px 8px 0;margin-bottom:1rem"><div style="font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;margin-bottom:4px">${t(lang,'notes')}</div><div style="font-size:13px;color:#374151">${data.notes}</div></div>`:''}
+      ${data.terms?`<div style="border-top:1px solid #E5E7EB;padding-top:1rem"><div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">${t(lang,'terms')}</div><div style="font-size:12px;color:#9CA3AF">${data.terms}</div></div>`:''}
     </div>`;
-  if (!invId) closeModal('invoice-modal');
-  openModal('preview-modal');
 }
 function downloadPDF() {
   if (!currentPreviewData) { showToast('No invoice to download', 'error'); return; }
   const { data, client } = currentPreviewData;
+  const lang = data.language || 'en';
   showToast('Generating PDF...', '');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -1809,7 +2054,7 @@ function downloadPDF() {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(...blue);
-  doc.text('INVOICE', 196, 20, { align: 'right' });
+  doc.text(t(lang,'invoice'), 196, 20, { align: 'right' });
   doc.setFontSize(11);
   doc.setTextColor(...dark);
   doc.text('MapleBill', 30, 21);
@@ -1822,8 +2067,8 @@ function downloadPDF() {
   doc.roundedRect(14, 34, 88, 36, 3, 3, 'F');
   doc.roundedRect(108, 34, 88, 36, 3, 3, 'F');
   doc.setFontSize(8); doc.setTextColor(...gray); doc.setFont('helvetica', 'bold');
-  doc.text('BILLED TO', 20, 42);
-  doc.text('INVOICE DETAILS', 114, 42);
+  doc.text(t(lang,'billedTo').toUpperCase(), 20, 42);
+  doc.text(t(lang,'details').toUpperCase(), 114, 42);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...dark);
   doc.text(client?.company || 'Client', 20, 49);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...gray);
@@ -1831,19 +2076,23 @@ function downloadPDF() {
   if (client?.email) doc.text(client.email, 20, 59);
   if (client?.address) doc.text(client.address, 20, 64);
   doc.setFontSize(9); doc.setTextColor(...gray);
-  doc.text('Issue Date:', 114, 49); doc.setTextColor(...dark); doc.text(fmtDate(data.date), 150, 49);
-  doc.setTextColor(...gray); doc.text('Due Date:', 114, 55); doc.setTextColor(...dark); doc.text(fmtDate(data.due), 150, 55);
-  doc.setTextColor(...gray); doc.text('Currency:', 114, 61); doc.setTextColor(...dark); doc.text(data.currency, 150, 61);
+  doc.text(t(lang,'issueDate')+':', 114, 49); doc.setTextColor(...dark); doc.text(fmtDate(data.date), 150, 49);
+  doc.setTextColor(...gray); doc.text(t(lang,'dueDate')+':', 114, 55); doc.setTextColor(...dark); doc.text(fmtDate(data.due), 150, 55);
+  doc.setTextColor(...gray); doc.text(t(lang,'currency')+':', 114, 61); doc.setTextColor(...dark); doc.text(data.currency, 150, 61);
+  if (data.province && provinceTaxLabel(data.province)) {
+    doc.setTextColor(...gray); doc.text(t(lang,'tax')+':', 114, 67); doc.setTextColor(...dark);
+    doc.setFontSize(8); doc.text(provinceTaxLabel(data.province), 150, 67); doc.setFontSize(9);
+  }
 
   // Table header
   let y = 80;
   doc.setFillColor(...blue);
   doc.rect(14, y, 182, 8, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-  doc.text('DESCRIPTION', 18, y+5.5);
-  doc.text('QTY', 130, y+5.5, { align: 'right' });
-  doc.text('PRICE', 155, y+5.5, { align: 'right' });
-  doc.text('AMOUNT', 196, y+5.5, { align: 'right' });
+  doc.text(t(lang,'description').toUpperCase(), 18, y+5.5);
+  doc.text(t(lang,'qty').toUpperCase(), 130, y+5.5, { align: 'right' });
+  doc.text(t(lang,'unitPrice').toUpperCase(), 155, y+5.5, { align: 'right' });
+  doc.text(t(lang,'amount').toUpperCase(), 196, y+5.5, { align: 'right' });
   y += 12;
 
   // Line items
@@ -1860,19 +2109,20 @@ function downloadPDF() {
   // Totals
   y += 4;
   doc.setDrawColor(229, 231, 235); doc.line(130, y, 196, y); y += 6;
-  doc.setTextColor(...gray); doc.text('Subtotal', 130, y); doc.setTextColor(...dark); doc.text(fmt(data._sub, data.currency), 196, y, { align: 'right' }); y += 6;
-  if (data._disc > 0) { doc.setTextColor(22,163,74); doc.text(`Discount (${data.discount}%)`, 130, y); doc.text('-' + fmt(data._disc, data.currency), 196, y, { align: 'right' }); y += 6; }
-  doc.setTextColor(...gray); doc.text('Tax', 130, y); doc.setTextColor(...dark); doc.text(fmt(data._tax, data.currency), 196, y, { align: 'right' }); y += 2;
+  doc.setTextColor(...gray); doc.text(t(lang,'subtotal'), 130, y); doc.setTextColor(...dark); doc.text(fmt(data._sub, data.currency), 196, y, { align: 'right' }); y += 6;
+  if (data._disc > 0) { doc.setTextColor(22,163,74); doc.text(`${t(lang,'discount')} (${data.discount}%)`, 130, y); doc.text('-' + fmt(data._disc, data.currency), 196, y, { align: 'right' }); y += 6; }
+  const taxLabel = data.province && CA_TAX_RATES[data.province]?.short !== '—' ? CA_TAX_RATES[data.province].short : t(lang,'tax');
+  doc.setTextColor(...gray); doc.text(taxLabel, 130, y); doc.setTextColor(...dark); doc.text(fmt(data._tax, data.currency), 196, y, { align: 'right' }); y += 2;
   doc.setDrawColor(...blue); doc.setLineWidth(0.5); doc.line(130, y+2, 196, y+2); y += 6;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(...blue);
-  doc.text('TOTAL', 130, y); doc.text(fmt(data._total, data.currency), 196, y, { align: 'right' });
+  doc.text(t(lang,'total').toUpperCase(), 130, y); doc.text(fmt(data._total, data.currency), 196, y, { align: 'right' });
 
   // Notes
   if (data.notes) {
     y += 14;
     doc.setFillColor(240, 253, 244); doc.roundedRect(14, y-4, 182, 16, 2, 2, 'F');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(21, 128, 61);
-    doc.text('NOTES', 18, y+1);
+    doc.text(t(lang,'notes').toUpperCase(), 18, y+1);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(55, 65, 81);
     doc.text(data.notes, 18, y+7);
   }
@@ -1885,10 +2135,19 @@ function emailInvoice() {
   if (!currentPreviewData) { showToast('No invoice to send', 'error'); return; }
   const { data, client } = currentPreviewData;
   if (!client?.email) { showToast('This client has no email address', 'error'); return; }
-  const subject = encodeURIComponent(`Invoice ${data.number} from MapleBill`);
-  const body = encodeURIComponent(
-    `Hi ${client.name || client.company},\n\nPlease find attached invoice ${data.number} for ${fmt(data._total, data.currency)}, due on ${fmtDate(data.due)}.\n\nThank you for your business!\n\nMapleBill`
-  );
+  const lang = data.language || 'en';
+  let subject, body;
+  if (lang === 'fr') {
+    subject = encodeURIComponent(`Facture ${data.number} de MapleBill`);
+    body = encodeURIComponent(
+      `Bonjour ${client.name || client.company},\n\nVeuillez trouver ci-joint la facture ${data.number} d'un montant de ${fmt(data._total, data.currency)}, à régler avant le ${fmtDate(data.due)}.\n\nMerci de votre confiance !\n\nMapleBill`
+    );
+  } else {
+    subject = encodeURIComponent(`Invoice ${data.number} from MapleBill`);
+    body = encodeURIComponent(
+      `Hi ${client.name || client.company},\n\nPlease find attached invoice ${data.number} for ${fmt(data._total, data.currency)}, due on ${fmtDate(data.due)}.\n\nThank you for your business!\n\nMapleBill`
+    );
+  }
   window.open(`mailto:${client.email}?subject=${subject}&body=${body}`, '_blank');
   showToast(`Email opened for ${client.email}`, 'success');
 }
@@ -2001,6 +2260,8 @@ function openClientModal() {
   editingClientId = null;
   document.getElementById('client-modal-title').textContent = 'Add Client';
   ['cl-company','cl-name','cl-email','cl-phone','cl-address','cl-tax','cl-web','cl-notes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('cl-province').value = '';
+  document.getElementById('cl-lang').value = 'en';
   document.getElementById('delete-client-btn').style.display = 'none';
   openModal('client-modal');
 }
@@ -2017,6 +2278,8 @@ function editClient(id) {
   document.getElementById('cl-tax').value = cl.tax;
   document.getElementById('cl-web').value = cl.web;
   document.getElementById('cl-notes').value = cl.notes;
+  document.getElementById('cl-province').value = cl.province || '';
+  document.getElementById('cl-lang').value = cl.language || 'en';
   document.getElementById('delete-client-btn').style.display = 'inline-flex';
   openModal('client-modal');
 }
@@ -2043,7 +2306,10 @@ async function saveClient() {
     email,
     phone: document.getElementById('cl-phone').value,
     address: document.getElementById('cl-address').value,
-    notes: document.getElementById('cl-notes').value
+    notes: document.getElementById('cl-notes').value,
+    tax_number: document.getElementById('cl-tax').value,
+    province: document.getElementById('cl-province').value,
+    language: document.getElementById('cl-lang').value
   };
   let error;
   if (editingClientId) {
@@ -2082,14 +2348,18 @@ function renderQuotesTable() {
 
 // ── Expenses ──
 function renderExpensesTable() {
-  document.getElementById('expenses-table-body').innerHTML = state.expenses.map(e => `<tr>
+  document.getElementById('expenses-table-body').innerHTML = state.expenses.map(e => {
+    const cra = craCategory(e.category);
+    return `<tr>
     <td style="color:var(--text-secondary)">${fmtDate(e.date)}</td>
     <td style="font-weight:500">${e.desc}</td>
     <td><span class="badge badge-sent">${e.category}</span></td>
+    <td style="color:var(--text-secondary);font-size:12px">Line ${cra.line}<br><span style="font-size:11px">${cra.label}</span></td>
     <td style="font-weight:600">${fmt(e.amount)}</td>
     <td>${e.taxDeductible ? '<span class="badge badge-paid">Yes</span>' : '<span class="badge badge-draft">No</span>'}</td>
     <td><button class="btn btn-ghost btn-icon btn-sm" style="color:var(--red-500)" onclick="deleteExpense('${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td>
-  </tr>`).join('');
+  </tr>`;
+  }).join('');
 }
 function openExpenseModal() {
   document.getElementById('exp-date').value = today();
@@ -2213,6 +2483,53 @@ function exportCSV() {
   showToast('CSV exported','success');
 }
 function exportExcel() { showToast('Excel export ready — check your downloads','success'); }
+
+// ── CRA-Ready Expense Export (T2125) ──
+function exportExpensesCRA() {
+  if (!state.expenses.length) { showToast('No expenses to export', 'error'); return; }
+
+  const csvEscape = (val) => {
+    const s = String(val ?? '');
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
+  // Detail rows
+  const rows = [['Date','Description','Category','T2125 Line','CRA Description','Amount','Deductible %','Deductible Amount']];
+  const lineTotals = {}; // line -> { label, total, deductible }
+
+  state.expenses.forEach(e => {
+    const cra = craCategory(e.category);
+    const limit = e.taxDeductible ? (cra.limit !== undefined ? cra.limit : 1) : 0;
+    const deductible = e.amount * limit;
+    rows.push([
+      e.date, e.desc, e.category, cra.line, cra.label,
+      e.amount.toFixed(2), `${Math.round(limit*100)}%`, deductible.toFixed(2)
+    ]);
+    if (!lineTotals[cra.line]) lineTotals[cra.line] = { label: cra.label, total: 0, deductible: 0 };
+    lineTotals[cra.line].total += e.amount;
+    lineTotals[cra.line].deductible += deductible;
+  });
+
+  // Blank separator + summary by T2125 line
+  rows.push([]);
+  rows.push(['SUMMARY BY T2125 LINE (Form T2125 — Statement of Business or Professional Activities)']);
+  rows.push(['T2125 Line','Description','Total Amount','Deductible Amount']);
+  Object.keys(lineTotals).sort().forEach(line => {
+    const lt = lineTotals[line];
+    rows.push([line, lt.label, lt.total.toFixed(2), lt.deductible.toFixed(2)]);
+  });
+  const grandTotal = state.expenses.reduce((s,e)=>s+e.amount,0);
+  const grandDeductible = Object.values(lineTotals).reduce((s,l)=>s+l.deductible,0);
+  rows.push([]);
+  rows.push(['TOTAL', '', grandTotal.toFixed(2), grandDeductible.toFixed(2)]);
+
+  const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `maplebill-cra-expenses-${today()}.csv`;
+  a.click();
+  showToast('CRA expense export downloaded ✓', 'success');
+}
 
 // ── Close modal on overlay click ──
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
