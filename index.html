@@ -1428,7 +1428,9 @@ function getClient(id) { return state.clients.find(c=>c.id===id); }
 function invoiceTotal(inv) {
   const sub = inv.items.reduce((s,i) => s + i.qty * i.price, 0);
   const disc = sub * (inv.discount/100);
-  const tax = inv.items.reduce((s,i) => s + i.qty * i.price * (i.tax/100), 0);
+  let tax = inv.items.reduce((s,i) => s + i.qty * i.price * (i.tax/100), 0);
+  // Fall back to the invoice-level tax amount if per-item tax rates weren't saved
+  if (tax === 0 && inv.taxAmount) tax = inv.taxAmount;
   return { sub, disc, tax, total: sub - disc + tax };
 }
 function statusBadge(status) {
@@ -1825,6 +1827,7 @@ async function loadOrgData() {
     currency: inv.currency, discount: inv.discount_value || 0,
     notes: inv.notes || '', terms: inv.terms || '',
     province: inv.province || '', language: inv.language || 'en', po: inv.po || '',
+    taxAmount: inv.tax_amount || 0,
     items: (inv.invoice_items || []).map(li => ({
       desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0
     }))
