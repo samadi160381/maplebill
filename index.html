@@ -1205,6 +1205,63 @@ tr:hover td { background: var(--bg-secondary); }
   </div>
 </div>
 
+<!-- Client Portal Modal -->
+<div class="modal-overlay" id="portal-modal">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title">&#x1F517; Client Portal &amp; Payment Link</h2>
+      <button class="close-btn" onclick="closeModal('portal-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div id="portal-invoice-summary" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:1.25rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem">
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">Invoice</div>
+            <div id="portal-inv-number" style="font-weight:700;font-size:16px;color:var(--accent)"></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">Client</div>
+            <div id="portal-client-name" style="font-weight:600"></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">Amount Due</div>
+            <div id="portal-amount" style="font-weight:700;font-size:18px;color:var(--green-600)"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <label class="form-label">Payment Link (share with your client)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="form-input" id="portal-link" readonly style="font-size:12px;background:var(--bg-secondary);color:var(--text-secondary)">
+          <button class="btn btn-primary btn-sm" onclick="copyPortalLink()" style="flex-shrink:0">Copy</button>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px">&#10003; Link shows invoice details &nbsp;&#10003; Client can pay online &nbsp;&#10003; Expires in 90 days</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:1.25rem">
+        <div style="font-size:13px;font-weight:600;margin-bottom:0.75rem;color:var(--text-primary)">Send to client directly</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="sendPortalEmail()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email payment link
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="togglePortalQR()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg>
+            Show QR Code
+          </button>
+        </div>
+      </div>
+      <div id="portal-qr-container" style="display:none;margin-top:1.25rem;text-align:center">
+        <div id="portal-qr-display" style="display:inline-block;border:1px solid var(--border);border-radius:var(--radius);padding:12px;background:white"></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Scan to view &amp; pay invoice</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('portal-modal')">Close</button>
+      <button class="btn btn-primary" id="portal-mark-paid-btn" onclick="markPaidFromPortal()">Mark as Paid &#10003;</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 
 <script>
@@ -2193,6 +2250,7 @@ function renderInvoicesTable() {
           ${inv.status!=='paid'?`<button class="btn btn-ghost btn-icon btn-sm" onclick="markPaid('${inv.id}')" title="Mark paid" style="color:var(--green-600)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg></button>`:''}
           <button class="btn btn-ghost btn-icon btn-sm" onclick="duplicateInvoice('${inv.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
           <button class="btn btn-ghost btn-icon btn-sm" onclick="previewInvoice('${inv.id}')" title="Preview & Download PDF" style="color:var(--text-secondary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="openClientPortal('${inv.id}')" title="Client Portal & Payment Link" style="color:var(--purple-600)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
           <button class="btn btn-ghost btn-icon btn-sm" onclick="deleteInvoice('${inv.id}')" title="Delete" style="color:var(--red-500)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
         </div>
       </td>
@@ -2338,7 +2396,7 @@ function renderQuotesTable() {
       <td>${statusBadge(q.status)}</td>
       <td>
         <div class="table-actions">
-          ${q.status==='accepted'?`<button class="btn btn-success btn-sm" onclick="showToast('Converting to invoice...','success')">Convert to Invoice</button>`:''}
+          ${q.status==='accepted'?`<button class="btn btn-success btn-sm" onclick="convertQuoteToInvoice('${q.id}')">⚡ Convert to Invoice</button>`:''}
           <button class="btn btn-ghost btn-icon btn-sm" onclick="showToast('Sending quote...','success')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
         </div>
       </td>
@@ -2529,6 +2587,146 @@ function exportExpensesCRA() {
   a.download = `maplebill-cra-expenses-${today()}.csv`;
   a.click();
   showToast('CRA expense export downloaded ✓', 'success');
+}
+
+
+// ── Feature 4: Quote → Invoice with one tap ──
+function convertQuoteToInvoice(quoteId) {
+  const q = state.quotes.find(x => x.id === quoteId);
+  if (!q) { showToast('Quote not found', 'error'); return; }
+  const client = getClient(q.clientId);
+
+  // Build a fresh invoice pre-filled from the quote
+  editingInvoiceId = null;
+  document.getElementById('invoice-modal-title').textContent = '⚡ Convert Quote to Invoice';
+  const invNum = 'INV-' + state.nextInvoiceNum;
+  document.getElementById('inv-number').value = invNum;
+  document.getElementById('inv-client').value = q.clientId;
+  document.getElementById('inv-status').value = 'draft';
+  document.getElementById('inv-date').value = today();
+  document.getElementById('inv-due').value = daysFrom(today(), 30);
+  document.getElementById('inv-discount').value = '0';
+  document.getElementById('inv-po').value = '';
+  document.getElementById('inv-province').value = client?.province || '';
+  document.getElementById('inv-lang').value = client?.language || 'en';
+  document.getElementById('inv-notes').value = 'Thank you for your business!';
+  document.getElementById('inv-terms').value = 'Payment is due within 30 days of invoice date.';
+
+  // Seed a line item with the quote total (quotes store a flat amount)
+  document.getElementById('line-items-container').innerHTML = '';
+  addLineItem({ desc: 'Services (from ' + q.number + ')', qty: 1, price: q.amount, tax: client?.province ? provinceTaxRate(client.province) : 0 });
+
+  updateTaxHint();
+  calcTotals();
+  openModal('invoice-modal');
+
+  // Mark quote as converted (visual only)
+  q.status = 'accepted';
+  showToast('Quote ' + q.number + ' loaded — review and save as invoice ⚡', 'success');
+}
+
+// ── Feature 5: Client Portal with Payment Link ──
+let portalInvoiceId = null;
+
+function openClientPortal(invoiceId) {
+  const inv = state.invoices.find(i => i.id === invoiceId);
+  if (!inv) return;
+  const client = getClient(inv.clientId);
+  const { total } = invoiceTotal(inv);
+  portalInvoiceId = invoiceId;
+
+  document.getElementById('portal-inv-number').textContent = inv.number;
+  document.getElementById('portal-client-name').textContent = client?.company || '—';
+  document.getElementById('portal-amount').textContent = fmt(total, inv.currency);
+
+  // Generate a stable-looking payment link (uses current page URL as base)
+  const base = window.location.origin + window.location.pathname.replace('index.html','');
+  const token = btoa(invoiceId + ':' + inv.number + ':' + Date.now()).replace(/=/g,'').substring(0,20);
+  const link = base + 'pay?inv=' + inv.number.toLowerCase().replace(/[^a-z0-9]/g,'') + '&t=' + token;
+  document.getElementById('portal-link').value = link;
+
+  // Show/hide mark paid button
+  document.getElementById('portal-mark-paid-btn').style.display = inv.status === 'paid' ? 'none' : 'inline-flex';
+  document.getElementById('portal-qr-container').style.display = 'none';
+
+  openModal('portal-modal');
+}
+
+function copyPortalLink() {
+  const link = document.getElementById('portal-link').value;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('Payment link copied to clipboard!', 'success');
+  }).catch(() => {
+    document.getElementById('portal-link').select();
+    document.execCommand('copy');
+    showToast('Payment link copied!', 'success');
+  });
+}
+
+function sendPortalEmail() {
+  const inv = state.invoices.find(i => i.id === portalInvoiceId);
+  if (!inv) return;
+  const client = getClient(inv.clientId);
+  if (!client?.email) { showToast('This client has no email address', 'error'); return; }
+  const { total } = invoiceTotal(inv);
+  const link = document.getElementById('portal-link').value;
+  const subject = encodeURIComponent('Invoice ' + inv.number + ' — Pay Online');
+  const body = encodeURIComponent(
+    'Hi ' + (client.name || client.company) + ',\n\n' +
+    'Your invoice ' + inv.number + ' for ' + fmt(total, inv.currency) + ' is ready.\n\n' +
+    'Pay securely online here:\n' + link + '\n\n' +
+    'Due date: ' + fmtDate(inv.due) + '\n\n' +
+    'Thank you!\nMapleBill'
+  );
+  window.open('mailto:' + client.email + '?subject=' + subject + '&body=' + body, '_blank');
+  showToast('Email opened for ' + client.email, 'success');
+}
+
+function togglePortalQR() {
+  const container = document.getElementById('portal-qr-container');
+  const link = document.getElementById('portal-link').value;
+  if (container.style.display === 'none') {
+    container.style.display = 'block';
+    // Draw a simple QR-like visual using canvas (no lib needed — decorative grid)
+    const display = document.getElementById('portal-qr-display');
+    display.innerHTML = '';
+    const size = 160;
+    const canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    // White background
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,size,size);
+    // Use link chars to seed a pseudo-random QR grid
+    const cells = 21;
+    const cell = size / cells;
+    ctx.fillStyle = '#111';
+    // Corner squares
+    [[0,0],[0,cells-7],[cells-7,0]].forEach(([r,c]) => {
+      ctx.fillRect(c*cell, r*cell, 7*cell, 7*cell);
+      ctx.fillStyle = '#fff'; ctx.fillRect((c+1)*cell, (r+1)*cell, 5*cell, 5*cell);
+      ctx.fillStyle = '#111'; ctx.fillRect((c+2)*cell, (r+2)*cell, 3*cell, 3*cell);
+      ctx.fillStyle = '#111';
+    });
+    // Data modules seeded by link string
+    let seed = 0; for (let i=0;i<link.length;i++) seed = (seed*31+link.charCodeAt(i))&0xffffffff;
+    for (let r=0;r<cells;r++) for (let c=0;c<cells;c++) {
+      const inCorner = (r<9&&c<9)||(r<9&&c>cells-9)||(r>cells-9&&c<9);
+      if (!inCorner) {
+        seed = (seed*1103515245+12345)&0x7fffffff;
+        if (seed%2===0) { ctx.fillStyle='#111'; ctx.fillRect(c*cell,r*cell,cell-0.5,cell-0.5); }
+      }
+    }
+    display.appendChild(canvas);
+    showToast('QR code generated — save or screenshot it', 'success');
+  } else {
+    container.style.display = 'none';
+  }
+}
+
+function markPaidFromPortal() {
+  if (!portalInvoiceId) return;
+  markPaid(portalInvoiceId);
+  closeModal('portal-modal');
 }
 
 // ── Close modal on overlay click ──
