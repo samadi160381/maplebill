@@ -1609,7 +1609,7 @@ async function showPublicInvoice(invoiceId) {
           ${items.map(item => `
             <tr style="border-bottom:1px solid #e2e8f0">
               <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}</td>
-              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || ''}</td>
+              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label && item.unit_label !== 'unit' ? item.unit_label : ''}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151">${item.description}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151;text-align:right">${parseFloat(item.unit_price).toFixed(2)}</td>
               <td style="padding:12px 0 12px 8px;font-size:13px;color:#374151;text-align:right;font-weight:600">${(item.quantity*item.unit_price).toFixed(2)}</td>
@@ -1843,7 +1843,7 @@ async function loadOrgData() {
     province: inv.province || '', language: inv.language || 'en', po: inv.po || '',
     taxAmount: inv.tax_amount || 0,
     items: (inv.invoice_items || []).map(li => ({
-      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0, unit: li.unit_label || ''
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: li.tax_rate || 0, unit: li.unit_label && li.unit_label !== 'unit' ? li.unit_label : ''
     }))
   }));
 
@@ -2067,14 +2067,14 @@ function addLineItem(item=null) {
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
   row.className = 'line-item-row';
-  const unitVal = item.unit || '';
-  const allUnits = UNITS.includes(unitVal) || !unitVal ? UNITS : [...UNITS, unitVal];
+  const unitVal = item.unit && item.unit !== 'unit' ? item.unit : '';
   row.innerHTML = `
     <input class="li-input" placeholder="Service description" value="${item.desc}" oninput="calcTotals()">
     <input class="li-input" type="number" min="0" value="${item.qty}" oninput="calcTotals()" style="text-align:center">
     <select class="li-input li-unit" style="text-align:center">
-      <option value="">— select —</option>
-      ${allUnits.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
+      <option value="" ${!unitVal?'selected':''}>— select —</option>
+      ${UNITS.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
+      ${unitVal && !UNITS.includes(unitVal) ? `<option value="${unitVal}" selected>${unitVal}</option>` : ''}
     </select>
     <input class="li-input" type="number" min="0" step="0.01" value="${item.price}" oninput="calcTotals()" placeholder="0.00">
     <input class="li-input" type="number" min="0" max="100" value="${item.tax}" oninput="calcTotals()" placeholder="0" style="text-align:center">
@@ -2209,7 +2209,7 @@ async function saveInvoice(status) {
       quantity: item.qty || 1,
       unit_price: item.price || 0,
       tax_rate: item.tax || 0,
-      unit_label: item.unit || 'unit',
+      unit_label: item.unit && item.unit !== 'unit' ? item.unit : '',
       sort_order: i
     }));
     let { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
@@ -2298,7 +2298,7 @@ async function sendInvoiceEmail(invoiceId) {
             ${(inv.items||[]).map((item,i) => `
               <tr style="background:${i%2===0?'#f8fafc':'white'}">
                 <td style="padding:10px;color:#374151">${item.desc}</td>
-                <td style="padding:10px;color:#374151;text-align:center">${item.qty}${item.unit && item.unit!=='unit' ? ' '+item.unit : ''}</td>
+                <td style="padding:10px;color:#374151;text-align:center">${item.qty}</td>
                 <td style="padding:10px;color:#374151;text-align:right">$${parseFloat(item.price).toFixed(2)}</td>
                 <td style="padding:10px;color:#374151;text-align:right;font-weight:600">$${(item.qty*item.price).toFixed(2)}</td>
               </tr>
