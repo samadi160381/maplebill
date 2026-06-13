@@ -562,7 +562,7 @@ tr:hover td { background: var(--bg-secondary); }
       <div class="page" id="page-dashboard">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Good morning, Alex 👋</h1>
+            <h1 class="page-title" id="dashboard-greeting">Welcome 👋</h1>
             <p class="page-subtitle">Here's what's happening with your business today</p>
           </div>
           <div class="report-period">
@@ -575,26 +575,26 @@ tr:hover td { background: var(--bg-secondary); }
           <div class="stat-card">
             <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
             <div class="stat-label">Total Revenue</div>
-            <div class="stat-value">$48,290</div>
-            <div class="stat-change">↑ 12% vs last month</div>
+            <div class="stat-value" id="stat-revenue">$0</div>
+            <div class="stat-change" id="stat-revenue-sub">0 paid invoices</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
             <div class="stat-label">Outstanding</div>
-            <div class="stat-value">$12,450</div>
-            <div class="stat-change" style="color:var(--amber-600)">5 invoices pending</div>
+            <div class="stat-value" id="stat-outstanding">$0</div>
+            <div class="stat-change" id="stat-outstanding-sub" style="color:var(--amber-600)">0 invoices pending</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
             <div class="stat-label">Paid This Month</div>
-            <div class="stat-value">$31,840</div>
-            <div class="stat-change">↑ 8% vs last month</div>
+            <div class="stat-value" id="stat-paid-month">$0</div>
+            <div class="stat-change" id="stat-paid-month-sub">this month</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
             <div class="stat-label">Overdue</div>
-            <div class="stat-value">$4,200</div>
-            <div class="stat-change negative">↑ 3 overdue invoices</div>
+            <div class="stat-value" id="stat-overdue">$0</div>
+            <div class="stat-change negative" id="stat-overdue-sub">0 overdue invoices</div>
           </div>
         </div>
         <div class="grid-col-7-5">
@@ -615,10 +615,10 @@ tr:hover td { background: var(--bg-secondary); }
             <div class="card-body">
               <div class="chart-container"><canvas id="status-chart"></canvas></div>
               <div style="margin-top:1rem;display:flex;flex-direction:column;gap:6px">
-                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#16A34A;display:inline-block"></span>Paid (61%)</span><span style="font-weight:600;color:var(--text-primary)">$31,840</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#2563EB;display:inline-block"></span>Sent (16%)</span><span style="font-weight:600;color:var(--text-primary)">$8,250</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#F59E0B;display:inline-block"></span>Draft (15%)</span><span style="font-weight:600;color:var(--text-primary)">$8,000</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#EF4444;display:inline-block"></span>Overdue (8%)</span><span style="font-weight:600;color:var(--text-primary)">$4,200</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#16A34A;display:inline-block"></span>Paid</span><span style="font-weight:600;color:var(--text-primary)" id="legend-paid">$0</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#2563EB;display:inline-block"></span>Sent</span><span style="font-weight:600;color:var(--text-primary)" id="legend-sent">$0</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#F59E0B;display:inline-block"></span>Draft</span><span style="font-weight:600;color:var(--text-primary)" id="legend-draft">$0</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#EF4444;display:inline-block"></span>Overdue</span><span style="font-weight:600;color:var(--text-primary)" id="legend-overdue">$0</span></div>
               </div>
             </div>
           </div>
@@ -1364,6 +1364,32 @@ async function loadOrgData() {
     id: e.id, date: e.expense_date, desc: e.description,
     category: e.category, amount: e.amount, taxDeductible: e.tax_deductible
   }));
+
+  // Load quotes
+  const { data: quotes } = await sb.from('quotes')
+    .select('*, quote_items(*)')
+    .eq('organization_id', currentOrgId)
+    .order('created_at', { ascending: false })
+    .catch(() => ({ data: [] }));
+  state.quotes = (quotes || []).map(q => ({
+    id: q.id, number: q.number, clientId: q.client_id,
+    date: q.issue_date, expires: q.expiry_date, status: q.status,
+    amount: q.total || 0,
+    items: (q.quote_items || []).map(li => ({
+      desc: li.description, qty: li.quantity, price: li.unit_price, tax: 0
+    }))
+  }));
+
+  // Load payments
+  const { data: payments } = await sb.from('payments')
+    .select('*')
+    .eq('organization_id', currentOrgId)
+    .order('created_at', { ascending: false })
+    .catch(() => ({ data: [] }));
+  state.payments = (payments || []).map(p => ({
+    id: p.id, date: p.payment_date, invoiceId: p.invoice_id,
+    amount: p.amount, method: p.payment_method || 'Other', status: p.status || 'completed'
+  }));
 }
 
 // ── Dashboard ──
@@ -1371,18 +1397,70 @@ async function initApp() {
   showToast('Loading your data...', '');
   await loadOrgData();
   populateClientDropdown();
+  renderDashboardStats();
   renderRecentInvoices();
   renderActivityFeed();
   renderTopClients();
   setTimeout(initCharts, 100);
   updateOverdueBadge();
+  // Set greeting
+  const { data: { user } } = await sb.auth.getUser();
+  const name = user?.email ? user.email.split('@')[0] : 'there';
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const el = document.getElementById('dashboard-greeting');
+  if (el) el.textContent = `${greeting}, ${name} 👋`;
   showToast('Data loaded!', 'success');
   const hashPage = location.hash.replace('#', '');
   if (hashPage && document.getElementById('page-' + hashPage)) nav(hashPage);
 }
+
+function renderDashboardStats() {
+  const invoices = state.invoices;
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+
+  let totalRevenue = 0, outstanding = 0, paidThisMonth = 0, overdue = 0;
+  let outstandingCount = 0, overdueCount = 0, paidCount = 0;
+
+  invoices.forEach(inv => {
+    const { total } = invoiceTotal(inv);
+    if (inv.status === 'paid') {
+      totalRevenue += total;
+      paidCount++;
+      const d = new Date(inv.date);
+      if (d.getMonth() === thisMonth && d.getFullYear() === thisYear) paidThisMonth += total;
+    }
+    if (inv.status === 'sent' || inv.status === 'viewed') { outstanding += total; outstandingCount++; }
+    if (inv.status === 'overdue') { overdue += total; overdueCount++; outstanding += total; outstandingCount++; }
+  });
+
+  document.getElementById('stat-revenue').textContent = fmt(totalRevenue);
+  document.getElementById('stat-revenue-sub').textContent = `${paidCount} paid invoice${paidCount !== 1 ? 's' : ''}`;
+  document.getElementById('stat-outstanding').textContent = fmt(outstanding);
+  document.getElementById('stat-outstanding-sub').textContent = `${outstandingCount} invoice${outstandingCount !== 1 ? 's' : ''} pending`;
+  document.getElementById('stat-paid-month').textContent = fmt(paidThisMonth);
+  document.getElementById('stat-paid-month-sub').textContent = now.toLocaleString('default', { month: 'long' });
+  document.getElementById('stat-overdue').textContent = fmt(overdue);
+  document.getElementById('stat-overdue-sub').textContent = `${overdueCount} overdue invoice${overdueCount !== 1 ? 's' : ''}`;
+
+  // Update status chart legend
+  const statusTotals = { paid: 0, sent: 0, draft: 0, overdue: 0 };
+  invoices.forEach(inv => {
+    const { total } = invoiceTotal(inv);
+    if (statusTotals[inv.status] !== undefined) statusTotals[inv.status] += total;
+    else if (inv.status === 'viewed') statusTotals.sent += total;
+  });
+  const lp = document.getElementById('legend-paid'); if (lp) lp.textContent = fmt(statusTotals.paid);
+  const ls = document.getElementById('legend-sent'); if (ls) ls.textContent = fmt(statusTotals.sent);
+  const ld = document.getElementById('legend-draft'); if (ld) ld.textContent = fmt(statusTotals.draft);
+  const lo = document.getElementById('legend-overdue'); if (lo) lo.textContent = fmt(statusTotals.overdue);
+}
 function updateOverdueBadge() {
   const count = state.invoices.filter(i=>i.status==='overdue').length;
   document.getElementById('overdue-badge').textContent = count;
+  renderDashboardStats();
 }
 function renderRecentInvoices() {
   const tbody = document.getElementById('recent-invoices-body');
@@ -1399,13 +1477,26 @@ function renderRecentInvoices() {
   }).join('');
 }
 function renderActivityFeed() {
-  const activities = [
-    { text: '<strong>INV-1047</strong> sent to Peak Performance Co.', time: '2 hours ago' },
-    { text: '<strong>INV-1045</strong> paid by Maple Tech Solutions — $6,328', time: '1 day ago' },
-    { text: 'New client <strong>Northern Lights Media</strong> added', time: '2 days ago' },
-    { text: '<strong>INV-1046</strong> is overdue — reminder sent', time: '3 days ago' },
-    { text: '<strong>INV-1043</strong> paid by Sunrise Digital — $2,160', time: '1 week ago' },
-  ];
+  const activities = [];
+  // Build activity from real invoices (most recent first, up to 5)
+  const sorted = [...state.invoices].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  sorted.forEach(inv => {
+    const client = getClient(inv.clientId);
+    const { total } = invoiceTotal(inv);
+    const name = client?.company || 'Unknown Client';
+    const statusMap = {
+      paid: `<strong>${inv.number}</strong> paid by ${name} — ${fmt(total)}`,
+      sent: `<strong>${inv.number}</strong> sent to ${name}`,
+      overdue: `<strong>${inv.number}</strong> is overdue — ${name}`,
+      draft: `<strong>${inv.number}</strong> draft created for ${name}`,
+      viewed: `<strong>${inv.number}</strong> viewed by ${name}`,
+    };
+    activities.push({ text: statusMap[inv.status] || `Invoice ${inv.number} updated`, time: fmtDate(inv.date) });
+  });
+  if (activities.length === 0) {
+    document.getElementById('activity-feed').innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:13px;text-align:center">No activity yet — create your first invoice!</div>';
+    return;
+  }
   document.getElementById('activity-feed').innerHTML = activities.map(a =>
     `<div class="activity-item"><div class="activity-dot"></div><div class="activity-content"><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`
   ).join('');
@@ -1448,15 +1539,45 @@ function initCharts() {
   if (charts.revenue) charts.revenue.destroy();
   if (charts.status) charts.status.destroy();
 
-  const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+  // Build real monthly revenue from invoices (last 6 months)
+  const now = new Date();
+  const monthLabels = [];
+  const revenueData = [];
+  const collectedData = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    monthLabels.push(d.toLocaleString('default', { month: 'short' }));
+    let rev = 0, col = 0;
+    state.invoices.forEach(inv => {
+      const invDate = new Date(inv.date);
+      if (invDate.getMonth() === d.getMonth() && invDate.getFullYear() === d.getFullYear()) {
+        const { total } = invoiceTotal(inv);
+        rev += total;
+        if (inv.status === 'paid') col += total;
+      }
+    });
+    revenueData.push(rev);
+    collectedData.push(col);
+  }
+
+  // Build real status totals
+  const statusCounts = { paid: 0, sent: 0, draft: 0, overdue: 0 };
+  state.invoices.forEach(inv => {
+    const { total } = invoiceTotal(inv);
+    if (inv.status === 'paid') statusCounts.paid += total;
+    else if (inv.status === 'sent' || inv.status === 'viewed') statusCounts.sent += total;
+    else if (inv.status === 'draft') statusCounts.draft += total;
+    else if (inv.status === 'overdue') statusCounts.overdue += total;
+  });
+
   const rc = document.getElementById('revenue-chart').getContext('2d');
   charts.revenue = new Chart(rc, {
     type: 'bar',
     data: {
-      labels: months,
+      labels: monthLabels,
       datasets: [
-        { label:'Revenue', data:[28000,32000,29000,38000,42000,48290], backgroundColor:'rgba(37,99,235,0.15)', borderColor:'#2563EB', borderWidth:2, borderRadius:4, type:'bar' },
-        { label:'Collected', data:[26000,30000,27500,35000,39000,31840], borderColor:'#16A34A', borderWidth:2, type:'line', fill:false, tension:0.3, pointBackgroundColor:'#16A34A', pointRadius:3 }
+        { label:'Revenue', data: revenueData, backgroundColor:'rgba(37,99,235,0.15)', borderColor:'#2563EB', borderWidth:2, borderRadius:4, type:'bar' },
+        { label:'Collected', data: collectedData, borderColor:'#16A34A', borderWidth:2, type:'line', fill:false, tension:0.3, pointBackgroundColor:'#16A34A', pointRadius:3 }
       ]
     },
     options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ grid:{color:gridColor}, ticks:{color:textColor,font:{size:11}} }, y:{ grid:{color:gridColor}, ticks:{ color:textColor, font:{size:11}, callback:v=>'$'+v.toLocaleString() } } } }
@@ -1467,7 +1588,7 @@ function initCharts() {
     type: 'doughnut',
     data: {
       labels: ['Paid','Sent','Draft','Overdue'],
-      datasets: [{ data:[61,16,15,8], backgroundColor:['#16A34A','#2563EB','#9CA3AF','#EF4444'], borderWidth:0, hoverOffset:4 }]
+      datasets: [{ data:[statusCounts.paid, statusCounts.sent, statusCounts.draft, statusCounts.overdue], backgroundColor:['#16A34A','#2563EB','#9CA3AF','#EF4444'], borderWidth:0, hoverOffset:4 }]
     },
     options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, cutout:'72%' }
   });
