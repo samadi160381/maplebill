@@ -1609,7 +1609,7 @@ async function showPublicInvoice(invoiceId) {
           ${items.map(item => `
             <tr style="border-bottom:1px solid #e2e8f0">
               <td style="padding:12px 8px 12px 0;font-size:13px;color:#374151">${item.quantity}</td>
-              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || 'unit'}</td>
+              <td style="padding:12px 8px;font-size:13px;color:#374151">${item.unit_label || ''}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151">${item.description}</td>
               <td style="padding:12px 8px;font-size:13px;color:#374151;text-align:right">${parseFloat(item.unit_price).toFixed(2)}</td>
               <td style="padding:12px 0 12px 8px;font-size:13px;color:#374151;text-align:right;font-weight:600">${(item.quantity*item.unit_price).toFixed(2)}</td>
@@ -1772,7 +1772,7 @@ function toggleTheme() {
 let currentOrgId = null;
 let defaultTaxRate = 0;
 let defaultTerms = 'Payment is due within 15 days of invoice date.';
-const UNITS = ['unit', 'kg', 'lb', 'g', 'oz', 'case', 'box', 'dozen', 'L', 'hr', 'day'];
+const UNITS = ['each', 'kg', 'lb', 'g', 'oz', 'L', 'mL', 'case', 'box', 'dozen', 'hr', 'day', 'month', 'flat rate', 'custom…'];
 let defaultTaxLabel = 'Tax';
 
 async function loadOrgData() {
@@ -2067,13 +2067,19 @@ function addLineItem(item=null) {
   const container = document.getElementById('line-items-container');
   const row = document.createElement('div');
   row.className = 'line-item-row';
-  const unitVal = item.unit || 'unit';
+  const unitVal = item.unit || '';
+  const isCustom = unitVal && !UNITS.slice(0,-1).includes(unitVal);
   row.innerHTML = `
     <input class="li-input" placeholder="Service description" value="${item.desc}" oninput="calcTotals()">
     <input class="li-input" type="number" min="0" value="${item.qty}" oninput="calcTotals()" style="text-align:center">
-    <select class="li-input li-unit" style="text-align:center">
-      ${UNITS.map(u => `<option value="${u}" ${u===unitVal?'selected':''}>${u}</option>`).join('')}
-    </select>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <select class="li-input li-unit-select" style="text-align:center;font-size:12px" onchange="handleUnitChange(this)">
+        <option value="" ${!unitVal?'selected':''}>— select —</option>
+        ${UNITS.slice(0,-1).map(u => `<option value="${u}" ${u===unitVal&&!isCustom?'selected':''}>${u}</option>`).join('')}
+        <option value="custom…" ${isCustom?'selected':''}>custom…</option>
+      </select>
+      <input class="li-input li-unit-custom" placeholder="e.g. pallet" value="${isCustom?unitVal:''}" style="display:${isCustom?'block':'none'};font-size:12px;padding:4px 6px" oninput="calcTotals()">
+    </div>
     <input class="li-input" type="number" min="0" step="0.01" value="${item.price}" oninput="calcTotals()" placeholder="0.00">
     <input class="li-input" type="number" min="0" max="100" value="${item.tax}" oninput="calcTotals()" placeholder="0" style="text-align:center">
     <div class="li-amount" style="text-align:right;font-weight:600;font-size:14px;color:var(--text-primary);padding:0 4px">$0.00</div>
@@ -2081,6 +2087,17 @@ function addLineItem(item=null) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
     </button>`;
   container.appendChild(row);
+  calcTotals();
+}
+function handleUnitChange(sel) {
+  const customInput = sel.closest('div').querySelector('.li-unit-custom');
+  if (sel.value === 'custom…') {
+    customInput.style.display = 'block';
+    customInput.focus();
+  } else {
+    customInput.style.display = 'none';
+    customInput.value = '';
+  }
   calcTotals();
 }
 function calcTotals() {
@@ -2130,7 +2147,7 @@ function collectInvoiceData() {
   const items = [];
   document.querySelectorAll('.line-item-row').forEach(row => {
     const inputs = row.querySelectorAll('input');
-    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, unit: row.querySelector('.li-unit')?.value || 'unit', price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
+    items.push({ desc:inputs[0]?.value||'', qty:parseFloat(inputs[1]?.value)||0, unit: (()=>{ const sel=row.querySelector('.li-unit-select'); const custom=row.querySelector('.li-unit-custom'); return sel?.value==='custom…' ? (custom?.value||'') : (sel?.value||''); })(), price:parseFloat(inputs[2]?.value)||0, tax:parseFloat(inputs[3]?.value)||0 });
   });
   return {
     number: document.getElementById('inv-number').value,
@@ -2207,7 +2224,7 @@ async function saveInvoice(status) {
       quantity: item.qty || 1,
       unit_price: item.price || 0,
       tax_rate: item.tax || 0,
-      unit_label: item.unit || 'unit',
+      unit_label: item.unit || '',
       sort_order: i
     }));
     let { error: liErr } = await sb.from('invoice_items').insert(lineItemsFull);
@@ -2296,7 +2313,7 @@ async function sendInvoiceEmail(invoiceId) {
             ${(inv.items||[]).map((item,i) => `
               <tr style="background:${i%2===0?'#f8fafc':'white'}">
                 <td style="padding:10px;color:#374151">${item.desc}</td>
-                <td style="padding:10px;color:#374151;text-align:center">${item.qty}${item.unit && item.unit!=='unit' ? ' '+item.unit : ''}</td>
+                <td style="padding:10px;color:#374151;text-align:center">${item.qty}${item.unit ? ' '+item.unit : ''}</td>
                 <td style="padding:10px;color:#374151;text-align:right">$${parseFloat(item.price).toFixed(2)}</td>
                 <td style="padding:10px;color:#374151;text-align:right;font-weight:600">$${(item.qty*item.price).toFixed(2)}</td>
               </tr>
@@ -2554,7 +2571,7 @@ function downloadPDF() {
     if (idx % 2 === 0) { doc.setFillColor(249,250,251); doc.rect(14, y-4, 182, 8, 'F'); }
     doc.text(item.desc || '', 18, y+0.5);
     doc.text(String(item.qty), 108, y+0.5, { align: 'right' });
-    doc.text(item.unit || 'unit', 128, y+0.5, { align: 'right' });
+    doc.text(item.unit || '', 128, y+0.5, { align: 'right' });
     doc.text(fmt(item.price, data.currency), 160, y+0.5, { align: 'right' });
     doc.text(fmt(item.qty * item.price, data.currency), 196, y+0.5, { align: 'right' });
     y += 8;
