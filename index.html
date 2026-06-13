@@ -904,7 +904,7 @@ tr:hover td { background: var(--bg-secondary); }
                   </div>
                   <div class="settings-section">
                     <div class="settings-label">Default Terms</div>
-                    <textarea class="form-input form-textarea" id="settings-default-terms" style="min-height:100px">Payment is due within 30 days of invoice date. Late payments are subject to a 1.5% monthly interest charge. Please make checks payable to Acme Studio Inc.</textarea>
+                    <textarea class="form-input form-textarea" id="settings-default-terms" style="min-height:100px">Payment is due within 15 days of invoice date. Late payments are subject to a 1.5% monthly interest charge. Please make checks payable to Acme Studio Inc.</textarea>
                   </div>
                   <button class="btn btn-primary" onclick="saveInvoiceSettings()">Save changes</button>
                 </div>
@@ -1070,7 +1070,7 @@ tr:hover td { background: var(--bg-secondary); }
       <!-- Notes & Terms -->
       <div class="grid-2">
         <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" id="inv-notes" placeholder="Thank you for your business!"></textarea></div>
-        <div class="form-group"><label class="form-label">Terms & Conditions</label><textarea class="form-input form-textarea" id="inv-terms" placeholder="Payment due within 30 days...">Payment is due within 30 days of invoice date.</textarea></div>
+        <div class="form-group"><label class="form-label">Terms & Conditions</label><textarea class="form-input form-textarea" id="inv-terms" placeholder="Payment due within 15 days...">Payment is due within 15 days of invoice date.</textarea></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1659,7 +1659,7 @@ async function showPublicInvoice(invoiceId) {
 
       <!-- Closing message -->
       <div style="text-align:center;margin-top:32px;font-size:22px;font-family:Georgia,serif;font-style:italic;color:#1B2A4A">
-        Thank you for your business!
+        We're grateful to have you as a client!
       </div>
 
       <div class="no-print" style="text-align:center;margin-top:44px">
@@ -1992,7 +1992,7 @@ function openNewInvoice() {
   document.getElementById('inv-province').value = '';
   document.getElementById('inv-lang').value = 'en';
   document.getElementById('inv-notes').value = 'Thank you for your business!';
-  document.getElementById('inv-terms').value = 'Payment is due within 30 days of invoice date.';
+  document.getElementById('inv-terms').value = 'Payment is due within 15 days of invoice date.';
   document.getElementById('line-items-container').innerHTML = '';
   addLineItem();
   updateTaxHint();
@@ -2992,7 +2992,7 @@ function convertQuoteToInvoice(quoteId) {
   document.getElementById('inv-province').value = client?.province || '';
   document.getElementById('inv-lang').value = client?.language || 'en';
   document.getElementById('inv-notes').value = 'Thank you for your business!';
-  document.getElementById('inv-terms').value = 'Payment is due within 30 days of invoice date.';
+  document.getElementById('inv-terms').value = 'Payment is due within 15 days of invoice date.';
 
   // Seed a line item with the quote total (quotes store a flat amount)
   document.getElementById('line-items-container').innerHTML = '';
