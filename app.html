@@ -626,7 +626,16 @@ body {
 
 </div>
 
+</script>
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* ── Supabase init — replace with your project URL and anon key ── */
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // e.g. https://xxxx.supabase.co
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
 /* ─────────────────────────────────────────────
    handleCountry — show the right region field
 ───────────────────────────────────────────── */
@@ -785,40 +794,16 @@ async function doSignup(e) {
   btn.disabled = true;
 
   try {
-    // ── TODO: replace with your real auth call ──
-    // Examples:
-    //
-    // Supabase:
-    // const { data, error } = await supabase.auth.signUp({
-    //   email: meta.email, password,
-    //   options: { data: meta }   // stored as user_metadata
-    // });
-    // if (error) throw error;
-    //
-    // Firebase:
-    // const cred = await createUserWithEmailAndPassword(auth, meta.email, password);
-    // await updateProfile(cred.user, { displayName: meta.first_name + ' ' + meta.last_name });
-    //
-    // Custom API:
-    // const res = await fetch('/api/auth/signup', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ ...meta, password })
-    // });
-    // if (!res.ok) { const e = await res.json(); throw new Error(e.message); }
+    // Supabase sign-up
+    const { data, error } = await supabase.auth.signUp({
+      email: meta.email,
+      password,
+      options: { data: meta }   // saved as user_metadata
+    });
+    if (error) throw error;
 
-    // ── Simulated 1.5 s network call (remove this in production) ──
-    await new Promise(r => setTimeout(r, 1500));
-
-    // ── On success: redirect to dashboard ──
-    // window.location.href = '/dashboard';
-
-    // Demo feedback only — remove in production:
-    btn.classList.remove('loading');
-    btn.disabled = false;
-    btn.querySelector('.btn-label').innerHTML = '✓ Account created! Redirecting…';
-    btn.style.background = '#16A34A';
-    btn.style.boxShadow  = '0 4px 16px rgba(22,163,74,0.35)';
+    // On success: redirect to dashboard
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
@@ -834,21 +819,13 @@ async function doSignup(e) {
 ───────────────────────────────────────────── */
 function doGoogleSignup(e) {
   e.preventDefault();
-
-  // Supabase example:
-  // supabase.auth.signInWithOAuth({ provider: 'google' });
-
-  // Firebase example:
-  // signInWithPopup(auth, new GoogleAuthProvider());
-
-  // Direct OAuth redirect (replace placeholders):
-  // window.location.href =
-  //   'https://accounts.google.com/o/oauth2/v2/auth'
-  //   + '?client_id=YOUR_CLIENT_ID'
-  //   + '&redirect_uri=' + encodeURIComponent(window.location.origin + '/auth/callback')
-  //   + '&response_type=code&scope=openid%20email%20profile&prompt=consent';
-
-  // TODO: connect your OAuth provider (Supabase / Firebase / custom OAuth URL)
+  // Supabase Google OAuth — redirects to Google, then back to your site
+  supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/dashboard'
+    }
+  });
 }
 
 /* ─────────────────────────────────────────────
@@ -928,35 +905,12 @@ async function doSignIn(e) {
   btn.disabled = true;
 
   try {
-    // TODO: replace with your real auth call
-    //
-    // Supabase:
-    // const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    // if (error) throw error;
-    //
-    // Firebase:
-    // await signInWithEmailAndPassword(auth, email, password);
-    //
-    // Custom API:
-    // const res = await fetch('/api/auth/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email, password })
-    // });
-    // if (!res.ok) { const err = await res.json(); throw new Error(err.message); }
+    // Supabase sign-in
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
 
-    // ── Simulated delay (remove in production) ──
-    await new Promise(r => setTimeout(r, 1200));
-
-    // ── On success: redirect to dashboard ──
-    // window.location.href = '/dashboard';
-
-    // Demo feedback only — remove in production:
-    btn.classList.remove('loading');
-    btn.disabled = false;
-    btn.querySelector('.btn-label').innerHTML = '&#10003; Signed in! Redirecting&hellip;';
-    btn.style.background = '#16A34A';
-    btn.style.boxShadow  = '0 4px 16px rgba(22,163,74,0.35)';
+    // On success: redirect to dashboard
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
