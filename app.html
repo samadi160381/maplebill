@@ -848,11 +848,15 @@ async function doGoogleSignup(e) {
 ───────────────────────────────────────────── */
 function showSignIn(e) {
   if (e) e.preventDefault();
-  document.getElementById('signup-shell').style.display = 'none';
-  document.getElementById('signin-shell').style.display = 'block';
-  document.getElementById('signin-error-banner').classList.remove('visible');
-  document.getElementById('signin-email').value    = '';
-  document.getElementById('signin-password').value = '';
+  try {
+    document.getElementById('signup-shell').style.display = 'none';
+    document.getElementById('signin-shell').style.display = 'block';
+    document.getElementById('signin-error-banner').classList.remove('visible');
+    document.getElementById('signin-email').value    = '';
+    document.getElementById('signin-password').value = '';
+  } catch(err) {
+    alert('ERROR: ' + err.message);
+  }
 }
 
 function showSignUp(e) {
