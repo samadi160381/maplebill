@@ -449,9 +449,17 @@ tr:hover td { background: var(--bg-secondary); }
   <div class="auth-card">
     <h1 class="auth-title">Create your account</h1>
     <p class="auth-subtitle">Start sending professional invoices today</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+      <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" id="signup-first" placeholder="Jane"></div>
+      <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" id="signup-last" placeholder="Smith"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" type="tel" id="signup-phone" placeholder="+1 (555) 000-0000"></div>
+    <div class="form-group"><label class="form-label">Business Name</label><input class="form-input" type="text" id="signup-biz" placeholder="Acme Inc."></div>
+    <div class="form-group"><label class="form-label">Business Address</label><input class="form-input" type="text" id="signup-addr" placeholder="123 Main St, City, Province"></div>
     <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="signup-email" placeholder="you@company.com"></div>
     <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="signup-pw" placeholder="Minimum 8 characters"></div>
     <button class="btn btn-primary btn-full btn-lg" onclick="doSignup()" style="margin-top:0.5rem">Create account</button>
+
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:0.75rem">By signing up you agree to our Terms of Service and Privacy Policy</p>
   </div>
   <div class="auth-footer">Already have an account? <a href="#" onclick="showAuth('login')">Sign in</a></div>
@@ -1730,8 +1738,16 @@ async function doLogin() {
 async function doSignup() {
   const email = document.getElementById('signup-email') ? document.getElementById('signup-email').value.trim() : '';
   const pw = document.getElementById('signup-pw') ? document.getElementById('signup-pw').value : '';
-  if (!email || !pw) { showToast('Please fill in all fields', 'error'); return; }
-  const { error } = await sb.auth.signUp({ email, password: pw });
+  const first = document.getElementById('signup-first') ? document.getElementById('signup-first').value.trim() : '';
+  const last = document.getElementById('signup-last') ? document.getElementById('signup-last').value.trim() : '';
+  const phone = document.getElementById('signup-phone') ? document.getElementById('signup-phone').value.trim() : '';
+  const biz = document.getElementById('signup-biz') ? document.getElementById('signup-biz').value.trim() : '';
+  const addr = document.getElementById('signup-addr') ? document.getElementById('signup-addr').value.trim() : '';
+  if (!email || !pw || !first || !last || !biz) { showToast('Please fill in all required fields', 'error'); return; }
+  const { data, error } = await sb.auth.signUp({
+    email, password: pw,
+    options: { data: { first_name: first, last_name: last, phone: phone, business_name: biz, business_address: addr } }
+  });
   if (error) showToast(error.message, 'error');
   else { showToast('Check your email to confirm your account!', 'success'); showAuth('login'); }
 }
