@@ -536,7 +536,7 @@ body {
         </button>
 
         <p class="form-footer">
-          Already have an account? <a href="javascript:void(0)" onclick="showSignIn(event)">Sign in</a>
+          Already have an account? <a href="#" onclick="event.preventDefault();document.getElementById('signup-shell').style.display='none';document.getElementById('signin-shell').style.display='block';">Sign in</a>
         </p>
 
         <div class="trust-badges">
