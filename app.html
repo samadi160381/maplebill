@@ -362,15 +362,16 @@ body {
 
   <!-- RIGHT PANEL -->
   <div class="panel-right">
-    <div class="form-shell">
+
+    <!-- ── SIGNUP VIEW ── -->
+    <div id="signup-shell" class="form-shell">
 
       <div class="form-top">
         <h2 class="form-title">Create your account</h2>
         <p class="form-sub">Free for 30 days. No credit card required.</p>
       </div>
 
-      <!-- Google SSO -->
-      <a id="btn-google" href="#" class="btn-google" onclick="doGoogleSignup(event)">
+      <a href="javascript:void(0)" class="btn-google" onclick="doGoogleSignup(event)">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
           <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
@@ -386,9 +387,8 @@ body {
         <div class="divider-line"></div>
       </div>
 
-      <!-- Global error banner -->
       <div class="form-error-banner" id="form-error-banner">
-        <span>⚠</span>
+        <span>&#9888;</span>
         <span id="form-error-text">Please fix the errors above.</span>
       </div>
 
@@ -432,7 +432,6 @@ body {
           <span class="pwd-label" id="pwd-label">Enter a password</span>
         </div>
 
-        <!-- Business info -->
         <div class="section-label" style="margin-top:8px;">Business info</div>
 
         <div class="field">
@@ -440,113 +439,91 @@ body {
           <input id="biz" type="text" placeholder="Sophie Leblanc Studio" autocomplete="organization">
         </div>
 
-        <!-- Country picker -->
         <div class="field">
           <label for="country">Country</label>
           <select id="country" onchange="handleCountry(this.value)">
-            <option value="" disabled selected>Select your country…</option>
-            <option value="CA">🇨🇦 Canada</option>
-            <option value="US">🇺🇸 United States</option>
-            <option value="GB">🇬🇧 United Kingdom</option>
-            <option value="AU">🇦🇺 Australia</option>
-            <option value="FR">🇫🇷 France</option>
-            <option value="DE">🇩🇪 Germany</option>
-            <option value="NL">🇳🇱 Netherlands</option>
-            <option value="BE">🇧🇪 Belgium</option>
-            <option value="CH">🇨🇭 Switzerland</option>
-            <option value="ES">🇪🇸 Spain</option>
-            <option value="IT">🇮🇹 Italy</option>
-            <option value="PT">🇵🇹 Portugal</option>
-            <option value="SE">🇸🇪 Sweden</option>
-            <option value="NO">🇳🇴 Norway</option>
-            <option value="DK">🇩🇰 Denmark</option>
-            <option value="FI">🇫🇮 Finland</option>
-            <option value="NZ">🇳🇿 New Zealand</option>
-            <option value="SG">🇸🇬 Singapore</option>
-            <option value="IN">🇮🇳 India</option>
-            <option value="BR">🇧🇷 Brazil</option>
-            <option value="MX">🇲🇽 Mexico</option>
-            <option value="JP">🇯🇵 Japan</option>
-            <option value="KR">🇰🇷 South Korea</option>
-            <option value="ZA">🇿🇦 South Africa</option>
-            <option value="NG">🇳🇬 Nigeria</option>
-            <option value="OTHER">🌍 Other</option>
+            <option value="" disabled selected>Select your country&#8230;</option>
+            <option value="CA">&#127464;&#127462; Canada</option>
+            <option value="US">&#127482;&#127480; United States</option>
+            <option value="GB">&#127468;&#127463; United Kingdom</option>
+            <option value="AU">&#127462;&#127482; Australia</option>
+            <option value="FR">&#127467;&#127479; France</option>
+            <option value="DE">&#127465;&#127466; Germany</option>
+            <option value="NL">&#127475;&#127473; Netherlands</option>
+            <option value="BE">&#127463;&#127466; Belgium</option>
+            <option value="CH">&#127464;&#127469; Switzerland</option>
+            <option value="ES">&#127466;&#127480; Spain</option>
+            <option value="IT">&#127470;&#127481; Italy</option>
+            <option value="PT">&#127477;&#127481; Portugal</option>
+            <option value="SE">&#127480;&#127466; Sweden</option>
+            <option value="NO">&#127475;&#127476; Norway</option>
+            <option value="DK">&#127465;&#127472; Denmark</option>
+            <option value="FI">&#127467;&#127470; Finland</option>
+            <option value="NZ">&#127475;&#127487; New Zealand</option>
+            <option value="SG">&#127480;&#127468; Singapore</option>
+            <option value="IN">&#127470;&#127475; India</option>
+            <option value="BR">&#127463;&#127479; Brazil</option>
+            <option value="MX">&#127474;&#127485; Mexico</option>
+            <option value="JP">&#127471;&#127477; Japan</option>
+            <option value="KR">&#127472;&#127479; South Korea</option>
+            <option value="ZA">&#127487;&#127462; South Africa</option>
+            <option value="NG">&#127475;&#127468; Nigeria</option>
+            <option value="OTHER">&#127757; Other</option>
           </select>
         </div>
 
-        <!-- Canada: Province dropdown -->
         <div class="field region-canada" id="region-canada">
           <label for="province">Province / Territory</label>
           <select id="province">
-            <option value="" disabled selected>Select…</option>
-            <option>Alberta</option>
-            <option>British Columbia</option>
-            <option>Manitoba</option>
-            <option>New Brunswick</option>
-            <option>Newfoundland &amp; Labrador</option>
-            <option>Northwest Territories</option>
-            <option>Nova Scotia</option>
-            <option>Nunavut</option>
-            <option>Ontario</option>
-            <option>Prince Edward Island</option>
-            <option>Québec</option>
-            <option>Saskatchewan</option>
-            <option>Yukon</option>
+            <option value="" disabled selected>Select&#8230;</option>
+            <option>Alberta</option><option>British Columbia</option><option>Manitoba</option>
+            <option>New Brunswick</option><option>Newfoundland &amp; Labrador</option>
+            <option>Northwest Territories</option><option>Nova Scotia</option><option>Nunavut</option>
+            <option>Ontario</option><option>Prince Edward Island</option><option>Qu&#233;bec</option>
+            <option>Saskatchewan</option><option>Yukon</option>
           </select>
         </div>
 
-        <!-- US: State dropdown -->
         <div class="field region-other" id="region-us">
           <label for="state">State</label>
           <select id="state">
-            <option value="" disabled selected>Select…</option>
-            <option>Alabama</option><option>Alaska</option><option>Arizona</option>
-            <option>Arkansas</option><option>California</option><option>Colorado</option>
-            <option>Connecticut</option><option>Delaware</option><option>Florida</option>
-            <option>Georgia</option><option>Hawaii</option><option>Idaho</option>
-            <option>Illinois</option><option>Indiana</option><option>Iowa</option>
-            <option>Kansas</option><option>Kentucky</option><option>Louisiana</option>
-            <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
-            <option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
-            <option>Missouri</option><option>Montana</option><option>Nebraska</option>
-            <option>Nevada</option><option>New Hampshire</option><option>New Jersey</option>
-            <option>New Mexico</option><option>New York</option><option>North Carolina</option>
-            <option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
-            <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option>
-            <option>South Carolina</option><option>South Dakota</option><option>Tennessee</option>
-            <option>Texas</option><option>Utah</option><option>Vermont</option>
-            <option>Virginia</option><option>Washington</option><option>West Virginia</option>
+            <option value="" disabled selected>Select&#8230;</option>
+            <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+            <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+            <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+            <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+            <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+            <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+            <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+            <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+            <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+            <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+            <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+            <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
             <option>Wisconsin</option><option>Wyoming</option>
           </select>
         </div>
 
-        <!-- AU: State dropdown -->
         <div class="field region-other" id="region-au">
           <label for="au-state">State / Territory</label>
           <select id="au-state">
-            <option value="" disabled selected>Select…</option>
-            <option>Australian Capital Territory</option>
-            <option>New South Wales</option>
-            <option>Northern Territory</option>
-            <option>Queensland</option>
-            <option>South Australia</option>
-            <option>Tasmania</option>
-            <option>Victoria</option>
-            <option>Western Australia</option>
+            <option value="" disabled selected>Select&#8230;</option>
+            <option>Australian Capital Territory</option><option>New South Wales</option>
+            <option>Northern Territory</option><option>Queensland</option>
+            <option>South Australia</option><option>Tasmania</option>
+            <option>Victoria</option><option>Western Australia</option>
           </select>
         </div>
 
-        <!-- Free-text region for everyone else -->
         <div class="field region-other" id="region-text">
           <label for="region">State / Region <span class="field-optional">(optional)</span></label>
-          <input id="region" type="text" placeholder="e.g. Bavaria, Île-de-France">
+          <input id="region" type="text" placeholder="e.g. Bavaria, Ile-de-France">
         </div>
 
-        <!-- Terms -->
         <div class="terms-row">
           <input type="checkbox" id="terms">
           <label for="terms">
-            I agree to MapleBill's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            I agree to MapleBill&#8217;s <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
           </label>
         </div>
 
@@ -559,92 +536,92 @@ body {
         </button>
 
         <p class="form-footer">
-          Already have an account? <a href="#" onclick="showSignIn(event)">Sign in</a>
+          Already have an account? <a href="javascript:void(0)" onclick="showSignIn(event)">Sign in</a>
         </p>
 
         <div class="trust-badges">
-          <div class="trust-item"><span class="trust-icon">🔒</span> SSL encrypted</div>
-          <div class="trust-item"><span class="trust-icon">🌍</span> Available worldwide</div>
-          <div class="trust-item"><span class="trust-icon">✓</span> SOC 2 compliant</div>
+          <div class="trust-item"><span class="trust-icon">&#128274;</span> SSL encrypted</div>
+          <div class="trust-item"><span class="trust-icon">&#127757;</span> Available worldwide</div>
+          <div class="trust-item"><span class="trust-icon">&#10003;</span> SOC 2 compliant</div>
         </div>
 
       </form>
+    </div>
 
-      <!-- ── SIGN IN FORM (hidden by default) ── -->
-      <div id="signin-shell" style="display:none;">
+    <!-- ── SIGN IN VIEW (hidden by default) ── -->
+    <div id="signin-shell" class="form-shell" style="display:none;">
 
-        <div class="form-top">
-          <h2 class="form-title">Welcome back</h2>
-          <p class="form-sub">Sign in to your MapleBill account.</p>
-        </div>
-
-        <a href="#" class="btn-google" onclick="doGoogleSignup(event)">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
-            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-          </svg>
-          Continue with Google
-        </a>
-
-        <div class="divider">
-          <div class="divider-line"></div>
-          <span class="divider-text">or sign in with email</span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="form-error-banner" id="signin-error-banner">
-          <span>&#9888;</span>
-          <span id="signin-error-text">Invalid email or password.</span>
-        </div>
-
-        <form id="signin-form" onsubmit="doSignIn(event)" novalidate>
-
-          <div class="field">
-            <label for="signin-email">Email address</label>
-            <input id="signin-email" type="email" placeholder="sophie@studio.com" autocomplete="email">
-          </div>
-
-          <div class="field">
-            <label for="signin-password">Password</label>
-            <div class="pwd-wrap">
-              <input id="signin-password" type="password" placeholder="Your password" autocomplete="current-password">
-              <button class="pwd-toggle" type="button" onclick="toggleSignInPwd()" aria-label="Show or hide password">
-                <svg id="signin-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <p style="text-align:right; margin-bottom:20px; margin-top:-6px;">
-            <a href="#" style="font-size:0.78rem; color:var(--navy); font-weight:600; text-decoration:none;">Forgot password?</a>
-          </p>
-
-          <button type="submit" class="btn-submit" id="signin-btn">
-            <span class="btn-label" style="display:flex;align-items:center;gap:8px;">
-              Sign in
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-            <div class="spinner"></div>
-          </button>
-
-          <p class="form-footer">
-            Don't have an account? <a href="#" onclick="showSignUp(event)">Create one free</a>
-          </p>
-
-          <div class="trust-badges">
-            <div class="trust-item"><span class="trust-icon">&#128274;</span> SSL encrypted</div>
-            <div class="trust-item"><span class="trust-icon">&#127757;</span> Available worldwide</div>
-            <div class="trust-item"><span class="trust-icon">&#10003;</span> SOC 2 compliant</div>
-          </div>
-
-        </form>
+      <div class="form-top">
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-sub">Sign in to your MapleBill account.</p>
       </div>
 
+      <a href="javascript:void(0)" class="btn-google" onclick="doGoogleSignup(event)">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </a>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or sign in with email</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="form-error-banner" id="signin-error-banner">
+        <span>&#9888;</span>
+        <span id="signin-error-text">Invalid email or password.</span>
+      </div>
+
+      <form id="signin-form" onsubmit="doSignIn(event)" novalidate>
+
+        <div class="field">
+          <label for="signin-email">Email address</label>
+          <input id="signin-email" type="email" placeholder="sophie@studio.com" autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="signin-password">Password</label>
+          <div class="pwd-wrap">
+            <input id="signin-password" type="password" placeholder="Your password" autocomplete="current-password">
+            <button class="pwd-toggle" type="button" onclick="toggleSignInPwd()" aria-label="Show or hide password">
+              <svg id="signin-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p style="text-align:right; margin-bottom:20px; margin-top:-6px;">
+          <a href="#" style="font-size:0.78rem; color:var(--navy); font-weight:600; text-decoration:none;">Forgot password?</a>
+        </p>
+
+        <button type="submit" class="btn-submit" id="signin-btn">
+          <span class="btn-label" style="display:flex;align-items:center;gap:8px;">
+            Sign in
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <div class="spinner"></div>
+        </button>
+
+        <p class="form-footer">
+          Don&#8217;t have an account? <a href="javascript:void(0)" onclick="showSignUp(event)">Create one free</a>
+        </p>
+
+        <div class="trust-badges">
+          <div class="trust-item"><span class="trust-icon">&#128274;</span> SSL encrypted</div>
+          <div class="trust-item"><span class="trust-icon">&#127757;</span> Available worldwide</div>
+          <div class="trust-item"><span class="trust-icon">&#10003;</span> SOC 2 compliant</div>
+        </div>
+
+      </form>
     </div>
+
   </div>
 
 </div>
@@ -891,9 +868,8 @@ function doGoogleSignup(e) {
 ───────────────────────────────────────────── */
 function showSignIn(e) {
   if (e) e.preventDefault();
-  document.getElementById('signup-form').closest('.form-shell').style.display = 'none';
+  document.getElementById('signup-shell').style.display = 'none';
   document.getElementById('signin-shell').style.display = 'block';
-  // reset any previous errors
   document.getElementById('signin-error-banner').classList.remove('visible');
   document.getElementById('signin-email').value    = '';
   document.getElementById('signin-password').value = '';
@@ -901,7 +877,7 @@ function showSignIn(e) {
 
 function showSignUp(e) {
   if (e) e.preventDefault();
-  document.getElementById('signup-form').closest('.form-shell').style.display = 'block';
+  document.getElementById('signup-shell').style.display = 'block';
   document.getElementById('signin-shell').style.display = 'none';
 }
 
