@@ -626,6 +626,7 @@ body {
 
 </div>
 
+
 <!-- Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -815,15 +816,19 @@ async function doSignup(e) {
    Replace the href on #btn-google with your
    real OAuth URL, or call your SDK here.
 ───────────────────────────────────────────── */
-function doGoogleSignup(e) {
+async function doGoogleSignup(e) {
   e.preventDefault();
-  // Supabase Google OAuth — redirects to Google, then back to your site
-  supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/dashboard'
-    }
-  });
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard'
+      }
+    });
+    if (error) throw error;
+  } catch (err) {
+    alert('Google sign-in error: ' + (err.message || JSON.stringify(err)));
+  }
 }
 
 /* ─────────────────────────────────────────────
