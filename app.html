@@ -798,12 +798,15 @@ async function doSignup(e) {
     const { data, error } = await supabase.auth.signUp({
       email: meta.email,
       password,
-      options: { data: meta }   // saved as user_metadata
+      options: {
+        data: meta,   // saved as user_metadata
+        emailRedirectTo: window.location.origin + '/dashboard.html'
+      }
     });
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
@@ -823,7 +826,7 @@ async function doGoogleSignup(e) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/dashboard'
+        redirectTo: window.location.origin + '/dashboard.html'
       }
     });
     if (error) throw error;
@@ -918,7 +921,7 @@ async function doSignIn(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
