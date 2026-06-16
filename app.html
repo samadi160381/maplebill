@@ -727,7 +727,6 @@ function showBanner(msg) {
   const banner = document.getElementById('form-error-banner');
   document.getElementById('form-error-text').textContent = msg;
   banner.classList.add('visible');
-  alert(msg);
 }
 
 function collectUserMetadata() {
@@ -757,7 +756,7 @@ function collectUserMetadata() {
 ───────────────────────────────────────────── */
 async function doSignup(e) {
   e.preventDefault();
-  alert("Form submitted!");
+  alert("Submit clicked!");
   clearFieldErrors();
 
   const meta     = collectUserMetadata();
@@ -803,15 +802,13 @@ async function doSignup(e) {
     });
     if (error) throw error;
 
-    // On success: show message and redirect
-    showBanner('✅ Account created! Check your email to confirm, then sign in.');
-    btn.classList.remove('loading');
-    btn.disabled = false;
+    // On success: redirect to dashboard
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
     btn.disabled = false;
-    showBanner(err.message || 'Something went wrong. Please try again.');
+    alert(err.message || 'Something went wrong'); showBanner(err.message || 'Something went wrong. Please try again.');
   }
 }
 
