@@ -634,14 +634,13 @@ body {
 const SUPABASE_URL  = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtZ3FmbWVqa2ppanZmanhxd2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTY3NjksImV4cCI6MjA5Njg3Mjc2OX0.S8tn-Otj04_ACS5bNVrNlsM4D599QqCXXQYiJeghmKQ';
 try {
-  if (!window.supabase) { alert('Supabase SDK did not load!'); }
-} catch(e) { alert('Pre-check error: ' + e.message); }
+  if (!window.supabase) { console.error('Supabase SDK did not load!'); }
+} catch(e) { console.error('Pre-check error: ' + e.message); }
 let supabase;
 try {
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  alert('Supabase client created OK');
 } catch(e) {
-  alert('Supabase init error: ' + e.message);
+  console.error('Supabase init error: ' + e.message);
 }
 
 /* ─────────────────────────────────────────────
@@ -765,7 +764,6 @@ function collectUserMetadata() {
 ───────────────────────────────────────────── */
 async function doSignup(e) {
   e.preventDefault();
-  alert("Submit clicked!");
   clearFieldErrors();
 
   const meta     = collectUserMetadata();
@@ -812,12 +810,12 @@ async function doSignup(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
     btn.disabled = false;
-    alert(err.message || 'Something went wrong'); showBanner(err.message || 'Something went wrong. Please try again.');
+    showBanner(err.message || 'Something went wrong. Please try again.');
   }
 }
 
@@ -832,7 +830,7 @@ async function doGoogleSignup(e) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/dashboard'
+        redirectTo: window.location.origin + '/dashboard.html'
       }
     });
     if (error) throw error;
@@ -865,7 +863,7 @@ function showSignIn(e) {
     document.getElementById('signin-email').value    = '';
     document.getElementById('signin-password').value = '';
   } catch(err) {
-    alert('ERROR: ' + err.message);
+    console.error('showSignIn error: ' + err.message);
   }
 }
 
@@ -927,7 +925,7 @@ async function doSignIn(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
@@ -947,10 +945,5 @@ async function doSignIn(e) {
 });
 </script>
 </body>
-</html><script>
-window.onerror = function(msg, url, line, col, error) {
-  alert('GLOBAL ERROR: ' + msg + ' at line ' + line + ':' + col);
-  return false;
-};
-</script>
+</html>
 
