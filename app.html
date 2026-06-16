@@ -802,7 +802,7 @@ async function doSignup(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard.html';
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
@@ -917,7 +917,7 @@ async function doSignIn(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard.html';
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
