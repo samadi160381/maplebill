@@ -757,6 +757,7 @@ function collectUserMetadata() {
 ───────────────────────────────────────────── */
 async function doSignup(e) {
   e.preventDefault();
+  alert("Form submitted!");
   clearFieldErrors();
 
   const meta     = collectUserMetadata();
