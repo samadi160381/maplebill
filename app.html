@@ -801,8 +801,10 @@ async function doSignup(e) {
     });
     if (error) throw error;
 
-    // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    // On success: show message and redirect
+    showBanner('✅ Account created! Check your email to confirm, then sign in.');
+    btn.classList.remove('loading');
+    btn.disabled = false;
 
   } catch (err) {
     btn.classList.remove('loading');
