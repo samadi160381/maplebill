@@ -319,8 +319,6 @@ body {
 </style>
 </head>
 <body>
-<button onclick="alert('JS WORKS')" style="position:fixed;top:10px;left:10px;z-index:99999;background:red;color:white;padding:20px;font-size:20px;">TEST JS</button>
-
 
 <div class="page">
 
@@ -635,7 +633,16 @@ body {
 /* ── Supabase init — replace with your project URL and anon key ── */
 const SUPABASE_URL  = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtZ3FmbWVqa2ppanZmanhxd2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTY3NjksImV4cCI6MjA5Njg3Mjc2OX0.S8tn-Otj04_ACS5bNVrNlsM4D599QqCXXQYiJeghmKQ';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+try {
+  if (!window.supabase) { alert('Supabase SDK did not load!'); }
+} catch(e) { alert('Pre-check error: ' + e.message); }
+let supabase;
+try {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  alert('Supabase client created OK');
+} catch(e) {
+  alert('Supabase init error: ' + e.message);
+}
 
 /* ─────────────────────────────────────────────
    handleCountry — show the right region field
