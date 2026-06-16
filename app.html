@@ -536,7 +536,7 @@ body {
         </button>
 
         <p class="form-footer">
-          Already have an account? <a href="#" onclick="event.preventDefault();document.getElementById('signup-shell').style.display='none';document.getElementById('signin-shell').style.display='block';">Sign in</a>
+          Already have an account? <a href="javascript:void(0)" onclick="showSignIn(event)">Sign in</a>
         </p>
 
         <div class="trust-badges">
@@ -626,13 +626,14 @@ body {
 
 </div>
 
+</script>
 
 <!-- Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ── Supabase init — replace with your project URL and anon key ── */
 const SUPABASE_URL  = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtZ3FmbWVqa2ppanZmanhxd2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTY3NjksImV4cCI6MjA5Njg3Mjc2OX0.S8tn-Otj04_ACS5bNVrNlsM4D599QqCXXQYiJeghmKQ';
+const SUPABASE_ANON = 'sb_publishable_A7Ng8DLarg0gXgheHiPqpg_kxO6-GF_';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ─────────────────────────────────────────────
@@ -816,19 +817,15 @@ async function doSignup(e) {
    Replace the href on #btn-google with your
    real OAuth URL, or call your SDK here.
 ───────────────────────────────────────────── */
-async function doGoogleSignup(e) {
+function doGoogleSignup(e) {
   e.preventDefault();
-  try {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/dashboard'
-      }
-    });
-    if (error) throw error;
-  } catch (err) {
-    alert('Google sign-in error: ' + (err.message || JSON.stringify(err)));
-  }
+  // Supabase Google OAuth — redirects to Google, then back to your site
+  supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/dashboard'
+    }
+  });
 }
 
 /* ─────────────────────────────────────────────
@@ -848,15 +845,11 @@ async function doGoogleSignup(e) {
 ───────────────────────────────────────────── */
 function showSignIn(e) {
   if (e) e.preventDefault();
-  try {
-    document.getElementById('signup-shell').style.display = 'none';
-    document.getElementById('signin-shell').style.display = 'block';
-    document.getElementById('signin-error-banner').classList.remove('visible');
-    document.getElementById('signin-email').value    = '';
-    document.getElementById('signin-password').value = '';
-  } catch(err) {
-    alert('ERROR: ' + err.message);
-  }
+  document.getElementById('signup-shell').style.display = 'none';
+  document.getElementById('signin-shell').style.display = 'block';
+  document.getElementById('signin-error-banner').classList.remove('visible');
+  document.getElementById('signin-email').value    = '';
+  document.getElementById('signin-password').value = '';
 }
 
 function showSignUp(e) {
