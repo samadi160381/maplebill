@@ -947,4 +947,10 @@ async function doSignIn(e) {
 });
 </script>
 </body>
-</html>
+</html><script>
+window.onerror = function(msg, url, line, col, error) {
+  alert('GLOBAL ERROR: ' + msg + ' at line ' + line + ':' + col);
+  return false;
+};
+</script>
+
