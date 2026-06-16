@@ -633,16 +633,7 @@ body {
 /* ── Supabase init — replace with your project URL and anon key ── */
 const SUPABASE_URL  = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtZ3FmbWVqa2ppanZmanhxd2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTY3NjksImV4cCI6MjA5Njg3Mjc2OX0.S8tn-Otj04_ACS5bNVrNlsM4D599QqCXXQYiJeghmKQ';
-let supabase = null;
-try {
-  if (window.supabase && typeof window.supabase.createClient === 'function') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  } else {
-    console.error('Supabase SDK not loaded yet — auth will not work on this page load.');
-  }
-} catch (e) {
-  console.error('Supabase init failed:', e);
-}
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ─────────────────────────────────────────────
    handleCountry — show the right region field
@@ -765,12 +756,8 @@ function collectUserMetadata() {
 ───────────────────────────────────────────── */
 async function doSignup(e) {
   e.preventDefault();
+  alert("Submit clicked!");
   clearFieldErrors();
-
-  if (!supabase) {
-    showBanner('Connection error — please refresh the page and try again.');
-    return;
-  }
 
   const meta     = collectUserMetadata();
   const password = document.getElementById('password').value;
@@ -811,23 +798,17 @@ async function doSignup(e) {
     const { data, error } = await supabase.auth.signUp({
       email: meta.email,
       password,
-      options: {
-        data: meta,   // saved as user_metadata
-        emailRedirectTo: window.location.origin + '/dashboard.html'
-      }
+      options: { data: meta }   // saved as user_metadata
     });
     if (error) throw error;
 
-    // On success: tell user to confirm their email (don't redirect — account isn't confirmed yet)
-    btn.classList.remove('loading');
-    btn.disabled = false;
-    showBanner('Account created! Please check your email and click the confirmation link to activate your account before signing in.');
-    return;
+    // On success: redirect to dashboard
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
     btn.disabled = false;
-    showBanner(err.message || 'Something went wrong. Please try again.');
+    alert(err.message || 'Something went wrong'); showBanner(err.message || 'Something went wrong. Please try again.');
   }
 }
 
@@ -838,12 +819,11 @@ async function doSignup(e) {
 ───────────────────────────────────────────── */
 async function doGoogleSignup(e) {
   e.preventDefault();
-  if (!supabase) { alert('Connection error — please refresh the page and try again.'); return; }
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/dashboard.html'
+        redirectTo: window.location.origin + '/dashboard'
       }
     });
     if (error) throw error;
@@ -910,12 +890,6 @@ async function doSignIn(e) {
   const banner = document.getElementById('signin-error-banner');
   banner.classList.remove('visible');
 
-  if (!supabase) {
-    document.getElementById('signin-error-text').textContent = 'Connection error — please refresh the page and try again.';
-    banner.classList.add('visible');
-    return;
-  }
-
   const email    = document.getElementById('signin-email').value.trim();
   const password = document.getElementById('signin-password').value;
 
@@ -944,7 +918,7 @@ async function doSignIn(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard.html';
+    window.location.href = '/dashboard';
 
   } catch (err) {
     btn.classList.remove('loading');
