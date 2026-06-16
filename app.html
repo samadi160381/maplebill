@@ -805,8 +805,11 @@ async function doSignup(e) {
     });
     if (error) throw error;
 
-    // On success: redirect to dashboard
-    window.location.href = '/dashboard.html';
+    // On success: tell user to confirm their email (don't redirect — account isn't confirmed yet)
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    showBanner('Account created! Please check your email and click the confirmation link to activate your account before signing in.');
+    return;
 
   } catch (err) {
     btn.classList.remove('loading');
