@@ -536,7 +536,7 @@ body {
         </button>
 
         <p class="form-footer">
-          Already have an account? <a href="javascript:void(0)" onclick="showSignIn(event)">Sign in</a>
+          Already have an account? <a href="#" onclick="event.preventDefault();document.getElementById('signup-shell').style.display='none';document.getElementById('signin-shell').style.display='block';">Sign in</a>
         </p>
 
         <div class="trust-badges">
@@ -626,7 +626,6 @@ body {
 
 </div>
 
-</script>
 
 <!-- Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -803,7 +802,7 @@ async function doSignup(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
@@ -817,15 +816,19 @@ async function doSignup(e) {
    Replace the href on #btn-google with your
    real OAuth URL, or call your SDK here.
 ───────────────────────────────────────────── */
-function doGoogleSignup(e) {
+async function doGoogleSignup(e) {
   e.preventDefault();
-  // Supabase Google OAuth — redirects to Google, then back to your site
-  supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/dashboard'
-    }
-  });
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard'
+      }
+    });
+    if (error) throw error;
+  } catch (err) {
+    alert('Google sign-in error: ' + (err.message || JSON.stringify(err)));
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -845,11 +848,15 @@ function doGoogleSignup(e) {
 ───────────────────────────────────────────── */
 function showSignIn(e) {
   if (e) e.preventDefault();
-  document.getElementById('signup-shell').style.display = 'none';
-  document.getElementById('signin-shell').style.display = 'block';
-  document.getElementById('signin-error-banner').classList.remove('visible');
-  document.getElementById('signin-email').value    = '';
-  document.getElementById('signin-password').value = '';
+  try {
+    document.getElementById('signup-shell').style.display = 'none';
+    document.getElementById('signin-shell').style.display = 'block';
+    document.getElementById('signin-error-banner').classList.remove('visible');
+    document.getElementById('signin-email').value    = '';
+    document.getElementById('signin-password').value = '';
+  } catch(err) {
+    alert('ERROR: ' + err.message);
+  }
 }
 
 function showSignUp(e) {
@@ -910,7 +917,7 @@ async function doSignIn(e) {
     if (error) throw error;
 
     // On success: redirect to dashboard
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard.html';
 
   } catch (err) {
     btn.classList.remove('loading');
