@@ -1525,7 +1525,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Allow landing page links like app.html#signup or app.html#login
     const hash = window.location.hash.replace('#', '');
     const target = (hash === 'signup' || hash === 'reset') ? hash : 'login';
-    document.getElementById('screen-' + target).style.display = 'flex';
+    document.getElementById('screen-' + target).style.display = '';
     document.getElementById('screen-' + target).classList.add('active');
   }
 });
@@ -1710,10 +1710,8 @@ function enterApp(user) {
 
 // ── Auth ──
 function showAuth(screen) {
-  document.querySelectorAll('.auth-screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-  const el = document.getElementById('screen-' + screen);
-  el.style.display = 'flex';
-  el.classList.add('active');
+  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
 }
 
 async function doLogin() {
