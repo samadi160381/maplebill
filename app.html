@@ -633,7 +633,16 @@ body {
 /* ── Supabase init — replace with your project URL and anon key ── */
 const SUPABASE_URL  = 'https://hmgqfmejkjijvfjxqwct.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtZ3FmbWVqa2ppanZmanhxd2N0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTY3NjksImV4cCI6MjA5Njg3Mjc2OX0.S8tn-Otj04_ACS5bNVrNlsM4D599QqCXXQYiJeghmKQ';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let supabase = null;
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  } else {
+    console.error('Supabase SDK not loaded yet — auth will not work on this page load.');
+  }
+} catch (e) {
+  console.error('Supabase init failed:', e);
+}
 
 /* ─────────────────────────────────────────────
    handleCountry — show the right region field
@@ -756,8 +765,12 @@ function collectUserMetadata() {
 ───────────────────────────────────────────── */
 async function doSignup(e) {
   e.preventDefault();
-  alert("Submit clicked!");
   clearFieldErrors();
+
+  if (!supabase) {
+    showBanner('Connection error — please refresh the page and try again.');
+    return;
+  }
 
   const meta     = collectUserMetadata();
   const password = document.getElementById('password').value;
@@ -814,7 +827,7 @@ async function doSignup(e) {
   } catch (err) {
     btn.classList.remove('loading');
     btn.disabled = false;
-    alert(err.message || 'Something went wrong'); showBanner(err.message || 'Something went wrong. Please try again.');
+    showBanner(err.message || 'Something went wrong. Please try again.');
   }
 }
 
@@ -825,6 +838,7 @@ async function doSignup(e) {
 ───────────────────────────────────────────── */
 async function doGoogleSignup(e) {
   e.preventDefault();
+  if (!supabase) { alert('Connection error — please refresh the page and try again.'); return; }
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -895,6 +909,12 @@ async function doSignIn(e) {
   e.preventDefault();
   const banner = document.getElementById('signin-error-banner');
   banner.classList.remove('visible');
+
+  if (!supabase) {
+    document.getElementById('signin-error-text').textContent = 'Connection error — please refresh the page and try again.';
+    banner.classList.add('visible');
+    return;
+  }
 
   const email    = document.getElementById('signin-email').value.trim();
   const password = document.getElementById('signin-password').value;
