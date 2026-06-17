@@ -1690,6 +1690,7 @@ sb.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' && session) {
     enterApp(session.user);
   } else if (event === 'SIGNED_OUT') {
+    if (loggingOut) return;
     document.getElementById('app').style.display = 'none';
     document.querySelectorAll('.auth-screen').forEach(s => { s.style.display=''; s.classList.remove('active'); });
     document.getElementById('screen-login').classList.add('active');
@@ -1734,7 +1735,10 @@ async function doSignup() {
   else { showToast('Check your email to confirm your account!', 'success'); showAuth('login'); }
 }
 
+let loggingOut = false;
+
 async function doLogout() {
+  loggingOut = true;
   await sb.auth.signOut();
   window.location.href = 'app.html';
 }
