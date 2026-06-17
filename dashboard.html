@@ -1739,6 +1739,7 @@ let loggingOut = false;
 
 async function doLogout() {
   loggingOut = true;
+  document.getElementById('app').style.display = 'none';
   await sb.auth.signOut();
   window.location.href = 'app.html';
 }
