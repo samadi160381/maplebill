@@ -266,13 +266,38 @@ body { font-family: 'Inter', sans-serif; color: var(--navy); background: var(--b
   }
 
   /* ---------- toggle sign in / sign up ---------- */
-  byId('go-signin').addEventListener('click', function () {
+  function showSignin() {
     byId('signup-shell').style.display = 'none';
     byId('signin-shell').style.display = 'block';
-  });
-  byId('go-signup').addEventListener('click', function () {
+  }
+  function showSignup() {
     byId('signin-shell').style.display = 'none';
     byId('signup-shell').style.display = 'block';
+  }
+
+  byId('go-signin').addEventListener('click', function (e) {
+    e.preventDefault();
+    showSignin();
+    window.location.hash = 'signin';
+  });
+  byId('go-signup').addEventListener('click', function (e) {
+    e.preventDefault();
+    showSignup();
+    window.location.hash = 'signup';
+  });
+
+  /* ---------- open the right form based on the link that brought us here ---------- */
+  if (window.location.hash === '#signup') {
+    showSignup();
+  } else {
+    showSignin();
+  }
+  window.addEventListener('hashchange', function () {
+    if (window.location.hash === '#signup') {
+      showSignup();
+    } else if (window.location.hash === '#signin') {
+      showSignin();
+    }
   });
 
   /* ---------- password show/hide ---------- */
