@@ -1736,6 +1736,7 @@ async function doSignup() {
 
 async function doLogout() {
   await sb.auth.signOut();
+  window.location.href = 'app.html';
 }
 
 // ── Nav ──
