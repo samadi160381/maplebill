@@ -795,6 +795,231 @@
     color: rgba(255,255,255,0.5);
   }
 
+  /* HOW IT WORKS */
+  .how-it-works {
+    padding: 90px 5%;
+    background: var(--navy);
+    color: white;
+  }
+  .how-it-works .section-eyebrow { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+  .how-it-works .section-title { color: white; }
+  .how-it-works .section-sub { color: rgba(255,255,255,0.55); }
+  .steps-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    position: relative;
+  }
+  .steps-grid::before {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: calc(16.66% + 20px);
+    right: calc(16.66% + 20px);
+    height: 2px;
+    background: linear-gradient(90deg, var(--red) 0%, rgba(192,32,42,0.3) 100%);
+  }
+  .step-card {
+    text-align: center;
+    position: relative;
+  }
+  .step-num {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 24px rgba(192,32,42,0.45);
+  }
+  .step-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; color: white; }
+  .step-card p { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.65; }
+
+  /* SCREENSHOTS */
+  .screenshots {
+    padding: 90px 5%;
+    background: var(--gray-50);
+  }
+  .screenshots-grid {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .screenshot-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--gray-100);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .screenshot-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+  .screenshot-card.featured { grid-column: 1 / -1; }
+  .screenshot-mock {
+    background: var(--navy);
+    padding: 16px 16px 0;
+  }
+  .mock-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-dot:nth-child(1) { background: #FF5F57; }
+  .mock-dot:nth-child(2) { background: #FFBD2E; }
+  .mock-dot:nth-child(3) { background: #28CA41; }
+  .mock-url {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    height: 22px;
+    margin-left: 8px;
+  }
+  .mock-screen {
+    background: var(--gray-50);
+    border-radius: 8px 8px 0 0;
+    padding: 20px;
+    min-height: 180px;
+  }
+  .mock-screen.tall { min-height: 240px; }
+  .screenshot-label {
+    padding: 16px 20px;
+  }
+  .screenshot-label h3 { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .screenshot-label p { font-size: 0.82rem; color: var(--gray-500); }
+
+  /* mock UI elements inside screens */
+  .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .mock-title { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 900; color: var(--navy); }
+  .mock-badge-green { background: #DCFCE7; color: #16A34A; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+  .mock-badge-yellow { background: #FEF9C3; color: #A16207; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+  .mock-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.78rem; color: var(--gray-700); }
+  .mock-row:last-child { border-bottom: none; }
+  .mock-stat { text-align: center; }
+  .mock-stat-val { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 900; color: var(--navy); }
+  .mock-stat-label { font-size: 0.7rem; color: var(--gray-500); margin-top: 2px; }
+  .mock-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .mock-chart-bar { height: 6px; background: var(--gray-200); border-radius: 3px; margin: 6px 0; }
+  .mock-chart-bar .fill { height: 100%; background: var(--red); border-radius: 3px; }
+  .mock-form-field { background: white; border: 1.5px solid var(--gray-200); border-radius: 7px; padding: 8px 12px; margin-bottom: 8px; font-size: 0.78rem; color: var(--gray-500); }
+  .mock-btn { background: var(--red); color: white; border-radius: 7px; padding: 9px; font-size: 0.78rem; font-weight: 700; text-align: center; margin-top: 4px; }
+  .mock-invoice-lines { margin: 12px 0; }
+  .mock-total-row { display: flex; justify-content: space-between; background: var(--navy); color: white; border-radius: 7px; padding: 10px 14px; font-size: 0.82rem; font-weight: 700; margin-top: 12px; }
+
+  /* FAQ */
+  .faq { padding: 90px 5%; background: white; }
+  .faq-list { max-width: 760px; margin: 48px auto 0; display: flex; flex-direction: column; gap: 0; }
+  .faq-item {
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .faq-item:first-child { border-top: 1px solid var(--gray-100); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: left;
+    gap: 16px;
+  }
+  .faq-q:hover { color: var(--red); }
+  .faq-icon {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+    transition: background 0.2s, transform 0.25s;
+    color: var(--navy);
+  }
+  .faq-item.open .faq-icon { background: var(--red); color: white; transform: rotate(45deg); }
+  .faq-a {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    line-height: 1.7;
+    padding: 0;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-bottom: 20px; }
+
+  /* BLOG */
+  .blog { padding: 90px 5%; background: var(--cream); }
+  .blog-grid {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .blog-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--gray-100);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .blog-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.09); }
+  .blog-thumb {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+  .blog-body { padding: 20px; }
+  .blog-tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--red); margin-bottom: 8px; }
+  .blog-card h3 { font-size: 0.97rem; font-weight: 700; color: var(--navy); line-height: 1.4; margin-bottom: 8px; }
+  .blog-card p { font-size: 0.83rem; color: var(--gray-500); line-height: 1.6; margin-bottom: 14px; }
+  .blog-meta { font-size: 0.75rem; color: var(--gray-500); }
+  .blog-cta { text-align: center; margin-top: 40px; }
+
+  /* FOOTER update */
+  .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
+  .footer-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1100px; margin: 0 auto 32px; width: 100%; text-align: left; }
+  .footer-col-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: white; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1100px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; flex-wrap: wrap; gap: 12px; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links li a { color: rgba(255,255,255,0.45); font-size: 0.8rem; text-decoration: none; }
+  .footer-links li a:hover { color: white; }
+
+  @media (max-width: 768px) {
+    .steps-grid { grid-template-columns: 1fr; }
+    .steps-grid::before { display: none; }
+    .screenshots-grid { grid-template-columns: 1fr; }
+    .screenshot-card.featured { grid-column: 1; }
+    .blog-grid { grid-template-columns: 1fr; }
+    .footer-cols { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .mock-stats-row { grid-template-columns: repeat(3, 1fr); }
+  }
+
   /* FOOTER */
   footer {
     background: var(--navy);
@@ -856,8 +1081,11 @@
   </div>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="/blog.html">Blog</a></li>
   </ul>
   <div class="nav-cta">
     <a href="/app.html#signin" class="btn-ghost">Sign in</a>
@@ -1063,6 +1291,197 @@
   </div>
 </section>
 
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how-it-works">
+  <div class="section-header">
+    <span class="section-eyebrow">Simple by design</span>
+    <h2 class="section-title">Up and running in minutes</h2>
+    <p class="section-sub">No accountant needed. No confusing setup. Just three steps to your first paid invoice.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Create your account</h3>
+      <p>Sign up free in 30 seconds. Add your business name, province, and GST/HST number — MapleBill handles the rest.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Build your invoice</h3>
+      <p>Add line items, pick a client, and tax is calculated automatically by province. Send as PDF or a live payment link.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Get paid</h3>
+      <p>Clients pay via Stripe, PayPal, or Interac e-Transfer. You get notified the moment payment lands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APP SCREENSHOTS -->
+<section class="screenshots" id="screenshots">
+  <div class="section-header">
+    <span class="section-eyebrow">Inside MapleBill</span>
+    <h2 class="section-title">Built for the way you actually work</h2>
+    <p class="section-sub">Clean, fast, and designed so invoicing takes minutes — not an evening.</p>
+  </div>
+  <div class="screenshots-grid">
+
+    <!-- Featured: Dashboard -->
+    <div class="screenshot-card featured">
+      <div class="screenshot-mock">
+        <div class="mock-bar">
+          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+          <div class="mock-url"></div>
+        </div>
+        <div class="mock-screen tall">
+          <div class="mock-header">
+            <div class="mock-title">Dashboard</div>
+            <div style="font-size:0.78rem;color:var(--gray-500);">March 2024</div>
+          </div>
+          <div class="mock-stats-row">
+            <div class="mock-stat"><div class="mock-stat-val">$18,400</div><div class="mock-stat-label">Collected</div></div>
+            <div class="mock-stat"><div class="mock-stat-val">$4,200</div><div class="mock-stat-label">Pending</div></div>
+            <div class="mock-stat"><div class="mock-stat-val">24</div><div class="mock-stat-label">Invoices sent</div></div>
+          </div>
+          <div class="mock-row"><span>Invoice #MB-2024-047 · Sophie L.</span><span class="mock-badge-green">Paid $4,850</span></div>
+          <div class="mock-row"><span>Invoice #MB-2024-046 · Marcus K.</span><span class="mock-badge-yellow">Pending $2,100</span></div>
+          <div class="mock-row"><span>Invoice #MB-2024-045 · Aisha R.</span><span class="mock-badge-green">Paid $6,750</span></div>
+          <div class="mock-chart-bar" style="margin-top:14px;"><div class="fill" style="width:78%"></div></div>
+          <div style="font-size:0.7rem;color:var(--gray-500);margin-top:4px;">78% of monthly target collected</div>
+        </div>
+      </div>
+      <div class="screenshot-label">
+        <h3>Revenue dashboard</h3>
+        <p>See everything at a glance — collected, pending, and overdue — by month or by client.</p>
+      </div>
+    </div>
+
+    <!-- Invoice builder -->
+    <div class="screenshot-card">
+      <div class="screenshot-mock">
+        <div class="mock-bar">
+          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+          <div class="mock-url"></div>
+        </div>
+        <div class="mock-screen">
+          <div class="mock-header"><div class="mock-title" style="font-size:0.95rem;">New Invoice</div></div>
+          <div class="mock-form-field">Client: Sophie Leblanc Studio</div>
+          <div class="mock-invoice-lines">
+            <div class="mock-row"><span>Web Design</span><span>$3,200</span></div>
+            <div class="mock-row"><span>Development</span><span>$1,200</span></div>
+            <div class="mock-row"><span>HST (13% · ON)</span><span style="color:var(--red);">$572</span></div>
+          </div>
+          <div class="mock-total-row"><span>Total Due</span><span>CAD $4,972.00</span></div>
+          <div class="mock-btn" style="margin-top:12px;">Send invoice →</div>
+        </div>
+      </div>
+      <div class="screenshot-label">
+        <h3>Smart invoice builder</h3>
+        <p>Tax auto-fills by province. Send via email, PDF, or a live Stripe payment link.</p>
+      </div>
+    </div>
+
+    <!-- CRA Report -->
+    <div class="screenshot-card">
+      <div class="screenshot-mock">
+        <div class="mock-bar">
+          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+          <div class="mock-url"></div>
+        </div>
+        <div class="mock-screen">
+          <div class="mock-header"><div class="mock-title" style="font-size:0.95rem;">Tax Summary 2023</div></div>
+          <div class="mock-row"><span>Total revenue</span><span style="font-weight:700;">$94,200</span></div>
+          <div class="mock-row"><span>GST/HST collected</span><span style="font-weight:700;">$8,478</span></div>
+          <div class="mock-row"><span>GST/HST remittable</span><span style="font-weight:700;">$6,104</span></div>
+          <div class="mock-row"><span>Net HST (ITCs)</span><span style="color:var(--red);font-weight:700;">$2,374</span></div>
+          <div class="mock-btn" style="margin-top:16px;">Export for CRA →</div>
+        </div>
+      </div>
+      <div class="screenshot-label">
+        <h3>CRA-ready tax report</h3>
+        <p>Auto-generated every March. Hand it to your accountant or file it yourself.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-header">
+    <span class="section-eyebrow">Common questions</span>
+    <h2 class="section-title">Everything you need to know</h2>
+    <p class="section-sub">Can't find your answer? <a href="/contact.html" style="color:var(--red);text-decoration:none;font-weight:600;">Email us</a> — we usually reply within a few hours.</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q">Do I need a GST/HST number to use MapleBill?<span class="faq-icon">+</span></button>
+      <div class="faq-a">No — MapleBill works whether or not you're registered for GST/HST. If you are registered, you can add your number and MapleBill will apply the correct provincial tax rate automatically. If you're not registered yet (under the $30,000 small supplier threshold), you can still create and send professional invoices without tax applied.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is my data stored in Canada?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Yes. All MapleBill data is stored on Canadian servers, making it easier to comply with PIPEDA and provincial privacy laws. We never sell your data to third parties.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I send invoices in French?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Absolutely. MapleBill supports both English and French invoices. You can set a default language per client, so Quebec clients automatically receive French invoices while others get English — all from the same account.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What payment methods can my clients use?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Clients can pay via Stripe (credit/debit card), PayPal, or Interac e-Transfer. You can include a payment link or QR code directly on the invoice. MapleBill tracks payment status automatically when paid through Stripe.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I cancel anytime?<span class="faq-icon">+</span></button>
+      <div class="faq-a">Yes — no contracts, no cancellation fees. You can downgrade to the free Solo plan or cancel entirely at any time from your account settings. Your invoice history is always available for export.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How does the 30-day free trial work?<span class="faq-icon">+</span></button>
+      <div class="faq-a">You get full access to the Pro plan for 30 days — no credit card required. At the end of the trial you can choose to subscribe to Pro ($12/month) or stay on the free Solo plan with 5 active invoices and 3 clients.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG / HELP CENTER -->
+<section class="blog" id="blog">
+  <div class="section-header">
+    <span class="section-eyebrow">Resources</span>
+    <h2 class="section-title">Guides, tips & tax help</h2>
+    <p class="section-sub">Plain-English guides for Canadian freelancers — no accounting degree required.</p>
+  </div>
+  <div class="blog-grid">
+    <a href="/blog/gst-hst-guide.html" class="blog-card">
+      <div class="blog-thumb" style="background:#EFF6FF;">🧾</div>
+      <div class="blog-body">
+        <div class="blog-tag">Tax guide</div>
+        <h3>GST/HST for Freelancers: The Complete 2024 Guide</h3>
+        <p>When to register, what to charge, and how to remit — explained without the jargon.</p>
+        <div class="blog-meta">8 min read · Updated Jan 2024</div>
+      </div>
+    </a>
+    <a href="/blog/cra-self-employed.html" class="blog-card">
+      <div class="blog-thumb" style="background:#F0FDF4;">📊</div>
+      <div class="blog-body">
+        <div class="blog-tag">CRA filing</div>
+        <h3>Self-Employed Tax Return: What to Claim in Canada</h3>
+        <p>Home office, equipment, software subscriptions — here's what's deductible and what isn't.</p>
+        <div class="blog-meta">6 min read · Updated Feb 2024</div>
+      </div>
+    </a>
+    <a href="/blog/invoice-late-payment.html" class="blog-card">
+      <div class="blog-thumb" style="background:#FEF9C3;">⏰</div>
+      <div class="blog-body">
+        <div class="blog-tag">Getting paid</div>
+        <h3>How to Follow Up on a Late Invoice (Without Losing the Client)</h3>
+        <p>Scripts and strategies that get you paid faster while keeping the relationship intact.</p>
+        <div class="blog-meta">5 min read · March 2024</div>
+      </div>
+    </a>
+  </div>
+  <div class="blog-cta">
+    <a href="/blog.html" class="btn-primary" style="padding:12px 28px;font-size:0.95rem;">View all articles →</a>
+  </div>
+</section>
+
 <!-- CTA BANNER -->
 <section class="cta-banner">
   <div class="cta-inner">
@@ -1076,22 +1495,68 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
+    <div class="footer-cols">
+      <div class="footer-col">
         <div class="footer-logo">
-      <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg">
-        <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Maple</text>
-        <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#E8353F" letter-spacing="-0.5">Bill</text>
-        <text x="136" y="14" font-size="18" fill="#E8353F">&#x1F341;</text>
-      </svg>
+          <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg">
+            <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Maple</text>
+            <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#E8353F" letter-spacing="-0.5">Bill</text>
+            <text x="136" y="14" font-size="18" fill="#E8353F">&#x1F341;</text>
+          </svg>
+        </div>
+        <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);margin-top:14px;line-height:1.65;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#screenshots">Screenshots</a></li>
+          <li><a href="/app.html#signup">Start free trial</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Help center</div>
+        <ul>
+          <li><a href="/blog/gst-hst-guide.html">GST/HST guide</a></li>
+          <li><a href="/blog/cra-self-employed.html">CRA filing tips</a></li>
+          <li><a href="/blog/invoice-late-payment.html">Late payment scripts</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="/contact.html">Contact support</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/privacy.html">Privacy Policy</a></li>
+          <li><a href="/terms.html">Terms of Service</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
     </div>
-    <ul class="footer-links">
-      <li><a href="/privacy.html">Privacy Policy</a></li>
-      <li><a href="/terms.html">Terms of Service</a></li>
-      <li><a href="/contact.html">Contact</a></li>
-      
-    </ul>
-    <div class="footer-copy">© 2024 MapleBill. All rights reserved.</div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 MapleBill. All rights reserved.</div>
+      <ul class="footer-links">
+        <li><a href="/privacy.html">Privacy</a></li>
+        <li><a href="/terms.html">Terms</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+      </ul>
+    </div>
   </div>
 </footer>
 
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var item = this.closest('.faq-item');
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
 </body>
 </html>
