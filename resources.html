@@ -532,9 +532,8 @@
   }
 
   .footer-cols {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
+    display: flex;
+    justify-content: center;
     margin-bottom: 32px;
   }
 
@@ -618,13 +617,25 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg">
-      <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#1A2340" letter-spacing="-0.5">Maple</text>
-      <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#C0202A" letter-spacing="-0.5">Bill</text>
-      <text x="136" y="14" font-size="18" fill="#C0202A">&#x1F341;</text>
+  <a href="/index.html" class="nav-logo" style="text-decoration:none; display:flex; align-items:center;">
+    <svg width="130" height="38" viewBox="0 0 130 38" xmlns="http://www.w3.org/2000/svg">
+      <!-- M icon: red left half -->
+      <polygon points="2,28 2,6 16,18 22,6 22,28" fill="#C0202A"/>
+      <!-- maple leaf cutout (white) inside red M half -->
+      <polygon points="12,22 10,20 11,18 9,19 8,16 10,17 9,14 11,16 12,13 13,16 15,14 14,17 16,16 15,19 13,18 14,20" fill="white"/>
+      <!-- M icon: navy right half -->
+      <polygon points="22,28 22,6 30,18 38,6 38,28" fill="#1A2340"/>
+      <!-- invoice lines on navy half -->
+      <rect x="25" y="20" width="10" height="2" rx="1" fill="#1A2340" opacity="0.0"/>
+      <rect x="24" y="19" width="9" height="1.5" rx="0.5" fill="white" opacity="0.7"/>
+      <rect x="24" y="22" width="9" height="1.5" rx="0.5" fill="white" opacity="0.7"/>
+      <rect x="24" y="25" width="9" height="1.5" rx="0.5" fill="white" opacity="0.7"/>
+      <!-- "Maple" text -->
+      <text x="46" y="26" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#1A2340" letter-spacing="-0.3">Maple</text>
+      <!-- "Bill" text bold red -->
+      <text x="97" y="26" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" fill="#C0202A" letter-spacing="-0.3">Bill</text>
     </svg>
-  </div>
+  </a>
   <ul class="nav-links">
     <li><a href="/index.html#features">Features</a></li>
     <li><a href="/index.html#how-it-works">How it works</a></li>
@@ -944,43 +955,26 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-cols">
-      <div class="footer-col">
-        <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:12px">
-          <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Maple</text>
-          <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#E8353F" letter-spacing="-0.5">Bill</text>
-          <text x="136" y="14" font-size="18" fill="#E8353F">&#x1F341;</text>
+      <div class="footer-col" style="text-align:center;">
+        <svg width="130" height="38" viewBox="0 0 130 38" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:12px; display:block; margin-left:auto; margin-right:auto;">
+          <!-- M icon: red left half -->
+          <polygon points="2,28 2,6 16,18 22,6 22,28" fill="#C0202A"/>
+          <!-- maple leaf cutout (dark) inside red M half -->
+          <polygon points="12,22 10,20 11,18 9,19 8,16 10,17 9,14 11,16 12,13 13,16 15,14 14,17 16,16 15,19 13,18 14,20" fill="#1A2340"/>
+          <!-- M icon: navy right half — use slightly lighter for visibility on dark bg -->
+          <polygon points="22,28 22,6 30,18 38,6 38,28" fill="#2d3f6b"/>
+          <!-- invoice lines on navy half -->
+          <rect x="24" y="19" width="9" height="1.5" rx="0.5" fill="white" opacity="0.6"/>
+          <rect x="24" y="22" width="9" height="1.5" rx="0.5" fill="white" opacity="0.6"/>
+          <rect x="24" y="25" width="9" height="1.5" rx="0.5" fill="white" opacity="0.6"/>
+          <!-- "Maple" text white -->
+          <text x="46" y="26" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" letter-spacing="-0.3">Maple</text>
+          <!-- "Bill" text bold red -->
+          <text x="97" y="26" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" fill="#E8353F" letter-spacing="-0.3">Bill</text>
         </svg>
-        <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);line-height:1.65;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
+        <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);line-height:1.65;">Invoicing built for Canadian freelancers. GST/HST compliant,<br>bilingual, and CRA-ready.</p>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Product</div>
-        <ul>
-          <li><a href="/index.html#features">Features</a></li>
-          <li><a href="/index.html#how-it-works">How it works</a></li>
-          <li><a href="/index.html#pricing">Pricing</a></li>
-          <li><a href="/app.html#signup">Start free trial</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Resources</div>
-        <ul>
-          <li><a href="/blog/gst-hst-guide.html">GST/HST guide</a></li>
-          <li><a href="/blog/cra-self-employed.html">CRA filing tips</a></li>
-          <li><a href="/blog/invoice-late-payment.html">Late payment scripts</a></li>
-          <li><a href="/resources.html">Resource page</a></li>
-          <li><a href="/index.html#faq">FAQ</a></li>
-          <li><a href="/contact.html">Contact support</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Company</div>
-        <ul>
-          <li><a href="/blog.html">Blog</a></li>
-          <li><a href="/privacy.html">Privacy Policy</a></li>
-          <li><a href="/terms.html">Terms of Service</a></li>
-          <li><a href="/contact.html">Contact</a></li>
-        </ul>
-      </div>
+
     </div>
     <div class="footer-bottom">
       <div class="footer-copy">© 2024 MapleBill. All rights reserved.</div>
