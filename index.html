@@ -65,6 +65,75 @@
   }
   .nav-links a:hover { color: var(--red); }
 
+  /* HELP CENTRE DROPDOWN */
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    padding: 0;
+  }
+  .nav-dropdown-toggle:hover,
+  .nav-dropdown.open .nav-dropdown-toggle { color: var(--red); }
+
+  .nav-dropdown-toggle .chevron {
+    transition: transform 0.2s;
+    font-size: 0.7rem;
+    margin-top: 1px;
+  }
+  .nav-dropdown.open .chevron { transform: rotate(180deg); }
+
+  .nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(26,35,64,0.12);
+    min-width: 220px;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+    z-index: 200;
+  }
+
+  .nav-dropdown.open .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-dropdown-menu a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-dropdown-menu a:hover {
+    background: var(--gray-50);
+    color: var(--red);
+  }
+
   .nav-cta {
     display: flex;
     gap: 12px;
@@ -1064,6 +1133,7 @@
     .testi-grid { grid-template-columns: 1fr; }
     .pricing-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .nav-dropdown { display: none; }
     .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
   }
 
@@ -1086,7 +1156,16 @@
     <li><a href="#testimonials">Reviews</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="/blog.html">Blog</a></li>
-    <li><a href="/resources.html">Resources</a></li>
+    <li class="nav-dropdown" id="helpCentreDropdown">
+      <button class="nav-dropdown-toggle" id="helpCentreToggle" aria-haspopup="true" aria-expanded="false">
+        Help Centre <span class="chevron">▾</span>
+      </button>
+      <div class="nav-dropdown-menu">
+        <a href="/blog/gst-hst-guide.html">GST/HST guide</a>
+        <a href="/blog/cra-self-employed.html">CRA filing tips</a>
+        <a href="/blog/invoice-late-payment.html">Late payment scripts</a>
+      </div>
+    </li>
   </ul>
   <div class="nav-cta">
     <a href="/app.html#signin" class="btn-ghost">Sign in</a>
@@ -1515,17 +1594,6 @@
         </div>
         <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);margin-top:14px;line-height:1.65;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Help center</div>
-        <ul>
-          <li><a href="/blog/gst-hst-guide.html">GST/HST guide</a></li>
-          <li><a href="/blog/cra-self-employed.html">CRA filing tips</a></li>
-          <li><a href="/blog/invoice-late-payment.html">Late payment scripts</a></li>
-          <li><a href="/resources.html">Resource page</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="/contact.html">Contact support</a></li>
-        </ul>
-      </div>
 
     </div>
     <div class="footer-bottom">
@@ -1549,6 +1617,37 @@
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  // Help Centre dropdown
+  (function() {
+    var dropdown = document.getElementById('helpCentreDropdown');
+    var toggle = document.getElementById('helpCentreToggle');
+    if (!dropdown || !toggle) return;
+
+    function closeDropdown() {
+      dropdown.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        closeDropdown();
+      } else {
+        dropdown.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) closeDropdown();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeDropdown();
+    });
+  })();
 </script>
 </body>
 </html>
