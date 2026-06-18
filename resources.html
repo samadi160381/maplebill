@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources — MapleBill</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1A2340;
+    --red: #C0202A;
+    --red-light: #E8353F;
+    --cream: #FDF8F3;
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-300: #D1D5DB;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --orange-accent: #FF6B35;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--navy);
+    background: var(--white);
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  .nav-logo svg { display: block; }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--red); }
+
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+
+  .btn-ghost {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--navy);
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { background: var(--gray-100); }
+
+  .btn-primary {
+    background: var(--red);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--red-light); transform: translateY(-1px); }
+
+  /* PAGE HEADER */
+  .page-hero {
+    background: var(--navy);
+    color: white;
+    padding: 72px 5% 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,32,42,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .page-hero-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #FF8F96;
+    background: rgba(192,32,42,0.2);
+    border: 1px solid rgba(192,32,42,0.35);
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .page-hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .page-hero p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* MAIN LAYOUT */
+  .resources-layout {
+    max-width: 1100px;
+    margin: 64px auto;
+    padding: 0 5%;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 88px;
+  }
+
+  .sidebar-section {
+    margin-bottom: 36px;
+  }
+
+  .sidebar-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+  }
+
+  .sidebar-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sidebar-links a {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 7px;
+    transition: background 0.15s, color 0.15s;
+    font-weight: 500;
+  }
+  .sidebar-links a:hover { background: var(--gray-100); color: var(--navy); }
+  .sidebar-links a.active { background: rgba(192,32,42,0.08); color: var(--red); }
+
+  /* CONTENT */
+  .resources-content { min-width: 0; }
+
+  .resource-section {
+    margin-bottom: 72px;
+    scroll-margin-top: 96px;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--red);
+    background: rgba(192,32,42,0.07);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .resource-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .resource-section .section-desc {
+    font-size: 0.95rem;
+    color: var(--gray-500);
+    margin-bottom: 28px;
+    max-width: 560px;
+  }
+
+  /* CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .resource-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: 14px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .resource-card:hover {
+    box-shadow: 0 8px 32px rgba(26,35,64,0.1);
+    transform: translateY(-3px);
+    border-color: rgba(192,32,42,0.15);
+  }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .card-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--red);
+  }
+
+  .resource-card h3 {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.35;
+  }
+
+  .resource-card p {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card-meta {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-arrow {
+    font-size: 0.78rem;
+    color: var(--red);
+    font-weight: 600;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* VIDEO / GUIDE CARDS (horizontal) */
+  .guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .guide-card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 20px 22px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .guide-card:hover {
+    box-shadow: 0 6px 24px rgba(26,35,64,0.09);
+    transform: translateY(-2px);
+  }
+
+  .guide-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--gray-100);
+    min-width: 40px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .guide-body { flex: 1; min-width: 0; }
+
+  .guide-body h3 {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .guide-body p {
+    font-size: 0.83rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+
+  .guide-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .badge-read { background: #EFF6FF; color: #1D4ED8; }
+  .badge-video { background: #FEF9C3; color: #92400E; }
+  .badge-guide { background: #F0FDF4; color: #15803D; }
+
+  /* SAMPLE INVOICE SECTION */
+  .sample-section {
+    background: var(--navy);
+    border-radius: 18px;
+    padding: 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    margin-bottom: 72px;
+  }
+
+  .sample-text { flex: 1; }
+
+  .sample-text h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.55rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .sample-text p {
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.65;
+    margin-bottom: 24px;
+    max-width: 400px;
+  }
+
+  .sample-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .btn-white {
+    background: white;
+    color: var(--navy);
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 11px 22px;
+    border-radius: 9px;
+    transition: opacity 0.2s, transform 0.1s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-white:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-outline-white-sm {
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 9px;
+    transition: border-color 0.2s, background 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-outline-white-sm:hover { border-color: white; background: rgba(255,255,255,0.07); }
+
+  .sample-preview {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 200px;
+    flex-shrink: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    transform: rotate(-1.5deg);
+  }
+
+  .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .sp-logo { font-family: 'Fraunces', serif; font-size: 0.95rem; font-weight: 900; color: var(--navy); }
+  .sp-logo span { color: var(--red); }
+  .sp-badge { background: #DCFCE7; color: #16A34A; font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+  .sp-num { font-size: 0.55rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .sp-amount { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 900; color: var(--navy); letter-spacing: -0.03em; margin-bottom: 12px; }
+  .sp-line { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--gray-700); padding: 4px 0; border-bottom: 1px solid var(--gray-100); }
+  .sp-line:last-of-type { border: none; }
+  .sp-total { background: var(--navy); color: white; border-radius: 6px; padding: 7px 10px; font-size: 0.62rem; font-weight: 700; display: flex; justify-content: space-between; margin-top: 10px; }
+
+  /* DIVIDER */
+  .resource-divider {
+    height: 1px;
+    background: var(--gray-100);
+    margin: 56px 0;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    padding: 40px 5%;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-bottom: 32px;
+  }
+
+  .footer-col-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: white; }
+
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; flex-wrap: wrap; gap: 12px; }
+  .footer-copy { font-size: 0.8rem; }
+  .footer-links { display: flex; gap: 24px; list-style: none; }
+  .footer-links a { color: rgba(255,255,255,0.45); font-size: 0.8rem; text-decoration: none; }
+  .footer-links a:hover { color: white; }
+
+  @media (max-width: 768px) {
+    .resources-layout { grid-template-columns: 1fr; gap: 32px; }
+    .sidebar { position: static; }
+    .sidebar-links { flex-direction: row; flex-wrap: wrap; }
+    .sidebar-links a { padding: 5px 12px; background: var(--gray-50); border-radius: 100px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .sample-section { flex-direction: column; }
+    .sample-preview { width: 100%; max-width: 240px; align-self: center; transform: none; }
+    .footer-cols { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#1A2340" letter-spacing="-0.5">Maple</text>
+      <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#C0202A" letter-spacing="-0.5">Bill</text>
+      <text x="136" y="14" font-size="18" fill="#C0202A">&#x1F341;</text>
+    </svg>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/index.html#how-it-works">How it works</a></li>
+    <li><a href="/index.html#pricing">Pricing</a></li>
+    <li><a href="/index.html#testimonials">Reviews</a></li>
+    <li><a href="/index.html#faq">FAQ</a></li>
+    <li><a href="/blog.html">Blog</a></li>
+    <li><a href="/resources.html" class="active">Resources</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="/app.html#signin" class="btn-ghost">Sign in</a>
+    <a href="/app.html#signup" class="btn-primary">Start free trial</a>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">📚 Resources</div>
+    <h1>Everything you need to get paid in Canada</h1>
+    <p>Guides, templates, scripts, and videos — all free, all built for Canadian freelancers.</p>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="resources-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">On this page</div>
+      <ul class="sidebar-links">
+        <li><a href="#sample-invoice">Sample Invoice</a></li>
+        <li><a href="#tax-guides">Tax Guides</a></li>
+        <li><a href="#late-payment">Late Payment Scripts</a></li>
+        <li><a href="#how-to">How-to Guides</a></li>
+        <li><a href="#video-tutorials">Video Tutorials</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Popular</div>
+      <ul class="sidebar-links">
+        <li><a href="/blog/gst-hst-guide.html">GST/HST Guide 2024</a></li>
+        <li><a href="/blog/cra-self-employed.html">CRA Filing Tips</a></li>
+        <li><a href="/blog/invoice-late-payment.html">Late Payment Scripts</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="resources-content">
+
+    <!-- SAMPLE INVOICE SECTION -->
+    <section class="sample-section" id="sample-invoice">
+      <div class="sample-text">
+        <h2>See a real MapleBill invoice</h2>
+        <p>Download a sample PDF or open a live invoice preview — complete with GST/HST line items, a Stripe payment link, and professional branding.</p>
+        <div class="sample-btns">
+          <a href="/sample-invoice.pdf" download class="btn-white">
+            <span>⬇</span> Download PDF Sample
+          </a>
+          <a href="/sample-invoice.html" target="_blank" class="btn-outline-white-sm">
+            <span>🔗</span> Open Full Sample Invoice
+          </a>
+        </div>
+      </div>
+      <div class="sample-preview">
+        <div class="sp-header">
+          <div class="sp-logo">Maple<span>Bill</span> 🍁</div>
+          <div class="sp-badge">✓ Paid</div>
+        </div>
+        <div class="sp-num">Invoice #MB-2024-047</div>
+        <div class="sp-amount">$4,850<sup style="font-size:0.9rem">.00</sup></div>
+        <div class="sp-line"><span>Web Design</span><span>$3,200</span></div>
+        <div class="sp-line"><span>Development</span><span>$1,200</span></div>
+        <div class="sp-line"><span>HST (13%)</span><span style="color:var(--red)">$450</span></div>
+        <div class="sp-total"><span>Total Due</span><span>CAD $4,850</span></div>
+      </div>
+    </section>
+
+    <!-- TAX GUIDES -->
+    <section class="resource-section" id="tax-guides">
+      <div class="section-eyebrow">Tax guides</div>
+      <h2>GST/HST &amp; CRA filing</h2>
+      <p class="section-desc">Plain-English guides for navigating Canadian tax rules — no accounting degree required.</p>
+      <div class="cards-grid">
+        <a href="/blog/gst-hst-guide.html" class="resource-card">
+          <div class="card-icon">🧾</div>
+          <div class="card-tag">GST/HST</div>
+          <h3>GST/HST for Freelancers: The Complete 2024 Guide</h3>
+          <p>When to register, what to charge, and how to remit — explained without the jargon.</p>
+          <div class="card-meta"><span>📖</span> 8 min read &nbsp;·&nbsp; Updated Jan 2024</div>
+          <div class="card-arrow">Read article →</div>
+        </a>
+        <a href="/blog/cra-self-employed.html" class="resource-card">
+          <div class="card-icon">📊</div>
+          <div class="card-tag">CRA filing tips</div>
+          <h3>Self-Employed Tax Return: What to Claim in Canada</h3>
+          <p>Home office, equipment, software — here's what's deductible and what isn't.</p>
+          <div class="card-meta"><span>📖</span> 6 min read &nbsp;·&nbsp; Updated Feb 2024</div>
+          <div class="card-arrow">Read article →</div>
+        </a>
+        <a href="/blog/how-to-create-invoice-canada.html" class="resource-card">
+          <div class="card-icon">🇨🇦</div>
+          <div class="card-tag">Invoicing</div>
+          <h3>How to Create an Invoice in Canada</h3>
+          <p>Required fields, tax numbers, and formatting rules for compliant Canadian invoices.</p>
+          <div class="card-meta"><span>📖</span> 5 min read</div>
+          <div class="card-arrow">Read article →</div>
+        </a>
+      </div>
+    </section>
+
+    <div class="resource-divider"></div>
+
+    <!-- LATE PAYMENT SCRIPTS -->
+    <section class="resource-section" id="late-payment">
+      <div class="section-eyebrow">Getting paid</div>
+      <h2>Late payment scripts</h2>
+      <p class="section-desc">Copy-paste email and message templates to follow up on overdue invoices — professionally, without burning the relationship.</p>
+      <div class="cards-grid">
+        <a href="/blog/invoice-late-payment.html" class="resource-card">
+          <div class="card-icon">⏰</div>
+          <div class="card-tag">Follow-up scripts</div>
+          <h3>How to Follow Up on a Late Invoice (Without Losing the Client)</h3>
+          <p>Scripts and strategies that get you paid faster while keeping the relationship intact.</p>
+          <div class="card-meta"><span>📖</span> 5 min read &nbsp;·&nbsp; March 2024</div>
+          <div class="card-arrow">Read article →</div>
+        </a>
+        <a href="/blog/invoice-late-payment.html#email-templates" class="resource-card">
+          <div class="card-icon">📧</div>
+          <div class="card-tag">Email templates</div>
+          <h3>5 Email Templates for Late Invoices</h3>
+          <p>From a gentle first nudge to a firm final notice — ready to copy and send.</p>
+          <div class="card-meta"><span>📖</span> 3 min read</div>
+          <div class="card-arrow">See templates →</div>
+        </a>
+        <a href="/blog/invoice-late-payment.html#phone-scripts" class="resource-card">
+          <div class="card-icon">📞</div>
+          <div class="card-tag">Phone scripts</div>
+          <h3>How to Send Professional Invoices</h3>
+          <p>Timing, tone, and delivery method — a complete sending checklist to look polished every time.</p>
+          <div class="card-meta"><span>📖</span> 4 min read</div>
+          <div class="card-arrow">Read article →</div>
+        </a>
+      </div>
+    </section>
+
+    <div class="resource-divider"></div>
+
+    <!-- HOW-TO GUIDES -->
+    <section class="resource-section" id="how-to">
+      <div class="section-eyebrow">Step-by-step</div>
+      <h2>How-to guides</h2>
+      <p class="section-desc">Short, practical walkthroughs to help you set up and get the most out of MapleBill.</p>
+      <div class="guide-list">
+        <a href="/docs/create-first-invoice" class="guide-card">
+          <div class="guide-num">01</div>
+          <div class="guide-body">
+            <h3>How to Create Your First Invoice</h3>
+            <p>From blank to sent in under 3 minutes — your complete first-invoice walkthrough.</p>
+          </div>
+          <span class="guide-badge badge-guide">Guide</span>
+        </a>
+        <a href="/blog/gst-hst-guide.html" class="guide-card">
+          <div class="guide-num">02</div>
+          <div class="guide-body">
+            <h3>How GST/HST Works in Canada</h3>
+            <p>Rates by province, registration thresholds, and how to collect and remit correctly.</p>
+          </div>
+          <span class="guide-badge badge-read">Article</span>
+        </a>
+        <a href="/docs/connect-stripe" class="guide-card">
+          <div class="guide-num">03</div>
+          <div class="guide-body">
+            <h3>How to Connect Stripe</h3>
+            <p>Accept credit and debit cards directly on your invoices — set up in 5 minutes.</p>
+          </div>
+          <span class="guide-badge badge-guide">Guide</span>
+        </a>
+        <a href="/blog/invoice-late-payment.html" class="guide-card">
+          <div class="guide-num">04</div>
+          <div class="guide-body">
+            <h3>How to Send Invoices</h3>
+            <p>Choosing email vs. PDF vs. payment link — and the best time to send for fastest payment.</p>
+          </div>
+          <span class="guide-badge badge-read">Article</span>
+        </a>
+        <a href="/blog/how-to-create-invoice-canada.html" class="guide-card">
+          <div class="guide-num">05</div>
+          <div class="guide-body">
+            <h3>How to Create an Invoice in Canada</h3>
+            <p>Legal requirements, required fields, and formatting for CRA-compliant invoices.</p>
+          </div>
+          <span class="guide-badge badge-read">Article</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="resource-divider"></div>
+
+    <!-- VIDEO TUTORIALS -->
+    <section class="resource-section" id="video-tutorials">
+      <div class="section-eyebrow">Video tutorials</div>
+      <h2>Watch &amp; learn</h2>
+      <p class="section-desc">Short screencasts covering the most common MapleBill workflows — start to finish.</p>
+      <div class="guide-list">
+        <a href="/tutorials/create-first-invoice" class="guide-card">
+          <div class="guide-num">▶</div>
+          <div class="guide-body">
+            <h3>Create Your First Invoice</h3>
+            <p>A 4-minute walkthrough from adding your logo to hitting send.</p>
+          </div>
+          <span class="guide-badge badge-video">Video · 4 min</span>
+        </a>
+        <a href="/tutorials/gst-hst-setup" class="guide-card">
+          <div class="guide-num">▶</div>
+          <div class="guide-body">
+            <h3>How GST/HST Works in Canada</h3>
+            <p>Understanding rates, registration, and how MapleBill auto-fills them.</p>
+          </div>
+          <span class="guide-badge badge-video">Video · 6 min</span>
+        </a>
+        <a href="/tutorials/connect-stripe" class="guide-card">
+          <div class="guide-num">▶</div>
+          <div class="guide-body">
+            <h3>How to Connect Stripe</h3>
+            <p>Link your Stripe account and start accepting card payments on invoices.</p>
+          </div>
+          <span class="guide-badge badge-video">Video · 3 min</span>
+        </a>
+        <a href="/tutorials/send-invoices" class="guide-card">
+          <div class="guide-num">▶</div>
+          <div class="guide-body">
+            <h3>How to Send Invoices</h3>
+            <p>Email, PDF, and payment link options — choose the right delivery for each client.</p>
+          </div>
+          <span class="guide-badge badge-video">Video · 5 min</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-cols">
+      <div class="footer-col">
+        <svg width="160" height="36" viewBox="0 0 160 36" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:12px">
+          <text x="0" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#ffffff" letter-spacing="-0.5">Maple</text>
+          <text x="82" y="27" font-family="Fraunces, Georgia, serif" font-size="26" font-weight="900" fill="#E8353F" letter-spacing="-0.5">Bill</text>
+          <text x="136" y="14" font-size="18" fill="#E8353F">&#x1F341;</text>
+        </svg>
+        <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);line-height:1.65;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <ul>
+          <li><a href="/index.html#features">Features</a></li>
+          <li><a href="/index.html#how-it-works">How it works</a></li>
+          <li><a href="/index.html#pricing">Pricing</a></li>
+          <li><a href="/app.html#signup">Start free trial</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Resources</div>
+        <ul>
+          <li><a href="/blog/gst-hst-guide.html">GST/HST guide</a></li>
+          <li><a href="/blog/cra-self-employed.html">CRA filing tips</a></li>
+          <li><a href="/blog/invoice-late-payment.html">Late payment scripts</a></li>
+          <li><a href="/resources.html">Resource page</a></li>
+          <li><a href="/index.html#faq">FAQ</a></li>
+          <li><a href="/contact.html">Contact support</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <ul>
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/privacy.html">Privacy Policy</a></li>
+          <li><a href="/terms.html">Terms of Service</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 MapleBill. All rights reserved.</div>
+      <ul class="footer-links">
+        <li><a href="/privacy.html">Privacy</a></li>
+        <li><a href="/terms.html">Terms</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Highlight sidebar link on scroll
+  const sections = document.querySelectorAll('.resource-section, .sample-section');
+  const sideLinks = document.querySelectorAll('.sidebar-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    sideLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
