@@ -419,7 +419,8 @@ body { font-family: 'Inter', sans-serif; color: var(--navy); background: var(--b
   /* ---------- GOOGLE OAUTH ---------- */
   function googleSignIn() {
     if (!sb) {
-      alert('Auth service is not available. Please refresh the page and try again.');
+      var activeShell = byId('signup-shell').style.display !== 'none' ? 'signup-error-banner' : 'signin-error-banner';
+      showBanner(activeShell, 'Auth service is not available. Please refresh the page and try again.');
       return;
     }
     sb.auth.signInWithOAuth({
@@ -427,10 +428,12 @@ body { font-family: 'Inter', sans-serif; color: var(--navy); background: var(--b
       options: { redirectTo: window.location.origin + '/dashboard' }
     }).then(function (result) {
       if (result.error) {
-        alert('Google sign-in error: ' + result.error.message);
+        var activeShell = byId('signup-shell').style.display !== 'none' ? 'signup-error-banner' : 'signin-error-banner';
+        showBanner(activeShell, 'Google sign-in error: ' + result.error.message);
       }
     }).catch(function (err) {
-      alert('Google sign-in error: ' + ((err && err.message) || 'Unknown error'));
+      var activeShell = byId('signup-shell').style.display !== 'none' ? 'signup-error-banner' : 'signin-error-banner';
+      showBanner(activeShell, 'Google sign-in error: ' + ((err && err.message) || 'Unknown error'));
     });
   }
   byId('google-signup-btn').addEventListener('click', googleSignIn);
