@@ -796,30 +796,86 @@
       <h2>Late payment scripts</h2>
       <p class="section-desc">Copy-paste email and message templates to follow up on overdue invoices — professionally, without burning the relationship.</p>
       <div class="cards-grid">
-        <a href="/blog/invoice-late-payment.html" class="resource-card">
+        <div class="resource-card" onclick="openArticle('late-payment-followup')" style="cursor:pointer;">
           <div class="card-icon">⏰</div>
           <div class="card-tag">Follow-up scripts</div>
           <h3>How to Follow Up on a Late Invoice (Without Losing the Client)</h3>
           <p>Scripts and strategies that get you paid faster while keeping the relationship intact.</p>
           <div class="card-meta"><span>📖</span> 5 min read &nbsp;·&nbsp; March 2024</div>
           <div class="card-arrow">Read article →</div>
-        </a>
-        <a href="/blog/invoice-late-payment.html#email-templates" class="resource-card">
+        </div>
+        <div class="resource-card" onclick="openArticle('late-payment-email-templates')" style="cursor:pointer;">
           <div class="card-icon">📧</div>
           <div class="card-tag">Email templates</div>
           <h3>5 Email Templates for Late Invoices</h3>
           <p>From a gentle first nudge to a firm final notice — ready to copy and send.</p>
           <div class="card-meta"><span>📖</span> 3 min read</div>
           <div class="card-arrow">See templates →</div>
-        </a>
-        <a href="/blog/invoice-late-payment.html#phone-scripts" class="resource-card">
+        </div>
+        <div class="resource-card" onclick="openArticle('late-payment-phone-scripts')" style="cursor:pointer;">
           <div class="card-icon">📞</div>
           <div class="card-tag">Phone scripts</div>
-          <h3>How to Send Professional Invoices</h3>
-          <p>Timing, tone, and delivery method — a complete sending checklist to look polished every time.</p>
+          <h3>Phone Scripts for Chasing Overdue Invoices</h3>
+          <p>What to say when email isn't working — calm, professional scripts for awkward calls.</p>
           <div class="card-meta"><span>📖</span> 4 min read</div>
           <div class="card-arrow">Read article →</div>
-        </a>
+        </div>
+      </div>
+
+      <div class="article-bodies">
+        <div class="article-body" id="late-payment-followup">
+          <div class="article-body-header">
+            <div class="article-body-icon">⏰</div>
+            <h3>How to Follow Up on a Late Invoice (Without Losing the Client)</h3>
+          </div>
+          <p>A late invoice doesn&#x2019;t always mean a bad client &#x2014; people get busy, emails get buried, and approval processes take longer than expected. The goal of your first follow-up isn&#x2019;t to pressure anyone; it&#x2019;s simply to move the invoice back to the top of their inbox. Timing matters here: don&#x2019;t wait three months before saying something. A gentle nudge the day after the due date is perfectly professional, and most clients will appreciate the reminder rather than feel annoyed by it.</p>
+          <p>Keep your first message short and assume good intent. Something like &#x201C;Just wanted to check in on invoice #MB-047 &#x2014; let me know if you need anything from me to get this processed&#x201D; signals that you&#x2019;re on top of your receivables without making the client feel accused of anything. Attaching the invoice again removes any friction they might use as an excuse to delay further.</p>
+          <p>If you don&#x2019;t hear back within a week, escalate slightly. This is the point where you want to be clearer about the amount and due date, and you can mention any late fee policy if you have one in your contract. Still stay professional &#x2014; tone matters more than you think, because clients who feel lectured or embarrassed have a way of deprioritizing your invoice further or deciding not to rehire you.</p>
+          <p>By the third follow-up, it&#x2019;s appropriate to signal consequences without burning bridges. Mentioning that you&#x2019;ll need to pause work on any ongoing projects until the account is settled, or that you&#x2019;ll be escalating to a collections process if payment isn&#x2019;t received by a specific date, tends to move things along. Most late-payers aren&#x2019;t trying to avoid payment &#x2014; they just need to know you&#x2019;re serious. A concrete deadline works better than an open-ended request.</p>
+          <p>Throughout all of this, document everything. Keep records of when you sent each follow-up and any responses you received. If you ever need to take formal action &#x2014; through small claims court or a collections agency &#x2014; that paper trail will matter. In Canada, small claims court limits vary by province (from $20,000 in Ontario to $50,000 in British Columbia), and it&#x2019;s often a viable option for significant outstanding invoices that a client refuses to pay.</p>
+        </div>
+
+        <div class="article-body" id="late-payment-email-templates">
+          <div class="article-body-header">
+            <div class="article-body-icon">📧</div>
+            <h3>5 Email Templates for Late Invoices</h3>
+          </div>
+          <p><strong>Template 1 &#x2014; Friendly first nudge (1&#x2013;3 days overdue)</strong><br>
+          Subject: Invoice #[NUMBER] &#x2014; Quick follow-up<br><br>
+          Hi [Name], hope you&#x2019;re doing well. Just a quick note to follow up on invoice #[NUMBER] for $[AMOUNT], which was due on [DATE]. I&#x2019;ve re-attached it in case it got buried. Let me know if you have any questions or need anything on my end to get it processed. Thanks!</p>
+          <p><strong>Template 2 &#x2014; Polite reminder (1 week overdue)</strong><br>
+          Subject: Invoice #[NUMBER] &#x2014; Now 7 days overdue<br><br>
+          Hi [Name], I wanted to follow up again on invoice #[NUMBER] for $[AMOUNT], originally due [DATE]. I understand things can get busy &#x2014; please let me know if there&#x2019;s an issue with the invoice or if you need me to send it to a different contact. Happy to help move this along on your end.</p>
+          <p><strong>Template 3 &#x2014; Direct reminder with late fee notice (2&#x2013;3 weeks overdue)</strong><br>
+          Subject: Invoice #[NUMBER] &#x2014; Payment now [X] days overdue<br><br>
+          Hi [Name], this is my third follow-up on invoice #[NUMBER] for $[AMOUNT]. As noted in our agreement, a late fee of [X%] applies after [30] days. I&#x2019;d love to resolve this quickly &#x2014; please confirm a payment date or reach out if there&#x2019;s a problem I can help address. I&#x2019;ve re-attached the invoice below.</p>
+          <p><strong>Template 4 &#x2014; Escalation notice (1 month+ overdue)</strong><br>
+          Subject: Final notice &#x2014; Invoice #[NUMBER]<br><br>
+          Hi [Name], I&#x2019;m writing to let you know that invoice #[NUMBER] for $[AMOUNT] remains unpaid after [X] days. If I don&#x2019;t receive payment or hear from you by [SPECIFIC DATE], I&#x2019;ll need to escalate this to a collections process. I&#x2019;d much prefer to resolve this directly &#x2014; please get in touch at your earliest convenience.</p>
+          <p><strong>Template 5 &#x2014; Final notice before collections (45+ days overdue)</strong><br>
+          Subject: Invoice #[NUMBER] &#x2014; Collections referral pending<br><br>
+          Hi [Name], this is a final notice regarding invoice #[NUMBER] for $[AMOUNT], now [X] days past due. If payment is not received by [DATE], I will be referring this account to a collections agency. All future correspondence should be directed to [your name/contact]. I sincerely hope we can settle this without that step &#x2014; please reply or call [PHONE] today.</p>
+        </div>
+
+        <div class="article-body" id="late-payment-phone-scripts">
+          <div class="article-body-header">
+            <div class="article-body-icon">📞</div>
+            <h3>Phone Scripts for Chasing Overdue Invoices</h3>
+          </div>
+          <p>Calling a client about a late invoice is uncomfortable for most freelancers &#x2014; but it&#x2019;s often the fastest way to get a real answer. Email is easy to ignore; a phone call creates a moment of accountability that&#x2019;s hard to sidestep. The key is to go into the call with a specific ask, stay calm regardless of the response you get, and end with a clear next step rather than just hoping the client follows through.</p>
+          <p><strong>Opening script (when someone picks up):</strong><br>
+          &#x201C;Hi [Name], this is [Your Name] &#x2014; I sent over invoice #[NUMBER] for [amount] on [date] and wanted to follow up to make sure everything looks good on your end. Is this a good moment?&#x201D;<br><br>
+          If they say yes, continue: &#x201C;Great. I just wanted to confirm you received it and check if there&#x2019;s a payment date I can expect &#x2014; even a rough timeline helps me with planning.&#x201D;</p>
+          <p><strong>If they say they haven&#x2019;t seen it:</strong><br>
+          &#x201C;No problem at all &#x2014; I&#x2019;ll resend it right now while we&#x2019;re on the phone. Is [email address] still the best place to send it? And who should I copy to make sure it gets processed quickly?&#x201D;<br><br>
+          This keeps momentum going and gets you the right contact rather than letting the invoice disappear into the wrong inbox again.</p>
+          <p><strong>If they push back or say they&#x2019;re having cash flow issues:</strong><br>
+          &#x201C;I appreciate you being upfront with me. I&#x2019;m happy to work out a payment schedule if that helps &#x2014; could we agree on a first payment of [amount] by [date] and a second payment by [date]? I can send you a quick email to confirm.&#x201D;<br><br>
+          A partial payment on a clear schedule is almost always better than waiting indefinitely for the full amount. Getting something in writing &#x2014; even just a reply-to-email confirmation &#x2014; turns a verbal promise into something you can follow up on.</p>
+          <p><strong>Voicemail script:</strong><br>
+          &#x201C;Hi [Name], this is [Your Name] calling about invoice #[NUMBER] for [amount] &#x2014; it was due on [date] and I&#x2019;m just following up to make sure it&#x2019;s in the queue. Please give me a call back at [number] or reply to my last email. Thanks, and have a great day.&#x201D;<br><br>
+          Keep voicemails short and non-confrontational. You&#x2019;re leaving a paper trail, not delivering a lecture. Follow up the call with an email the same day so there&#x2019;s a written record that you reached out.</p>
+        </div>
       </div>
     </section>
 
