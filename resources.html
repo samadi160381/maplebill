@@ -887,46 +887,108 @@
       <h2>How-to guides</h2>
       <p class="section-desc">Short, practical walkthroughs to help you set up and get the most out of MapleBill.</p>
       <div class="guide-list">
-        <a href="/docs/create-first-invoice" class="guide-card">
+        <div class="guide-card" onclick="openArticle('howto-create-first-invoice')" style="cursor:pointer;">
           <div class="guide-num">01</div>
           <div class="guide-body">
             <h3>How to Create Your First Invoice</h3>
             <p>From blank to sent in under 3 minutes — your complete first-invoice walkthrough.</p>
           </div>
           <span class="guide-badge badge-guide">Guide</span>
-        </a>
-        <a href="/blog/gst-hst-guide.html" class="guide-card">
+        </div>
+        <div class="guide-card" onclick="openArticle('howto-gst-hst')" style="cursor:pointer;">
           <div class="guide-num">02</div>
           <div class="guide-body">
             <h3>How GST/HST Works in Canada</h3>
             <p>Rates by province, registration thresholds, and how to collect and remit correctly.</p>
           </div>
           <span class="guide-badge badge-read">Article</span>
-        </a>
-        <a href="/docs/connect-stripe" class="guide-card">
+        </div>
+        <div class="guide-card" onclick="openArticle('howto-connect-stripe')" style="cursor:pointer;">
           <div class="guide-num">03</div>
           <div class="guide-body">
             <h3>How to Connect Stripe</h3>
             <p>Accept credit and debit cards directly on your invoices — set up in 5 minutes.</p>
           </div>
           <span class="guide-badge badge-guide">Guide</span>
-        </a>
-        <a href="/blog/invoice-late-payment.html" class="guide-card">
+        </div>
+        <div class="guide-card" onclick="openArticle('howto-send-invoices')" style="cursor:pointer;">
           <div class="guide-num">04</div>
           <div class="guide-body">
             <h3>How to Send Invoices</h3>
             <p>Choosing email vs. PDF vs. payment link — and the best time to send for fastest payment.</p>
           </div>
           <span class="guide-badge badge-read">Article</span>
-        </a>
-        <a href="/blog/how-to-create-invoice-canada.html" class="guide-card">
+        </div>
+        <div class="guide-card" onclick="openArticle('howto-invoice-canada')" style="cursor:pointer;">
           <div class="guide-num">05</div>
           <div class="guide-body">
             <h3>How to Create an Invoice in Canada</h3>
             <p>Legal requirements, required fields, and formatting for CRA-compliant invoices.</p>
           </div>
           <span class="guide-badge badge-read">Article</span>
-        </a>
+        </div>
+      </div>
+
+      <div class="article-bodies">
+        <div class="article-body" id="howto-create-first-invoice">
+          <div class="article-body-header">
+            <div class="article-body-icon">🧾</div>
+            <h3>How to Create Your First Invoice</h3>
+          </div>
+          <p>Creating your first invoice in MapleBill takes less than three minutes once your account is set up. Start by clicking <strong>New Invoice</strong> from your dashboard. You&#x2019;ll be prompted to either select an existing client or add a new one &#x2014; enter their name, company (if applicable), email address, and province, since province determines the correct GST/HST rate that gets applied automatically.</p>
+          <p>Next, add your line items. Each line has a description, quantity, and unit price. Be specific in your descriptions &#x2014; &#x201C;Website design &#x2014; homepage and about page&#x201D; is much better than &#x201C;Design work&#x201D; both for your client&#x2019;s records and for your own bookkeeping. If you&#x2019;re registered for GST/HST, toggle the tax switch on and MapleBill will automatically calculate and display the correct amount based on your client&#x2019;s province.</p>
+          <p>Set your invoice date and payment due date. A net-15 or net-30 term is standard for most freelance work &#x2014; net-30 means payment is due 30 days from the invoice date. If you&#x2019;ve agreed to different terms with a particular client, enter them here. You can also add a short note at the bottom of the invoice for things like bank transfer details, a thank-you message, or a reminder about your late fee policy.</p>
+          <p>Once everything looks right, hit <strong>Preview</strong> to see exactly what your client will receive. Check that your business name, contact info, and GST/HST number (if applicable) appear correctly &#x2014; these are required for a CRA-compliant invoice. When you&#x2019;re happy with it, click <strong>Send</strong> to email it directly from MapleBill, or use <strong>Download PDF</strong> if you prefer to send it yourself. Either way, the invoice is saved automatically and will appear in your <strong>Invoices</strong> tab with a Sent status.</p>
+          <p>That&#x2019;s it. Once your client pays, you can mark it as paid manually or, if you&#x2019;ve connected Stripe, payment status updates automatically. Your dashboard will always show you a live view of what&#x2019;s outstanding, what&#x2019;s overdue, and what&#x2019;s been paid.</p>
+        </div>
+
+        <div class="article-body" id="howto-gst-hst">
+          <div class="article-body-header">
+            <div class="article-body-icon">🇨🇦</div>
+            <h3>How GST/HST Works in Canada</h3>
+          </div>
+          <p>GST (Goods and Services Tax) is a federal tax of 5% that applies across Canada. HST (Harmonized Sales Tax) is a combined federal-provincial tax used in provinces that have merged their provincial sales tax with the GST &#x2014; Ontario charges 13% HST, Nova Scotia charges 15%, and so on. As a freelancer, the rate you charge depends on where your <em>client</em> is located, not where you are. If your Toronto-based business invoices a client in Alberta, you charge 5% GST. If that same client is in Ontario, you charge 13% HST.</p>
+          <p>You only need to register for a GST/HST account once your total taxable revenue exceeds $30,000 in any single calendar quarter, or over four consecutive quarters. Until then, you&#x2019;re a &#x201C;small supplier&#x201D; and charging GST/HST is optional &#x2014; most freelancers below the threshold choose not to, since it simplifies their invoicing. Once you cross the threshold, registration becomes mandatory and you must start charging within 30 days.</p>
+          <p>To register, go to the CRA website or call the CRA business line at 1-800-959-5525. You&#x2019;ll receive a 9-digit Business Number (BN) with a &#x201C;RT&#x201D; suffix for your GST/HST account &#x2014; for example, 123456789 RT 0001. This number must appear on every invoice you send once you&#x2019;re registered.</p>
+          <p>When it comes to remitting, you collect GST/HST from clients and subtract any GST/HST you paid on eligible business expenses (called Input Tax Credits, or ITCs). You remit the difference to the CRA on a schedule they assign &#x2014; annual for most new registrants with modest revenue, quarterly or monthly for higher-volume businesses. MapleBill tracks the tax you&#x2019;ve collected on each invoice, so generating a remittance summary at the end of each filing period takes seconds rather than hours.</p>
+          <p>A practical tip: treat collected GST/HST as money that was never yours. Set it aside in a separate account or sub-account from day one. The CRA charges interest on late remittances, and it&#x2019;s easy to accidentally spend tax money that&#x2019;s sitting in your main account if you&#x2019;re not careful.</p>
+        </div>
+
+        <div class="article-body" id="howto-connect-stripe">
+          <div class="article-body-header">
+            <div class="article-body-icon">💳</div>
+            <h3>How to Connect Stripe</h3>
+          </div>
+          <p>Connecting Stripe to MapleBill lets your clients pay invoices by credit or debit card directly from the invoice itself &#x2014; no back-and-forth about bank transfers, no waiting for cheques. Setup takes about five minutes and you only need to do it once.</p>
+          <p>From your MapleBill dashboard, go to <strong>Settings &rarr; Payments</strong> and click <strong>Connect Stripe</strong>. You&#x2019;ll be redirected to Stripe&#x2019;s onboarding flow, where you&#x2019;ll either log into an existing Stripe account or create a new one. Stripe will ask for your business details, banking information for payouts, and identity verification &#x2014; this is standard for any payment processor and usually takes under 10 minutes to complete.</p>
+          <p>Once connected, every new invoice you send will automatically include a <strong>Pay Now</strong> button. When a client clicks it, they&#x2019;re taken to a secure Stripe-hosted checkout page where they can pay by Visa, Mastercard, or Amex. You don&#x2019;t need to handle any card data yourself &#x2014; Stripe manages all of that. Funds are deposited to your bank account on Stripe&#x2019;s standard payout schedule, typically two business days after a payment is made.</p>
+          <p>Stripe charges a processing fee per transaction (currently 2.9% + 30&#xa2; for most Canadian card payments &#x2014; check Stripe&#x2019;s pricing page for the latest rates). Some freelancers absorb this cost as a convenience fee; others add a small surcharge to card-paid invoices. Either approach is fine &#x2014; just be upfront with clients about it. Many freelancers find that offering card payments gets invoices paid two to three times faster than bank transfer alone, making the processing fee well worth it.</p>
+          <p>When a client pays through Stripe, MapleBill automatically marks the invoice as paid and records the payment date. You&#x2019;ll also receive an email notification. There&#x2019;s nothing to do manually on your end &#x2014; your dashboard updates in real time.</p>
+        </div>
+
+        <div class="article-body" id="howto-send-invoices">
+          <div class="article-body-header">
+            <div class="article-body-icon">📤</div>
+            <h3>How to Send Invoices</h3>
+          </div>
+          <p>There are three ways to get an invoice in front of your client: email it directly from MapleBill, download a PDF and attach it yourself, or share a payment link. Each has its place depending on your client and the situation.</p>
+          <p><strong>Sending from MapleBill</strong> is the simplest option and the one most clients prefer. Click <strong>Send</strong> on any invoice and MapleBill emails it on your behalf with your branding, the invoice attached as a PDF, and a Pay Now button if you&#x2019;ve connected Stripe. You can customise the subject line and add a personal note before sending. The client receives a clean, professional email that looks like it came from you &#x2014; not a generic payment platform.</p>
+          <p><strong>Downloading a PDF</strong> makes sense when a client has a specific accounts payable process &#x2014; for example, they require invoices to come from your own email domain, or they need them submitted through a vendor portal. Export the PDF from MapleBill and attach it to your own email. The PDF includes all the same information and branding; you&#x2019;re just handling the delivery yourself.</p>
+          <p><strong>Sharing a payment link</strong> is useful for quick or repeat jobs where formality isn&#x2019;t required. MapleBill generates a unique URL for each invoice that opens a live, web-based version clients can view and pay directly. You can drop this link into a Slack message, a text, or any other channel &#x2014; no email required. It&#x2019;s especially handy for clients you communicate with primarily through chat.</p>
+          <p>As for timing, research consistently shows that invoices sent on Tuesday, Wednesday, or Thursday mornings get paid faster than those sent late on a Friday. Send as soon as the work is delivered rather than batching invoices at the end of the month &#x2014; the longer you wait, the more time passes before the payment clock even starts. If you have payment terms of net-30, sending the invoice the day you finish the work means you get paid 30 days from then, not 30 days from whenever you remembered to send it.</p>
+        </div>
+
+        <div class="article-body" id="howto-invoice-canada">
+          <div class="article-body-header">
+            <div class="article-body-icon">📋</div>
+            <h3>How to Create an Invoice in Canada</h3>
+          </div>
+          <p>A valid Canadian invoice needs to include specific information to be useful to your client&#x2019;s bookkeeper and to satisfy the CRA if you&#x2019;re ever audited. The good news is MapleBill handles most of this automatically &#x2014; but it helps to understand what&#x2019;s required and why.</p>
+          <p>Every invoice must include: your legal business name (or your personal name if you&#x2019;re operating as a sole proprietor without a registered business name), your contact information, the client&#x2019;s name and contact information, a unique invoice number, the invoice date, and an itemised list of services or goods provided with amounts. These are the baseline requirements regardless of your registration status.</p>
+          <p>If you&#x2019;re registered for GST/HST, you must also include your Business Number (BN) with the RT suffix, the GST/HST rate applied, and the total tax amount shown separately from the subtotal. Without these, your client cannot claim the Input Tax Credit they&#x2019;re entitled to &#x2014; which can create friction, especially with larger business clients whose bookkeepers will flag it. MapleBill adds all of this automatically once you enter your BN in Settings.</p>
+          <p>For Quebec-based freelancers, QST (Quebec Sales Tax) is a separate provincial tax you may also need to register for and collect, in addition to GST. The QST rate is 9.975%. Revenu Qu&#xe9;bec administers QST independently from the CRA, so registration and remittance are handled separately. MapleBill supports QST as an additional tax line on your invoices.</p>
+          <p>A few formatting tips that make a real difference: number your invoices sequentially (INV-001, INV-002) so nothing falls through the cracks at year-end; always show your payment terms clearly (e.g., &#x201C;Payment due within 30 days&#x201D;); and include your preferred payment method &#x2014; bank transfer details, a Stripe payment link, or both. The easier you make it to pay, the faster you get paid. Keep copies of every invoice for at least six years, which is the CRA&#x2019;s standard records retention window.</p>
+        </div>
       </div>
     </section>
 
