@@ -456,6 +456,57 @@
   .sp-line:last-of-type { border: none; }
   .sp-total { background: var(--navy); color: white; border-radius: 6px; padding: 7px 10px; font-size: 0.62rem; font-weight: 700; display: flex; justify-content: space-between; margin-top: 10px; }
 
+  /* ARTICLE BODIES (inline expansion under tax guide cards) */
+  .article-bodies {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 36px;
+  }
+
+  .article-body {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  .article-body-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .article-body-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+
+  .article-body h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+
+  .article-body p {
+    font-size: 0.92rem;
+    color: var(--gray-700);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .article-body p:last-child { margin-bottom: 0; }
+
   /* DIVIDER */
   .resource-divider {
     height: 1px;
@@ -627,6 +678,44 @@
           <div class="card-meta"><span>📖</span> 5 min read</div>
           <div class="card-arrow">Read article →</div>
         </a>
+      </div>
+
+      <div class="article-bodies">
+        <div class="article-body" id="gst-hst-guide">
+          <div class="article-body-header">
+            <div class="article-body-icon">🧾</div>
+            <h3>GST/HST for Freelancers: The Complete 2024 Guide</h3>
+          </div>
+          <p>If you&#x2019;re freelancing in Canada, GST/HST can feel like one more confusing layer on top of an already confusing tax system &#x2014; but the basics aren&#x2019;t as scary as they sound. Here&#x2019;s the short version: if your freelance income (plus any other self-employed income) adds up to more than $30,000 over four consecutive calendar quarters, you&#x2019;re required to register for a GST/HST account with the CRA. Until you hit that threshold, you&#x2019;re considered a &#x201C;small supplier&#x201D; and registration is optional.</p>
+          <p>Once you&#x2019;re registered, you need to start charging GST/HST on your invoices. The rate depends on where your client is located, not where you live &#x2014; so a Toronto freelancer billing a client in Alberta charges Alberta&#x2019;s GST rate (5%), while billing someone in Ontario means charging HST (13%). This trips up a lot of new freelancers who assume their own province&#x2019;s rate applies everywhere.</p>
+          <p>The upside of registering is that you can claim Input Tax Credits (ITCs) &#x2014; essentially, you get back the GST/HST you paid on business expenses like software subscriptions, your laptop, or a portion of your home office costs. This can make registering worthwhile even before you&#x2019;re required to, especially if you have significant startup expenses.</p>
+          <p>Remitting is the part people dread most, but it just means sending the CRA the difference between what you collected and what you paid in ITCs. Depending on your revenue, you&#x2019;ll file annually, quarterly, or monthly. The CRA assigns your filing frequency when you register, though you can request a different one. Mark your filing deadlines as soon as you know them &#x2014; late filing penalties add up faster than you&#x2019;d expect.</p>
+          <p>One practical tip: open a separate bank account or at least track GST/HST collected separately from your regular income. It&#x2019;s not really your money, even though it sits in your account between collecting it and remitting it, and treating it as spendable cash is the single most common mistake new freelancers make.</p>
+        </div>
+
+        <div class="article-body" id="cra-self-employed">
+          <div class="article-body-header">
+            <div class="article-body-icon">📊</div>
+            <h3>Self-Employed Tax Return: What to Claim in Canada</h3>
+          </div>
+          <p>Filing taxes as a self-employed Canadian means navigating a different set of rules than a typical T4 employee, but it also opens the door to deductions that can meaningfully lower what you owe. The key principle the CRA uses is whether an expense was incurred to earn business income &#x2014; if it passes that test and you can back it up with records, it&#x2019;s likely deductible.</p>
+          <p>Home office expenses are usually the biggest opportunity. If you work from home, you can claim a percentage of costs like rent, utilities, internet, and property insurance, based on the size of your workspace relative to your home. There are two ways to calculate this: the detailed method (tracking actual expenses and the percentage of your home used for work) or, in some cases, a simplified flat-rate method &#x2014; though the flat-rate option has mostly applied to employees rather than self-employed individuals, so check current CRA guidance for your situation.</p>
+          <p>Equipment and software are also fair game. A new laptop, monitor, ergonomic chair, or even your phone (the business-use portion) can be claimed. Software subscriptions tied to your work &#x2014; design tools, accounting software, project management platforms &#x2014; are deductible too. The CRA generally wants large equipment purchases capitalized and depreciated over time through the Capital Cost Allowance (CCA) system rather than written off all at once, so it&#x2019;s worth understanding which category your purchase falls into.</p>
+          <p>Vehicle expenses, if you use your car for client meetings or deliveries, can be claimed based on the percentage of business use versus personal use &#x2014; but this requires a mileage log, not just an estimate. Professional development, like courses or certifications related to your field, and a portion of your phone and internet bills are commonly claimed as well.</p>
+          <p>What you can&#x2019;t claim is just as important to know: personal expenses, clothing (unless it&#x2019;s a uniform or safety gear), and anything that doesn&#x2019;t have a clear business purpose will get flagged if you&#x2019;re ever reviewed. Keep receipts for everything, ideally digitized, since the CRA can ask for documentation going back six years.</p>
+        </div>
+
+        <div class="article-body" id="how-to-create-invoice-canada">
+          <div class="article-body-header">
+            <div class="article-body-icon">🇨🇦</div>
+            <h3>How to Create an Invoice in Canada</h3>
+          </div>
+          <p>A compliant Canadian invoice isn&#x2019;t complicated, but missing a required field can cause headaches with clients, accountants, or the CRA down the line. At minimum, every invoice needs your business name and contact information, the client&#x2019;s name and contact information, a unique invoice number, the date the invoice was issued, and a clear description of the goods or services provided along with the amount charged.</p>
+          <p>If you&#x2019;re registered for GST/HST, there&#x2019;s an extra requirement: your invoice must display your GST/HST registration number and the amount of tax charged, shown separately from the subtotal. This isn&#x2019;t optional &#x2014; without it, your client can&#x2019;t claim their own input tax credits on what they paid you, which can become a real point of friction with business clients. If you&#x2019;re not registered (because you&#x2019;re under the $30,000 small supplier threshold), you simply don&#x2019;t charge tax at all, and your invoice should reflect that.</p>
+          <p>Formatting-wise, clarity matters more than design. List each service or product on its own line with quantity, rate, and line total, then show a subtotal, tax amount, and grand total at the bottom. Including your payment terms (net 15, net 30, due on receipt) and accepted payment methods upfront avoids back-and-forth with clients later. Many freelancers also add a late payment policy, such as a small percentage fee after a certain number of days, though enforcing this depends on what you&#x2019;ve agreed to in your contract.</p>
+          <p>Numbering your invoices sequentially (INV-001, INV-002, etc.) rather than by date or client name makes bookkeeping far easier, especially come tax time, since it gives you and your accountant an easy way to confirm nothing is missing. It&#x2019;s also worth keeping a consistent template, whether through invoicing software or a simple spreadsheet, so your branding and information stay uniform across every client.</p>
+          <p>Finally, hang onto copies of every invoice you send, ideally for at least six years, since the CRA can request them during an audit. Cloud-based invoicing tools that auto-save and timestamp your invoices make this far less of a chore than digging through old emails or folders.</p>
+        </div>
       </div>
     </section>
 
