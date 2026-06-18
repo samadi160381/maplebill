@@ -560,6 +560,74 @@
     .footer-cols { grid-template-columns: 1fr 1fr; gap: 24px; }
     .nav-links { display: none; }
   }
+  /* ARTICLE OVERLAY */
+  #article-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--white);
+    overflow-y: auto;
+  }
+  #article-overlay.active {
+    display: block;
+  }
+  #article-overlay-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 5% 80px;
+  }
+  #article-overlay-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gray-100);
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--navy);
+    padding: 10px 18px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+    transition: background 0.2s;
+  }
+  #article-overlay-back:hover { background: var(--gray-300); }
+
+  #article-overlay-content .article-body-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  #article-overlay-content .article-body-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  #article-overlay-content h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  #article-overlay-content p {
+    font-size: 1rem;
+    color: var(--gray-700);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  #article-overlay-content p:last-child { margin-bottom: 0; }
+
 </style>
 </head>
 <body>
@@ -659,29 +727,29 @@
       <h2>GST/HST &amp; CRA filing</h2>
       <p class="section-desc">Plain-English guides for navigating Canadian tax rules — no accounting degree required.</p>
       <div class="cards-grid">
-        <div class="resource-card" onclick="toggleArticle('gst-hst-guide', this)" style="cursor:pointer;">
+        <div class="resource-card" onclick="openArticle('gst-hst-guide')" style="cursor:pointer;">
           <div class="card-icon">🧾</div>
           <div class="card-tag">GST/HST</div>
           <h3>GST/HST for Freelancers: The Complete 2024 Guide</h3>
           <p>When to register, what to charge, and how to remit — explained without the jargon.</p>
           <div class="card-meta"><span>📖</span> 8 min read &nbsp;·&nbsp; Updated Jan 2024</div>
-          <div class="card-arrow article-toggle-label">Read article →</div>
+          <div class="card-arrow">Read article →</div>
         </div>
-        <div class="resource-card" onclick="toggleArticle('cra-self-employed', this)" style="cursor:pointer;">
+        <div class="resource-card" onclick="openArticle('cra-self-employed')" style="cursor:pointer;">
           <div class="card-icon">📊</div>
           <div class="card-tag">CRA filing tips</div>
           <h3>Self-Employed Tax Return: What to Claim in Canada</h3>
           <p>Home office, equipment, software — here's what's deductible and what isn't.</p>
           <div class="card-meta"><span>📖</span> 6 min read &nbsp;·&nbsp; Updated Feb 2024</div>
-          <div class="card-arrow article-toggle-label">Read article →</div>
+          <div class="card-arrow">Read article →</div>
         </div>
-        <div class="resource-card" onclick="toggleArticle('how-to-create-invoice-canada', this)" style="cursor:pointer;">
+        <div class="resource-card" onclick="openArticle('how-to-create-invoice-canada')" style="cursor:pointer;">
           <div class="card-icon">🇨🇦</div>
           <div class="card-tag">Invoicing</div>
           <h3>How to Create an Invoice in Canada</h3>
           <p>Required fields, tax numbers, and formatting rules for compliant Canadian invoices.</p>
           <div class="card-meta"><span>📖</span> 5 min read</div>
-          <div class="card-arrow article-toggle-label">Read article →</div>
+          <div class="card-arrow">Read article →</div>
         </div>
       </div>
 
@@ -856,6 +924,14 @@
   </main>
 </div>
 
+<!-- ARTICLE OVERLAY -->
+<div id="article-overlay">
+  <div id="article-overlay-inner">
+    <button id="article-overlay-back" onclick="closeArticle()">← Back to Resources</button>
+    <div id="article-overlay-content"></div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -924,12 +1000,23 @@
     });
   });
 
-  function toggleArticle(id, card) {
-    const article = document.getElementById(id);
-    const label = card.querySelector('.article-toggle-label');
-    const isOpen = article.classList.toggle('open');
-    label.textContent = isOpen ? 'Close article ↑' : 'Read article →';
+  function openArticle(id) {
+    const source = document.getElementById(id);
+    const overlay = document.getElementById('article-overlay');
+    const overlayContent = document.getElementById('article-overlay-content');
+    overlayContent.innerHTML = source.innerHTML;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
+
+  function closeArticle() {
+    document.getElementById('article-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeArticle();
+  });
 </script>
 </body>
 </html>
