@@ -448,6 +448,23 @@ tr:hover td { background: var(--bg-secondary); }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr; }
   .client-grid { grid-template-columns: 1fr; }
+  /* Scrollable tabs on small screens */
+  .tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { white-space: nowrap; flex-shrink: 0; }
+  /* Topbar title truncation */
+  .topbar-title { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  /* Table horizontal scroll */
+  .table-wrapper { -webkit-overflow-scrolling: touch; }
+  /* Buttons full-width in modal on tiny screens */
+  .modal-footer { flex-direction: column; gap: 8px; }
+  .modal-footer .btn { width: 100%; justify-content: center; }
+  /* Auth card padding */
+  .auth-card { padding: 1.25rem; }
+  /* Prevent text overflow in stat cards */
+  .stat-value { font-size: 20px; }
+  /* Line item rows stack fully */
+  .line-item-row { grid-template-columns: 1fr !important; }
 }
 
 /* ── AI badge ── */
