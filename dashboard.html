@@ -2583,6 +2583,17 @@ function renderPreview() {
       </div>
       ${data.notes?`<div style="background:#F0FDF4;border-left:3px solid #16A34A;padding:0.75rem 1rem;border-radius:0 8px 8px 0;margin-bottom:1rem"><div style="font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;margin-bottom:4px">${t(lang,'notes')}</div><div style="font-size:13px;color:#374151">${data.notes}</div></div>`:''}
       ${data.terms?`<div style="border-top:1px solid #E5E7EB;padding-top:1rem"><div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">${t(lang,'terms')}</div><div style="font-size:12px;color:#9CA3AF">${data.terms}</div></div>`:''}
+      <div style="border-top:1px solid #E5E7EB;margin-top:1.5rem;padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Powered by</div>
+          <div style="font-size:13px;font-weight:700;color:#1A2340">MapleBill</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">maplebill.com</div>
+        </div>
+        <div style="text-align:center">
+          <img src="/frame.png" alt="MapleBill QR Code" style="width:72px;height:72px;display:block;margin:0 auto 4px"/>
+          <div style="font-size:10px;color:#9CA3AF">Scan to visit</div>
+        </div>
+      </div>
     </div>`;
 }
 function downloadPDF() {
@@ -2676,6 +2687,21 @@ function downloadPDF() {
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(55, 65, 81);
     doc.text(data.notes, 18, y+7);
   }
+
+  // Footer with QR code
+  y += 20;
+  doc.setDrawColor(229, 231, 235); doc.setLineWidth(0.3); doc.line(14, y, 196, y); y += 6;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(26, 35, 64);
+  doc.text('MapleBill', 14, y);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(156, 163, 175);
+  doc.text('maplebill.com', 14, y+5);
+  // QR code image
+  try {
+    const qrImg = new Image(); qrImg.src = '/frame.png';
+    doc.addImage('/frame.png', 'PNG', 171, y-4, 20, 20);
+    doc.setFontSize(7); doc.setTextColor(156, 163, 175);
+    doc.text('Scan to visit', 181, y+18, { align: 'center' });
+  } catch(e) {}
 
   doc.save(`${data.number}.pdf`);
   showToast('PDF downloaded!', 'success');
