@@ -3,8 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="MapleBill is simple invoicing software for Canadian freelancers and small businesses. GST/HST compliant, bilingual, and CRA-ready. Start your free 30-day trial.">
 <title>MapleBill — Invoice Management for Freelancers</title>
+<meta name="description" content="MapleBill is simple invoicing software for Canadian freelancers and small businesses. GST/HST compliant, bilingual, and CRA-ready. Start your free 30-day trial.">
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1A2340">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MapleBill">
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+
+<!-- Android / Chrome -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="MapleBill">
+
+<!-- Open Graph -->
+<meta property="og:title" content="MapleBill — Simple Invoicing for Canadian Freelancers">
+<meta property="og:description" content="GST/HST compliant invoicing, bilingual, and CRA-ready. Start free for 30 days.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://maplebill.ca">
+<meta property="og:image" content="/screenshots/desktop.png">
 <style>
   @font-face {
     font-family: 'Inter';
@@ -366,7 +389,7 @@
   .hero-note {
     margin-top: 18px;
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.45);
   }
 
   /* HERO CARD */
@@ -607,7 +630,7 @@
     margin-bottom: 8px;
   }
 
-  .detail-label span:last-child { color: #FF8A8A; }
+  .detail-label span:last-child { color: var(--red-light); }
 
   .detail-bar {
     height: 6px;
@@ -1036,13 +1059,13 @@
   /* mock UI elements inside screens */
   .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
   .mock-title { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 900; color: var(--navy); }
-  .mock-badge-green { background: #DCFCE7; color: #14532D; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+  .mock-badge-green { background: #DCFCE7; color: #16A34A; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
   .mock-badge-yellow { background: #FEF9C3; color: #A16207; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
   .mock-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.78rem; color: var(--gray-700); }
   .mock-row:last-child { border-bottom: none; }
   .mock-stat { text-align: center; }
   .mock-stat-val { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 900; color: var(--navy); }
-  .mock-stat-label { font-size: 0.7rem; color: var(--gray-700); margin-top: 2px; }
+  .mock-stat-label { font-size: 0.7rem; color: var(--gray-500); margin-top: 2px; }
   .mock-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
   .mock-chart-bar { height: 6px; background: var(--gray-200); border-radius: 3px; margin: 6px 0; }
   .mock-chart-bar .fill { height: 100%; background: var(--red); border-radius: 3px; }
@@ -1140,7 +1163,7 @@
   .footer-col ul li a:hover { color: white; }
   .footer-bottom { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1100px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; flex-wrap: wrap; gap: 12px; }
   .footer-links { display: flex; gap: 24px; }
-  .footer-links li a { color: rgba(255,255,255,0.75); font-size: 0.8rem; text-decoration: none; }
+  .footer-links li a { color: rgba(255,255,255,0.45); font-size: 0.8rem; text-decoration: none; }
   .footer-links li a:hover { color: white; }
 
   /* HAMBURGER BUTTON */
@@ -1255,7 +1278,7 @@
   /* FOOTER */
   footer {
     background: var(--navy);
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.5);
     padding: 20px 5% 16px;
   }
 
@@ -1279,7 +1302,7 @@
 
   .footer-links a {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.45);
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -1438,7 +1461,6 @@
 </div>
 
 <!-- HERO -->
-<main>
 <section class="hero">
   <div class="hero-inner">
     <div>
@@ -1845,8 +1867,6 @@
   </div>
 </section>
 
-</main>
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1859,7 +1879,7 @@
             <text x="136" y="14" font-size="18" fill="#E8353F">&#x1F341;</text>
           </svg>
         </div>
-        <p style="font-size:0.83rem;color:rgba(255,255,255,0.75);margin-top:10px;line-height:1.6;max-width:420px;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
+        <p style="font-size:0.83rem;color:rgba(255,255,255,0.45);margin-top:10px;line-height:1.6;max-width:420px;">Invoicing built for Canadian freelancers. GST/HST compliant, bilingual, and CRA-ready.</p>
       </div>
 
     </div>
@@ -1952,6 +1972,16 @@
       if (e.key === 'Escape') closeDropdown();
     });
   })();
+</script>
+<!-- PWA Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('MapleBill SW registered:', reg.scope))
+        .catch(err => console.log('SW registration failed:', err));
+    });
+  }
 </script>
 </body>
 </html>
