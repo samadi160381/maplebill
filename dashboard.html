@@ -1516,7 +1516,7 @@ function barcodeDataURL(value, opts) {
   } catch (e) { return ''; }
 }
 function mapleLeafSVG() {
-  return '<div class="invoice-watermark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50,4 L59,24 L80,13 L71,34 L93,38 L74,49 L89,64 L65,57 L69,80 L54,64 L51,96 L49,96 L46,64 L31,80 L35,57 L11,64 L26,49 L7,38 L29,34 L20,13 L41,24 Z" fill="#2563EB" fill-opacity="0.07"/></svg></div>';
+  return '<div class="invoice-watermark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M33.66,4.0 L30.92,21.76 L19.28,18.29 L23.44,33.48 L8.66,30.81 L19.28,43.72 L4.0,50.72 L17.2,56.0 L10.79,72.38 L26.83,68.51 L26.83,80.2 L33.66,72.38 L40.49,80.2 L40.49,68.51 L56.53,72.38 L50.12,56.0 L63.32,50.72 L48.03,43.72 L58.65,30.81 L43.88,33.48 L48.03,18.29 L36.4,21.76 Z" fill="#2563EB" fill-opacity="0.07"/><path d="M35.32,80.2 L35.32,96.0 L32.0,96.0 L32.0,80.2 Z" fill="#2563EB" fill-opacity="0.07"/></svg></div>';
 }
 function today() { return new Date().toISOString().split('T')[0]; }
 function daysFrom(d, days) {
@@ -2677,17 +2677,25 @@ function downloadPDF() {
 
   // Maple leaf watermark (drawn first so it sits behind all other content)
   (function drawMapleLeafWatermark() {
-    const leafPts = [[9,20],[21,-11],[-9,21],[22,4],[-19,11],[15,15],[-24,-7],[4,23],[-15,-16],[-3,32],[-2,0],[-3,-32],[-15,16],[4,-23],[-24,7],[15,-15],[-19,-11],[22,-4],[-9,-21],[21,11]];
-    const scale = 1.55;
-    const cx = 105, cy = 168;
-    const startX = cx, startY = cy - 46 * scale;
+    // Maple leaf outline (11-point leaf, traced from Canadian flag proportions).
+    // Path starts at the top tip; deltas are relative moves in page-space (y grows downward).
+    const leafDeltas = [[-3.633,23.552],[-15.429,-4.598],[5.509,20.133],[-19.593,-3.535],[14.084,17.12],[-20.269,9.282],[17.508,7.0],[-8.508,21.718],[21.269,-5.12],[0.0,15.494],[9.062,-10.374],[9.062,10.374],[0.0,-15.494],[21.269,5.12],[-8.508,-21.718],[17.508,-7.0],[-20.269,-9.282],[14.084,-17.12],[-19.593,3.535],[5.509,-20.133],[-15.429,4.598],[-3.633,-23.552]];
+    const scale = 0.85;
+    const cx = 105, cy = 160; // center point on the page (mm) where the leaf is anchored
+    const tipX = cx, tipY = cy - 100 * scale; // top tip of the leaf at this scale
+    // Small stem below the leaf base
+    const stemW = 4.4 * scale, stemH = 21 * scale;
+    const stemX = cx - stemW/2, stemY = cy + 1 * scale;
+
     doc.saveGraphicsState();
     doc.setGState(new doc.GState({ opacity: 0.05 }));
     doc.setFillColor(17, 24, 39);
-    doc.lines(leafPts, startX + 3, startY + 4, [scale, scale], 'F', true);
+    doc.lines(leafDeltas, tipX + 2, tipY + 3, [scale, scale], 'F', true);
+    doc.rect(stemX + 1, stemY + 3, stemW, stemH, 'F');
     doc.setGState(new doc.GState({ opacity: 0.06 }));
     doc.setFillColor(...blue);
-    doc.lines(leafPts, startX, startY, [scale, scale], 'F', true);
+    doc.lines(leafDeltas, tipX, tipY, [scale, scale], 'F', true);
+    doc.rect(stemX, stemY, stemW, stemH, 'F');
     doc.restoreGraphicsState();
   })();
 
@@ -2696,12 +2704,15 @@ function downloadPDF() {
     try {
       const bcCanvas = document.createElement('canvas');
       JsBarcode(bcCanvas, data.number || ' ', { format: 'CODE128', displayValue: true, fontSize: 16, height: 44, margin: 6, background: '#ffffff', lineColor: '#111827' });
-      const targetW = 55, maxH = 12;
-      let targetH = targetW * (bcCanvas.height / bcCanvas.width);
-      if (targetH > maxH) { targetH = maxH; }
+      const maxW = 55, maxH = 12;
+      const aspect = bcCanvas.width / bcCanvas.height;
+      let targetW = maxW, targetH = maxW / aspect;
+      if (targetH > maxH) { targetH = maxH; targetW = maxH * aspect; }
       const bx = 196 - targetW;
+      doc.setFillColor(255,255,255);
+      doc.rect(bx - 1, 11 - 1, targetW + 2, targetH + 2, 'F');
       doc.addImage(bcCanvas.toDataURL('image/png'), 'PNG', bx, 11, targetW, targetH);
-    } catch (e) {}
+    } catch (e) { console.error('Barcode draw failed:', e); }
   })();
 
   // Header
