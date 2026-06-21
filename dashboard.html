@@ -6,7 +6,7 @@
 <meta name="description" content="Manage your invoices, clients, and payments from the MapleBill dashboard. GST/HST compliant invoicing for Canadian freelancers and small businesses.">
 <title>MapleBill — Invoice Management</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://js.stripe.com/v3/"></script>
@@ -1516,7 +1516,8 @@ function barcodeDataURL(value, opts) {
   } catch (e) { return ''; }
 }
 function mapleLeafSVG() {
-  return '<div class="invoice-watermark"><svg viewBox="-45 -8 90 138" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 l-3.633,23.552 l-15.429,-4.598 l5.509,20.133 l-19.593,-3.535 l14.084,17.12 l-20.269,9.282 l17.508,7.0 l-8.508,21.718 l21.269,-5.12 l0,15.494 l9.062,-10.374 l9.062,10.374 l0,-15.494 l21.269,5.12 l-8.508,-21.718 l17.508,-7.0 l-20.269,-9.282 l14.084,-17.12 l-19.593,3.535 l5.509,-20.133 l-15.429,4.598 l-3.633,-23.552 Z" fill="#C8102E" fill-opacity="0.07"/><rect x="-2.6" y="89.5" width="5.2" height="21" fill="#C8102E" fill-opacity="0.07"/></svg></div>';
+  // Accurate 11-point Canadian maple leaf matching the uploaded PNG watermark
+  return '<div class="invoice-watermark"><svg viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg"><path d="M100,4 L109,34 L130,20 L122,46 L148,38 L134,60 L162,58 L144,76 L170,82 L148,92 L160,116 L134,108 L132,136 L114,118 L108,150 L100,130 L92,150 L86,118 L68,136 L66,108 L40,116 L52,92 L30,82 L56,76 L38,58 L66,60 L52,38 L78,46 L70,20 L91,34 Z" fill="#C8102E" fill-opacity="0.07"/><rect x="93" y="150" width="14" height="40" rx="2" fill="#C8102E" fill-opacity="0.07"/></svg></div>';
 }
 function today() { return new Date().toISOString().split('T')[0]; }
 function daysFrom(d, days) {
@@ -2677,20 +2678,29 @@ function downloadPDF() {
 
   // Maple leaf watermark (drawn first so it sits behind all other content)
   (function drawMapleLeafWatermark() {
-    // Maple leaf outline (11-point leaf, traced from Canadian flag proportions).
-    // Path starts at the top tip; deltas are relative moves in page-space (y grows downward).
-    const leafDeltas = [[-3.633,23.552],[-15.429,-4.598],[5.509,20.133],[-19.593,-3.535],[14.084,17.12],[-20.269,9.282],[17.508,7.0],[-8.508,21.718],[21.269,-5.12],[0.0,15.494],[9.062,-10.374],[9.062,10.374],[0.0,-15.494],[21.269,5.12],[-8.508,-21.718],[17.508,-7.0],[-20.269,-9.282],[14.084,-17.12],[-19.593,3.535],[5.509,-20.133],[-15.429,4.598],[-3.633,-23.552]];
-    const scale = 0.85;
-    const cx = 105, cy = 160; // center point on the page (mm) where the leaf is anchored
-    const tipX = cx, tipY = cy - 100 * scale; // top tip of the leaf at this scale
-    // Small stem below the leaf base
-    const stemW = 4.4 * scale, stemH = 21 * scale;
-    const stemX = cx - stemW/2, stemY = cy + 1 * scale;
+    // Accurate 11-point Canadian maple leaf, scaled to fit A4 page
+    // Points derived from the uploaded PNG watermark shape
+    const pts = [
+      [105, 14],  // top tip
+      [113, 38], [128, 28], [122, 50], [142, 44], [131, 62],
+      [154, 60], [140, 76], [160, 81], [142, 89], [152, 108],
+      [130, 101],[128, 123],[114, 108],[109, 132],[105, 116],
+      [101, 132],[96, 108], [82, 123], [80, 101], [58, 108],
+      [68, 89],  [50, 81],  [70, 76],  [56, 60],  [79, 62],
+      [68, 44],  [88, 50],  [82, 28],  [97, 38],  [105, 14]
+    ];
+    const stemW = 3.5, stemH = 17;
+    const stemX = 105 - stemW/2, stemY = 132;
 
     doc.saveGraphicsState();
     doc.setGState(new doc.GState({ opacity: 0.07 }));
     doc.setFillColor(200, 16, 46);
-    doc.lines(leafDeltas, tipX, tipY, [scale, scale], 'F', true);
+
+    // Draw leaf as filled polygon
+    doc.lines(
+      pts.slice(1).map((p,i) => [p[0]-pts[i][0], p[1]-pts[i][1]]),
+      pts[0][0], pts[0][1], [1,1], 'F', true
+    );
     doc.rect(stemX, stemY, stemW, stemH, 'F');
     doc.restoreGraphicsState();
   })();
